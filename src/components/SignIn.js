@@ -31,7 +31,7 @@ export default () => {
     try {
       await AuthService.signin(data);
       // Rdirect user to home page
-      window.location.href = "/";
+      // window.location.href = "/";
     } catch (error) {
       // Set error with message
       setMessage("Email ou mot de passe est incorrect!");

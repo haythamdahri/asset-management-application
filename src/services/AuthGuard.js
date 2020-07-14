@@ -45,6 +45,27 @@ export function UserRoute({ children, ...props }) {
   );
 }
 
+export function PrivilegedRoute({ children, ...props }) {
+  console.log(props.roles);
+  return (
+    <Route
+      {...props}
+      render={({ location }) =>
+        AuthService.isAuthenticated() ? (
+            children
+        ) : (
+          <Redirect
+            to={{
+              pathname: "/signin",
+              state: { from: location },
+            }}
+          />
+        )
+      }
+    />
+  );
+}
+
 export function AuthenticatedGuard({ children, ...props }) {
   return (
     <Route

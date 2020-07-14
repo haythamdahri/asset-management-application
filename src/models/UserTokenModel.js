@@ -3,5 +3,6 @@ export default class UserTokenModel {
     token = '';
     email = '';
     roles = [];
+    groups: [];
     exp = 0;
 }

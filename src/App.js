@@ -9,10 +9,10 @@ import {
 import SignIn from "./components/SignIn";
 import NotFound from "./components/NotFound";
 import Home from "./components/Home";
-import PrivateRoute, {
-  AuthenticatedGuard,
+import {
+  AuthenticatedGuard, UserRoute, PrivilegedRoute,
 } from "./services/AuthGuard";
-import Footer from "./components/Footer";
+import RoleType from "./models/RoleType";
 
 function App() {
   return (
@@ -26,9 +26,9 @@ function App() {
           }}
         >
           <Switch>
-            <PrivateRoute exact={true} path="/">
+            <PrivilegedRoute roles={[RoleType.ROLE_ACCESSORIES_EDIT]} exact={true} path="/">
               <Home />
-            </PrivateRoute>
+            </PrivilegedRoute>
             <AuthenticatedGuard exact={true} path="/signin">
               <SignIn />
             </AuthenticatedGuard>

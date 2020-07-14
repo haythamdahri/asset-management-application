@@ -1,16 +1,19 @@
 import axios from "axios";
 import UserTokenModel from "../models/UserTokenModel";
+import authHeader from "./AuthHeader";
 
-const API_URL = "http://localhost:8080/api/v1/auth/";
+const API_URL = "http://localhost:8080/api/v1/auth";
+const USER_API_URL = "http://localhost:8080/api/v1/users";
 const STORAGE_USER = "user";
 
 class AuthService {
   signin(user) {
     return axios
-      .post(API_URL, user)
+      .post(`${API_URL}/`, user)
       .then((userData) => {
         let userToken = this.decodeToken(userData.data.token);
         localStorage.setItem(STORAGE_USER, JSON.stringify(userToken));
+        console.log(userToken);
         return userToken;
       })
       .catch((err) => {
@@ -47,6 +50,29 @@ class AuthService {
     );
   }
 
+  // Check if user has a specific role or his group has
+  async hasAsyncRole(roleName) {
+    const response = await axios
+    .get(`${USER_API_URL}/roles/checking`, {
+      params: { roleName: roleName },
+      headers: authHeader(),
+    })
+    .then((response) => {
+      // If user not found then sign out and redirect to sign in page
+      if( response.data.signOutRequired ) {
+        this.signout();
+        window.location.href = "/signin";
+      }
+      // Return response
+      return response.data;
+    })
+    .catch((err) => {
+      throw new Error(err);
+    });
+    console.log(response);
+    return response.hasRole;
+  }
+
   // Check if connected user is an admin
   isAdmin() {
     let userToken = JSON.parse(
@@ -77,6 +103,7 @@ class AuthService {
     userToken.token = token;
     userToken.email = decoded.sub;
     userToken.roles = decoded.roles;
+    userToken.groups = decoded.groups;
     userToken.exp = Number(decoded.exp * 1000);
     return userToken;
   }
