@@ -1,55 +1,48 @@
 import React from "react";
+import "./App.css";
 import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link
+  Redirect,
 } from "react-router-dom";
+import SignIn from "./components/SignIn";
+import NotFound from "./components/NotFound";
+import Home from "./components/Home";
+import PrivateRoute, {
+  AuthenticatedGuard,
+} from "./services/AuthGuard";
+import Footer from "./components/Footer";
 
-export default function App() {
+function App() {
   return (
-    <Router>
-      <div>
-        <nav>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/about">About</Link>
-            </li>
-            <li>
-              <Link to="/users">Users</Link>
-            </li>
-          </ul>
-        </nav>
-
-        {/* A <Switch> looks through its children <Route>s and
-            renders the first one that matches the current URL. */}
-        <Switch>
-          <Route path="/about">
-            <About />
-          </Route>
-          <Route path="/users">
-            <Users />
-          </Route>
-          <Route path="/">
-            <Home />
-          </Route>
-        </Switch>
-      </div>
-    </Router>
-  );
+      <Router>
+        <div
+          className="container-fluid"
+          style={{
+            minHeight: "100vh",
+            fontFamily:
+              "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif",
+          }}
+        >
+          <Switch>
+            <PrivateRoute exact={true} path="/">
+              <Home />
+            </PrivateRoute>
+            <AuthenticatedGuard exact={true} path="/signin">
+              <SignIn />
+            </AuthenticatedGuard>
+            <Route exact={true} path="/notfound">
+              <NotFound />
+            </Route>
+            {/** Not Found Page */}
+            <Route path="">
+              <Redirect to="/notfound" />
+            </Route>
+          </Switch>
+        </div>
+      </Router>
+    );
 }
 
-function Home() {
-  return <h2>Home</h2>;
-}
-
-function About() {
-  return <h2>About</h2>;
-}
-
-function Users() {
-  return <h2>Users</h2>;
-}
+export default App;

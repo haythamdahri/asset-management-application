@@ -1,7 +1,7 @@
 import axios from "axios";
 import UserTokenModel from "../models/UserTokenModel";
 
-const API_URL = "http://localhost:8080/auth/";
+const API_URL = "http://localhost:8080/api/v1/auth/";
 const STORAGE_USER = "user";
 
 class AuthService {
