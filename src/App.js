@@ -39,13 +39,13 @@ function App() {
         <UserRoute exact={true} path="/contact">
           <Contact />
         </UserRoute>
-        <PrivilegedRoute
+        <UserRoute
           role={RoleType.ROLE_ADMIN}
           exact={true}
           path="/users"
         >
           <Users />
-        </PrivilegedRoute>
+        </UserRoute>
         <AuthenticatedGuard exact={true} path="/signin">
           <SignIn />
         </AuthenticatedGuard>

@@ -59,7 +59,7 @@ export default () => {
         <ul className="navbar-nav ml-auto">
           <li className="nav-item d-none d-sm-inline-block">
                 <Link className="nav-link" to="#" onClick={onSignOut}>
-                  <FontAwesomeIcon icon="sign-out-alt" /> Sign out
+                  <FontAwesomeIcon icon="sign-out-alt" /> Se déconnecter
                 </Link>
               </li>
           <li className="nav-item dropdown">
