@@ -13,7 +13,6 @@ class AuthService {
       .then((userData) => {
         let userToken = this.decodeToken(userData.data.token);
         localStorage.setItem(STORAGE_USER, JSON.stringify(userToken));
-        console.log(userToken);
         return userToken;
       })
       .catch((err) => {
@@ -69,7 +68,6 @@ class AuthService {
     .catch((err) => {
       throw new Error(err);
     });
-    console.log(response);
     return response.hasRole;
   }
 
@@ -103,7 +101,6 @@ class AuthService {
     userToken.token = token;
     userToken.email = decoded.sub;
     userToken.roles = decoded.roles;
-    userToken.groups = decoded.groups;
     userToken.exp = Number(decoded.exp * 1000);
     return userToken;
   }

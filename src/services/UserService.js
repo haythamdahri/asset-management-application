@@ -65,13 +65,24 @@ class UserService {
     return axios
       .get(`${API_URL}/current`, { headers: authHeader() })
       .then((response) => {
-        console.log(response.data);
         return response.data;
       })
       .catch((err) => {
         throw new Error(err);
       });
   }
+
+  getUsers() {
+    return axios
+      .get(`${API_URL}/`, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw new Error(err);
+      });
+  }
+
 }
 
 export default new UserService();

@@ -31,17 +31,17 @@ export default () => {
     try {
       await AuthService.signin(data);
       // Rdirect user to home page
-      // window.location.href = "/";
+      window.location.href = "/";
     } catch (error) {
       // Set error with message
-      setMessage("Email ou mot de passe est incorrect!");
+      setMessage("Email ou mot de passe est incorrecte!");
       setError(true);
       setLoading(false);
     }
   };
 
   return (
-    <div className="row my-login-page">
+    <div className="my-login-page">
       <div className="col-12">
         <section className="h-100">
           <div className="container h-100">
@@ -52,13 +52,13 @@ export default () => {
                 </div>
                 <div className="card fat">
                   <div className="card-body">
-                    <h4 className="card-title">Connexion</h4>
+                    <h4 className="card-title" style={{marginBottom: '0'}}>Connexion</h4>
 
                     {/** Sign in error */}
                     {error && (
                       <>
                         <div
-                          className="alert alert-danger fade show font-weight-bold text-center mt-3"
+                          className="mt-4 alert alert-danger fade show font-weight-bold text-center mt-3"
                           role="alert"
                         >
                           <FontAwesomeIcon icon="exclamation" /> {message}
@@ -107,6 +107,7 @@ export default () => {
                             errors.password ? "is-invalid" : ""
                           }`}
                           id="password"
+                          autoComplete="on"
                         />
                         {/** Required password error */}
                         <div className="invalid-feedback">
