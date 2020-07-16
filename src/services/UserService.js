@@ -83,6 +83,17 @@ class UserService {
       });
   }
 
+  getCustomUsers() {
+    return axios
+      .get(`${API_URL}/custom`, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
   getUsersPage(search, pageable) {
     const params = {
       search: search !== "" ? search : "",

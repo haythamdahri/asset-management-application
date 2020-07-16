@@ -11,7 +11,6 @@ import NotFound from "./components/NotFound";
 import Home from "./components/Home";
 import {
   AuthenticatedGuard,
-  PrivilegedRoute,
   UserRoute,
 } from "./services/AuthGuard";
 import RoleType from "./models/RoleType";
