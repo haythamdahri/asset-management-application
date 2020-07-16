@@ -48,7 +48,11 @@ import {
   faCommentDots,
   faDotCircle,
   faPaperPlane,
-  faCircle
+  faCircle,
+  faUserEdit,
+  faStreetView,
+  faLayerGroup,
+  faUserMinus,
 } from "@fortawesome/free-solid-svg-icons";
 
 library.add(
@@ -92,7 +96,12 @@ library.add(
   faCommentDots,
   faDotCircle,
   faPaperPlane,
-  faCircle
+  faCircle,
+  faUserEdit,
+  faStreetView,
+  faLayerGroup,
+  faUserMinus,
+  faUserEdit
 );
 
 ReactDOM.render(

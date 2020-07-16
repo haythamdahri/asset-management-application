@@ -72,9 +72,25 @@ class UserService {
       });
   }
 
-  getUsers() {
+  getUser(id) {
     return axios
-      .get(`${API_URL}/`, { headers: authHeader() })
+      .get(`${API_URL}/${id}`, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
+  getUsersPage(search, pageable) {
+    const params = {
+      search: search !== "" ? search : "",
+      page: pageable.pageNumber,
+      size: pageable.pageSize,
+    };
+    return axios
+      .get(`${API_URL}/`, { params, headers: authHeader() })
       .then((response) => {
         return response.data;
       })

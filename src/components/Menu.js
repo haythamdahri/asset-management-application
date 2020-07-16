@@ -40,7 +40,7 @@ export default () => {
         {/* Brand Logo */}
         <Link to="/" className="brand-link">
           <img
-            src="dist/img/AdminLTELogo.png"
+            src="/dist/img/AdminLTELogo.png"
             alt="AdminLTE Logo"
             className="brand-image img-circle elevation-3"
             style={{ opacity: ".8" }}
@@ -56,7 +56,7 @@ export default () => {
                 src={
                   loading
                     ? "../../public/dist/img/boxed-bg.jpg"
-                    : user.avatar.file
+                    : user?.avatar?.file
                 }
                 className="img-circle elevation-2"
                 alt="User"

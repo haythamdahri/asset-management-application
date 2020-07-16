@@ -1,17 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import UserService from "../services/UserService";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Swal from "sweetalert2";
+import CustomPagination from "../pagination/components/custom-pagination/CustomPagination";
+import CustomPaginationService from "../pagination/services/CustomPaginationService";
+import { Page } from "../pagination/Page";
 
 export default () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [unauthorized, setUnauthorized] = useState(false);
-  const [users, setUsers] = useState([]);
+  const [usersPage, setUsersPage] = useState(new Page());
   let active = true;
-
+  const searchInput = useRef(null);
+  
   useEffect(() => {
+    document.title = "Gestion utilisateurs";
     fetchUsers();
     return () => {
       active = false;
@@ -19,21 +24,27 @@ export default () => {
   }, []);
 
   const fetchUsers = async () => {
+    const search = searchInput.current.value;
     try {
       setLoading(true);
       setError(false);
       setUnauthorized(false);
-      const users = await UserService.getUsers();
+      setUsersPage(new Page());
+      const response = await UserService.getUsersPage(
+        search,
+        usersPage.pageable
+      );
       if (active) {
         setLoading(false);
-        setUsers(users);
+        setUsersPage(response);
         setError(false);
       }
     } catch (e) {
+      console.log(e);
       if (active) {
-        const status = e.response.status;
+        const status = e.response?.status || null;
         setLoading(false);
-        setUsers(null);
+        setUsersPage(null);
         if (status === 403 && active) {
           setUnauthorized(true);
           setError(false);
@@ -53,6 +64,30 @@ export default () => {
         }
       }
     }
+  };
+
+  const getNextPage = () => {
+    usersPage.pageable = CustomPaginationService.getNextPage(usersPage);
+    fetchUsers();
+  };
+
+  const getPreviousPage = () => {
+    usersPage.pageable = CustomPaginationService.getPreviousPage(usersPage);
+    fetchUsers();
+  };
+
+  const getPageInNewSize = (pageSize) => {
+    usersPage.pageable = CustomPaginationService.getPageInNewSize(
+      usersPage,
+      pageSize
+    );
+    fetchUsers();
+  };
+
+  const onSearchSubmit = async (event) => {
+    event.preventDefault();
+    // Search users
+    getPageInNewSize(20);
   };
 
   return (
@@ -84,6 +119,41 @@ export default () => {
         <section className="content">
           <div className="container-fluid">
             <div className="row">
+              {/** PAGINATION COMPONENT */}
+              <div className="col-12 text-center">
+                <CustomPagination
+                  page={usersPage}
+                  loading={loading}
+                  nextPageEvent={getNextPage}
+                  previousPageEvent={getPreviousPage}
+                  pageSizeEvent={getPageInNewSize}
+                />
+              </div>
+              {/** SEARCH */}
+              <div className="col-sm-12 col-md-10 col-lg-10 col-xl-10 mx-auto mb-4">
+                <form onSubmit={onSearchSubmit}>
+                  <div className="form-row">
+                    <div className="col-sm-12 col-md-10 col-lg-10 col-xl-10 mx-auto">
+                      <input
+                        type="search"
+                        id="userSearch"
+                        placeholder="Nom, Username, Email, Website, Zip ..."
+                        name="search"
+                        className="form-control"
+                        ref={searchInput}
+                      />
+                    </div>
+                    <div className="col-sm-12 col-md-2 col-lg-2 col-xl-2 mx-auto">
+                      <button
+                        type="submit"
+                        className="btn btn-warning btn-block font-weight-bold"
+                      >
+                        <FontAwesomeIcon icon="search-dollar" /> Rechercher
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
               <div
                 className="col-12 bg-white p-2 shadow shadow-sm rounded mb-5"
                 style={{ borderTop: "black 2px solid" }}
@@ -102,13 +172,14 @@ export default () => {
                         <th>Manager</th>
                         <th>Notes</th>
                         <th>Groupes</th>
-                        <th>Connexion activé</th>
+                        <th>Connexion activée</th>
+                        <th colSpan={3}>Actions</th>
                       </tr>
                     </thead>
                     <tbody className="text-center">
                       {loading && (
                         <tr>
-                          <td colSpan={11} className="text-center bg-light">
+                          <td colSpan={14} className="text-center bg-light">
                             <div
                               className="spinner-border text-primary"
                               role="status"
@@ -118,23 +189,25 @@ export default () => {
                           </td>
                         </tr>
                       )}
-                      {!loading && users !== null && users.length === 0 && (
-                        <tr>
-                          <td
-                            colSpan={11}
-                            className="text-center alert alert-dark"
-                          >
-                            <h2 className="font-weight-bold">
-                              <FontAwesomeIcon icon="exclamation-circle" />{" "}
-                              Aucun utilisateur trouvé!
-                            </h2>
-                          </td>
-                        </tr>
-                      )}
+                      {!loading &&
+                        usersPage !== null &&
+                        usersPage?.content?.length === 0 && (
+                          <tr>
+                            <td
+                              colSpan={14}
+                              className="text-center alert alert-dark"
+                            >
+                              <h2 className="font-weight-bold">
+                                <FontAwesomeIcon icon="exclamation-circle" />{" "}
+                                Aucun utilisateur trouvé!
+                              </h2>
+                            </td>
+                          </tr>
+                        )}
                       {(error || unauthorized) && (
                         <tr>
                           <td
-                            colSpan={11}
+                            colSpan={14}
                             className={`text-center alert ${
                               error ? "alert-warning" : "alert-danger"
                             }`}
@@ -155,21 +228,42 @@ export default () => {
                         </tr>
                       )}
 
-                      {users &&
-                        users.map((user, key) => (
+                      {usersPage &&
+                        usersPage?.content?.map((user, key) => (
                           <tr key={key}>
                             <td>
-                              {user.firstName} {user.lastName}
+                              <Link to={`/users/${user.id}`}>
+                                {user.firstName} {user.lastName}
+                              </Link>
                             </td>
                             <td>{user.title}</td>
                             <td>{user.email}</td>
                             <td>{user.phone}</td>
                             <td>{user.username}</td>
-                            <td>{user.department.name}</td>
-                            <td>{user.location.name}</td>
-                            <td>{user.manager ? user.manager.name : ""}</td>
+                            <td>{user.department?.name}</td>
+                            <td>
+                              <Link to={`/locations/${user.location?.id}`}>
+                                {user.location?.name}
+                              </Link>
+                            </td>
+                            <td>
+                              <Link to={`/users/${user.manager?.id}`}>
+                                {user.manager
+                                  ? user.manager?.firstName +
+                                    " " +
+                                    user.manager?.lastName
+                                  : ""}
+                              </Link>
+                            </td>
                             <td>{user.notes}</td>
-                            <td>{user.groupes}</td>
+                            <td>
+                              {user.groups?.map((group, key) => (
+                                <span key={key}>
+                                  {group.name}
+                                  {key === user.groups.length - 1 ? "" : ","}
+                                </span>
+                              ))}
+                            </td>
                             <td>
                               {user.active ? (
                                 <FontAwesomeIcon
@@ -182,6 +276,30 @@ export default () => {
                                   color="red"
                                 />
                               )}
+                            </td>
+                            <td>
+                              <button className="btn btn-primary btn-sm">
+                                <FontAwesomeIcon
+                                  icon="user-edit"
+                                  color="white"
+                                />
+                              </button>
+                            </td>
+                            <td>
+                              <button className="btn btn-danger btn-sm">
+                                <FontAwesomeIcon
+                                  icon="user-minus"
+                                  color="white"
+                                />
+                              </button>
+                            </td>
+                            <td>
+                              <Link to={`/users/${user?.id}`} ><button className="btn btn-danger btn-sm">
+                                <FontAwesomeIcon
+                                  icon="street-view"
+                                  color="white"
+                                />
+                              </button></Link>
                             </td>
                           </tr>
                         ))}

@@ -21,6 +21,7 @@ import AuthService from "./services/AuthService";
 import Header from "./components/Header";
 import Contact from "./components/Contact";
 import Users from "./components/Users";
+import UserView from "./components/UserView";
 
 function App() {
   return (
@@ -45,6 +46,12 @@ function App() {
           path="/users"
         >
           <Users />
+        </UserRoute>
+        <UserRoute
+          exact={true}
+          path="/users/:id"
+        >
+          <UserView />
         </UserRoute>
         <AuthenticatedGuard exact={true} path="/signin">
           <SignIn />
