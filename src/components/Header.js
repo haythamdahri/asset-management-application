@@ -3,14 +3,11 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AuthService from "../services/AuthService";
 
-
 export default () => {
-
   const onSignOut = () => {
     AuthService.signout();
-    window.location.href = "/signin"
-  }
-
+    window.location.href = "/signin";
+  };
 
   return (
     <div>
@@ -58,27 +55,9 @@ export default () => {
         {/* Right navbar links */}
         <ul className="navbar-nav ml-auto">
           <li className="nav-item d-none d-sm-inline-block">
-                <Link className="nav-link" to="#" onClick={onSignOut}>
-                  <FontAwesomeIcon icon="sign-out-alt" /> Se déconnecter
-                </Link>
-              </li>
-          <li className="nav-item dropdown">
-            <Link
-              className="nav-link dropdown-toggle"
-              to="#"
-              id="navbarDropdown"
-              role="button"
-              data-toggle="dropdown"
-              aria-haspopup="true"
-              aria-expanded="false"
-            >
-              Dropdown
+            <Link className="nav-link" to="#" onClick={onSignOut}>
+              <FontAwesomeIcon icon="sign-out-alt" /> Se déconnecter
             </Link>
-            <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-              <Link className="dropdown-item" to="#">
-                 Se déconnecter
-              </Link>
-            </div>
           </li>
           {/* Messages Dropdown Menu */}
           <li className="nav-item dropdown">

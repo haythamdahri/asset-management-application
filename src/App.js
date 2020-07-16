@@ -22,6 +22,7 @@ import Header from "./components/Header";
 import Contact from "./components/Contact";
 import Users from "./components/Users";
 import UserView from "./components/UserView";
+import UserForm from "./components/UserForm";
 
 function App() {
   return (
@@ -52,6 +53,12 @@ function App() {
           path="/users/:id"
         >
           <UserView />
+        </UserRoute>
+        <UserRoute
+          exact={true}
+          path="/users/:id/edit"
+        >
+          <UserForm />
         </UserRoute>
         <AuthenticatedGuard exact={true} path="/signin">
           <SignIn />

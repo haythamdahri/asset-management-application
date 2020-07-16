@@ -14,9 +14,9 @@ export default () => {
   const [usersPage, setUsersPage] = useState(new Page());
   let active = true;
   const searchInput = useRef(null);
-  
+
   useEffect(() => {
-    document.title = "Gestion utilisateurs";
+    document.title = "Gestion Utilisateurs";
     fetchUsers();
     return () => {
       active = false;
@@ -24,7 +24,7 @@ export default () => {
   }, []);
 
   const fetchUsers = async () => {
-    const search = searchInput.current.value;
+    const search = searchInput?.current?.value || "";
     try {
       setLoading(true);
       setError(false);
@@ -32,7 +32,7 @@ export default () => {
       setUsersPage(new Page());
       const response = await UserService.getUsersPage(
         search,
-        usersPage.pageable
+        usersPage?.pageable || new Page()
       );
       if (active) {
         setLoading(false);
@@ -40,12 +40,11 @@ export default () => {
         setError(false);
       }
     } catch (e) {
-      console.log(e);
       if (active) {
         const status = e.response?.status || null;
         setLoading(false);
         setUsersPage(null);
-        if (status === 403 && active) {
+        if (status === 403) {
           setUnauthorized(true);
           setError(false);
         } else {
@@ -62,6 +61,10 @@ export default () => {
             title: `Une erreur est survenue, veuillez ressayer!`,
           });
         }
+      }
+    } finally {
+      if( search !== "" && search !== null ) {
+        searchInput.current.value = search;
       }
     }
   };
@@ -87,13 +90,15 @@ export default () => {
   const onSearchSubmit = async (event) => {
     event.preventDefault();
     // Search users
-    getPageInNewSize(20);
+    if( !unauthorized && !error && !loading ) {
+      getPageInNewSize(20);
+    }
   };
 
   return (
     <div>
       {/* Content Wrapper. Contains page content */}
-      <div className="content-wrapper">
+      <div className="content-wrapper pb-5">
         {/* Content Header (Page header) */}
         <section className="content-header">
           <div className="container-fluid">
@@ -119,41 +124,43 @@ export default () => {
         <section className="content">
           <div className="container-fluid">
             <div className="row">
-              {/** PAGINATION COMPONENT */}
-              <div className="col-12 text-center">
-                <CustomPagination
-                  page={usersPage}
-                  loading={loading}
-                  nextPageEvent={getNextPage}
-                  previousPageEvent={getPreviousPage}
-                  pageSizeEvent={getPageInNewSize}
-                />
-              </div>
-              {/** SEARCH */}
-              <div className="col-sm-12 col-md-10 col-lg-10 col-xl-10 mx-auto mb-4">
-                <form onSubmit={onSearchSubmit}>
-                  <div className="form-row">
-                    <div className="col-sm-12 col-md-10 col-lg-10 col-xl-10 mx-auto">
-                      <input
-                        type="search"
-                        id="userSearch"
-                        placeholder="Nom, Username, Email, Website, Zip ..."
-                        name="search"
-                        className="form-control"
-                        ref={searchInput}
-                      />
-                    </div>
-                    <div className="col-sm-12 col-md-2 col-lg-2 col-xl-2 mx-auto">
-                      <button
-                        type="submit"
-                        className="btn btn-warning btn-block font-weight-bold"
-                      >
-                        <FontAwesomeIcon icon="search-dollar" /> Rechercher
-                      </button>
-                    </div>
+              {!unauthorized && !error && !loading && (
+                  <div className="col-12 text-center">
+                    <CustomPagination
+                      page={usersPage}
+                      loading={loading}
+                      nextPageEvent={getNextPage}
+                      previousPageEvent={getPreviousPage}
+                      pageSizeEvent={getPageInNewSize}
+                    />
                   </div>
-                </form>
-              </div>
+              )}
+                  {/** SEARCH */}
+                  <div className="col-sm-12 col-md-10 col-lg-10 col-xl-10 mx-auto mb-4">
+                    <form onSubmit={onSearchSubmit}>
+                      <div className="form-row">
+                        <div className="col-sm-12 col-md-10 col-lg-10 col-xl-10 mx-auto">
+                          <input
+                            type="search"
+                            id="userSearch"
+                            placeholder="Nom, Username, Email, Website, Zip ..."
+                            name="search"
+                            className="form-control"
+                            ref={searchInput}
+                            disabled={unauthorized || loading ? true : ""}
+                          />
+                        </div>
+                        <div className="col-sm-12 col-md-2 col-lg-2 col-xl-2 mx-auto">
+                          <button
+                            type="submit"
+                            className="btn btn-warning btn-block font-weight-bold"
+                          >
+                            <FontAwesomeIcon icon="search-dollar" /> Rechercher
+                          </button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
               <div
                 className="col-12 bg-white p-2 shadow shadow-sm rounded mb-5"
                 style={{ borderTop: "black 2px solid" }}
@@ -278,12 +285,14 @@ export default () => {
                               )}
                             </td>
                             <td>
-                              <button className="btn btn-primary btn-sm">
-                                <FontAwesomeIcon
-                                  icon="user-edit"
-                                  color="white"
-                                />
-                              </button>
+                              <Link to={`/users/${user.id}/edit`}>
+                                <button className="btn btn-primary btn-sm">
+                                  <FontAwesomeIcon
+                                    icon="user-edit"
+                                    color="white"
+                                  />
+                                </button>
+                              </Link>
                             </td>
                             <td>
                               <button className="btn btn-danger btn-sm">
@@ -294,12 +303,14 @@ export default () => {
                               </button>
                             </td>
                             <td>
-                              <Link to={`/users/${user?.id}`} ><button className="btn btn-danger btn-sm">
-                                <FontAwesomeIcon
-                                  icon="street-view"
-                                  color="white"
-                                />
-                              </button></Link>
+                              <Link to={`/users/${user?.id}`}>
+                                <button className="btn btn-danger btn-sm">
+                                  <FontAwesomeIcon
+                                    icon="street-view"
+                                    color="white"
+                                  />
+                                </button>
+                              </Link>
                             </td>
                           </tr>
                         ))}

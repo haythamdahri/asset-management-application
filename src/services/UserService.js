@@ -50,14 +50,14 @@ class UserService {
       });
   }
 
-  saveUser(id, email, username, location) {
+  saveUser(id, formData) {
     return axios
-      .patch(`${API_URL}/${id}`, {email, username, location}, { headers: authHeader() })
+      .put(`${API_URL}/${id}`, formData, { headers: authHeader() })
       .then((response) => {
         return response.data;
       })
       .catch((err) => {
-        throw new Error(err?.response?.data?.message || 'An error occurred, please try again!');
+        throw err;  
       });
   }
 
