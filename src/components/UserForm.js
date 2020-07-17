@@ -8,8 +8,10 @@ import Swal from "sweetalert2";
 import CompanyService from "../services/CompanyService";
 import LanguageService from "../services/LanguageService";
 import DepartmentService from "../services/DepartmentService";
+import RoleService from "../services/RoleService";
 import LocationService from "../services/LocationService";
 import { countries } from "countries-list";
+import GroupService from "../services/GroupService";
 
 export default () => {
   const {
@@ -42,6 +44,14 @@ export default () => {
     loading: false,
     data: [],
   });
+  const [groupsData, setGroupsData] = useState({
+    loading: false,
+    data: [],
+  });
+  const [rolesData, setRolesData] = useState({
+    loading: false,
+    data: [],
+  });
 
   const [file, setFile] = useState(new File([], ""));
   // User Id Extraction from URL
@@ -62,6 +72,10 @@ export default () => {
     fetchDepartments();
     // Fetch locations
     fetchLocations();
+    // Fetch groups
+    fetchGroups();
+    // Fetch roles
+    fetchRoles();
     return () => {
       active = false;
     };
@@ -88,7 +102,6 @@ export default () => {
   const fetchUsers = async () => {
     try {
       const users = await UserService.getCustomUsers();
-      console.log(users);
       setUsersData({ loading: false, data: users });
     } catch (e) {
       setUsersData({ loading: false, data: [] });
@@ -113,6 +126,24 @@ export default () => {
     }
   };
 
+  const fetchGroups = async () => {
+    try {
+      const groups = await GroupService.getGroups();
+      setGroupsData({ loading: false, data: groups });
+    } catch (e) {
+      setGroupsData({ loading: false, data: [] });
+    }
+  };
+
+  const fetchRoles = async () => {
+    try {
+      const roles = await RoleService.getRoles();
+      setRolesData({ loading: false, data: roles });
+    } catch (e) {
+      setRolesData({ loading: false, data: [] });
+    }
+  };
+
   const fetchUser = async () => {
     setUnauthorized(false);
     setLoading(true);
@@ -120,6 +151,7 @@ export default () => {
     setUser({});
     try {
       const user = await UserService.getUser(id);
+      console.log(user.roles);
       if (!user.hasOwnProperty("id")) {
         setUser(null);
         setLoading(false);
@@ -178,34 +210,17 @@ export default () => {
     // Set FormData
     let formData = new FormData();
     formData.set("image", file);
+    formData.set("avatar", user.avatar.id);
     formData.set("id", user.id?.toString() || "");
-    Object.keys(data).forEach((key, index) => {
-      formData.set(key, data[key]);
-  });
-  formData.set("active", data?.active?.toString() || "false");
-  formData.set("updateImage", data.updateImage?.toString() || "false");
-  return;
-    formData.set("firstName", data.firstName);
-    formData.set("lastName", data.lastName.toString());
-    formData.set("password", data.password.toString());
-    formData.set("email", data.email.toString());
-    formData.set("company", data.company.toString());
-    formData.set("langauge", data.language.toString());
-    formData.set("employeeNumber", data.employeeNumber.toString());
-    formData.set("title", data.title?.toString());
-    formData.set("manager", data.manager?.toString());
-    formData.set("department", data.department?.toString());
-    formData.set("location", data.location?.toString());
-    formData.set("phone", data.title?.toString());
-    formData.set("website", data.website?.toString());
-    formData.set("address", data.address?.toString());
-    formData.set("city", data.city?.toString());
-    formData.set("state", data.state?.toString());
-    formData.set("country", data.country?.toString());
-    formData.set("zip", data.zip.toString());
-    formData.set("notes", data.notes.toString());
-    formData.set("groups", data.groups.toString());
-    formData.set("roles", data.roles.toString());
+    for (const [key, value] of Object.entries(data)) {
+      if( (key === "roles" || key === "groups") && value.length > 0) {
+        formData.set(key, value.join(";"));
+      } else {
+        formData.set(key, value);
+      }
+    }
+    formData.set("active", data?.active?.toString() || "false");
+    formData.set("updateImage", data.updateImage?.toString() || "false");
     // SEND POST TO SERVER
     const Toast = Swal.mixin({
       toast: true,
@@ -214,7 +229,7 @@ export default () => {
       timer: 3000,
     });
     try {
-      setUser(await UserService.saveUser(user.id, formData));
+      setUser(await UserService.saveUser(formData));
       setSaving(false);
       Toast.fire({
         icon: "success",
@@ -281,16 +296,21 @@ export default () => {
             )}
 
             {user !== null && !userError && !unauthorized && !loading && (
-              <div className="col-9 mx-auto mt-2">
-                <div className="shadow p-3 mb-5 bg-white rounded">
-                  <form onSubmit={handleSubmit(onSubmit)} noValidate>
-
-                    {/** LASTNAME */}
-                    <div className="form-group row">
-                      <label className="col-md-3 font-weight-bold" htmlFor="lastName">
-                        Nom:{" "}
-                      </label>
-                      <div className="col-md-9">
+              <div className="col-md-9 mx-auto mt-4">
+                <form
+                  onSubmit={handleSubmit(onSubmit)}
+                  noValidate
+                  className="shadow p-3 mb-5 bg-white rounded"
+                >
+                  {/** LASTNAME */}
+                  <div className="form-group row">
+                    <label
+                      className="col-md-3 font-weight-bold"
+                      htmlFor="lastName"
+                    >
+                      Nom:{" "}
+                    </label>
+                    <div className="col-md-9">
                       <input
                         disabled={saving}
                         placeholder="Nom ..."
@@ -311,14 +331,17 @@ export default () => {
                           <div className="invalid-feedback">Nom est requis</div>
                         )}
                     </div>
-                    </div>
+                  </div>
 
-                    {/** FIRSTNAME */}
-                    <div className="form-group row">
-                      <label className="col-md-3 font-weight-bold" htmlFor="firstName">
-                        Prénom:{" "}
-                      </label>
-                      <div className="col-md-9">
+                  {/** FIRSTNAME */}
+                  <div className="form-group row">
+                    <label
+                      className="col-md-3 font-weight-bold"
+                      htmlFor="firstName"
+                    >
+                      Prénom:{" "}
+                    </label>
+                    <div className="col-md-9">
                       <input
                         disabled={saving}
                         placeholder="Prénom ..."
@@ -341,14 +364,17 @@ export default () => {
                           </div>
                         )}
                     </div>
-                    </div>
+                  </div>
 
-                    {/** USERNAME */}
-                    <div className="form-group row">
-                      <label className="col-md-3 font-weight-bold" htmlFor="username">
-                        Username:{" "}
-                      </label>
-                      <div className="col-md-9">
+                  {/** USERNAME */}
+                  <div className="form-group row">
+                    <label
+                      className="col-md-3 font-weight-bold"
+                      htmlFor="username"
+                    >
+                      Username:{" "}
+                    </label>
+                    <div className="col-md-9">
                       <input
                         disabled={saving}
                         placeholder="Username ..."
@@ -371,14 +397,17 @@ export default () => {
                           </div>
                         )}
                     </div>
-                    </div>
+                  </div>
 
-                    {/** PASSWORD */}
-                    <div className="form-group row">
-                      <label className="col-md-3 font-weight-bold" htmlFor="password">
-                        Mot de passe:{" "}
-                      </label>
-                      <div className="col-md-9">
+                  {/** PASSWORD */}
+                  <div className="form-group row">
+                    <label
+                      className="col-md-3 font-weight-bold"
+                      htmlFor="password"
+                    >
+                      Mot de passe:{" "}
+                    </label>
+                    <div className="col-md-9">
                       <input
                         disabled={saving}
                         placeholder="Mot de passe ..."
@@ -396,7 +425,9 @@ export default () => {
                         onChange={(e) => {
                           const value = e.target.value;
                           // this will clear error by only pass the name of field
-                          if (value === getValues("passwordConfirm")?.toString())
+                          if (
+                            value === getValues("passwordConfirm")?.toString()
+                          )
                             return clearErrors("passwordConfirm");
                           // set an error with type and message
                           setError("passwordConfirm", {
@@ -405,17 +436,18 @@ export default () => {
                           });
                         }}
                       />
-                    </div></div>
+                    </div>
+                  </div>
 
-                    {/** PASSWORD CONFIRMATION */}
-                    <div className="form-group row">
-                      <label
-                        className="col-md-3 font-weight-bold"
-                        htmlFor="passwordConfirm"
-                      >
-                        Confirmation mot de passe:{" "}
-                      </label>
-                      <div className="col-md-9">
+                  {/** PASSWORD CONFIRMATION */}
+                  <div className="form-group row">
+                    <label
+                      className="col-md-3 font-weight-bold"
+                      htmlFor="passwordConfirm"
+                    >
+                      Confirmation mot de passe:{" "}
+                    </label>
+                    <div className="col-md-9">
                       <input
                         disabled={saving}
                         placeholder="Confirmation mot de passe ..."
@@ -451,14 +483,18 @@ export default () => {
                             {errors.passwordConfirm.message}
                           </div>
                         )}
-                    </div></div>
+                    </div>
+                  </div>
 
-                    {/** EMAIL */}
-                    <div className="form-group row">
-                      <label className="col-md-3 font-weight-bold" htmlFor="email">
-                        Email:{" "}
-                      </label>
-                      <div className="col-9">
+                  {/** EMAIL */}
+                  <div className="form-group row">
+                    <label
+                      className="col-md-3 font-weight-bold"
+                      htmlFor="email"
+                    >
+                      Email:{" "}
+                    </label>
+                    <div className="col-9">
                       <input
                         disabled={saving}
                         placeholder="Email ..."
@@ -477,14 +513,18 @@ export default () => {
                       {errors.email && errors.email.type === "required" && (
                         <div className="invalid-feedback">Email est requis</div>
                       )}
-                    </div></div>
+                    </div>
+                  </div>
 
-                    {/** COMPANY */}
-                    <div className="form-group row">
-                      <label className="col-md-3 font-weight-bold" htmlFor="company">
-                        Société:{" "}
-                      </label>
-                      <div className="col-md-9">
+                  {/** COMPANY */}
+                  <div className="form-group row">
+                    <label
+                      className="col-md-3 font-weight-bold"
+                      htmlFor="company"
+                    >
+                      Société:{" "}
+                    </label>
+                    <div className="col-md-9">
                       <select
                         defaultValue={user?.company?.id}
                         onClick={(event) => {
@@ -511,14 +551,18 @@ export default () => {
                           </option>
                         ))}
                       </select>
-                    </div></div>
+                    </div>
+                  </div>
 
-                    {/** LANGUAGE */}
-                    <div className="form-group row">
-                      <label className="col-md-3 font-weight-bold" htmlFor="language">
-                        Langue:{" "}
-                      </label>
-                      <div className="col-md-9">
+                  {/** LANGUAGE */}
+                  <div className="form-group row">
+                    <label
+                      className="col-md-3 font-weight-bold"
+                      htmlFor="language"
+                    >
+                      Langue:{" "}
+                    </label>
+                    <div className="col-md-9">
                       <select
                         defaultValue={user?.language?.id}
                         onClick={(event) => {
@@ -546,17 +590,17 @@ export default () => {
                         ))}
                       </select>
                     </div>
-                        </div>
+                  </div>
 
-                    {/** EMPLOYEE NUMBER */}
-                    <div className="form-group row">
-                      <label
-                        className="col-md-3 font-weight-bold"
-                        htmlFor="employeeNumber"
-                      >
-                        Numéro d'employé:{" "}
-                      </label>
-                      <div className="col-9">
+                  {/** EMPLOYEE NUMBER */}
+                  <div className="form-group row">
+                    <label
+                      className="col-md-3 font-weight-bold"
+                      htmlFor="employeeNumber"
+                    >
+                      Numéro d'employé:{" "}
+                    </label>
+                    <div className="col-9">
                       <input
                         disabled={saving}
                         placeholder="Numéro d'employé ..."
@@ -578,14 +622,18 @@ export default () => {
                             Numéro d'employé est requis
                           </div>
                         )}
-                    </div></div>
+                    </div>
+                  </div>
 
-                    {/** MANAGER */}
-                    <div className="form-group row">
-                      <label className="col-md-3 font-weight-bold" htmlFor="manager">
-                        Manager:{" "}
-                      </label>
-                      <div className="col-md-9">
+                  {/** MANAGER */}
+                  <div className="form-group row">
+                    <label
+                      className="col-md-3 font-weight-bold"
+                      htmlFor="manager"
+                    >
+                      Manager:{" "}
+                    </label>
+                    <div className="col-md-9">
                       <select
                         defaultValue={user?.manager?.id}
                         onClick={(event) => {
@@ -615,14 +663,18 @@ export default () => {
                             )
                         )}
                       </select>
-                    </div></div>
+                    </div>
+                  </div>
 
-                    {/** DEPARTMENT */}
-                    <div className="form-group row">
-                      <label className="col-md-3 font-weight-bold" htmlFor="department">
-                        Département:{" "}
-                      </label>
-                      <div className="col-md-9">
+                  {/** DEPARTMENT */}
+                  <div className="form-group row">
+                    <label
+                      className="col-md-3 font-weight-bold"
+                      htmlFor="department"
+                    >
+                      Département:{" "}
+                    </label>
+                    <div className="col-md-9">
                       <select
                         defaultValue={user?.department?.id}
                         onClick={(event) => {
@@ -649,14 +701,18 @@ export default () => {
                           </option>
                         ))}
                       </select>
-                    </div></div>
+                    </div>
+                  </div>
 
-                    {/** LOCATION */}
-                    <div className="form-group row">
-                      <label className="col-md-3 font-weight-bold" htmlFor="location">
-                        Localisation:{" "}
-                      </label>
-                      <div className="col-md-9">
+                  {/** LOCATION */}
+                  <div className="form-group row">
+                    <label
+                      className="col-md-3 font-weight-bold"
+                      htmlFor="location"
+                    >
+                      Localisation:{" "}
+                    </label>
+                    <div className="col-md-9">
                       <select
                         defaultValue={user?.location?.id}
                         onClick={(event) => {
@@ -683,14 +739,18 @@ export default () => {
                           </option>
                         ))}
                       </select>
-                    </div></div>
+                    </div>
+                  </div>
 
-                    {/** PHONE */}
-                    <div className="form-group row">
-                      <label className="col-md-3 font-weight-bold" htmlFor="phone">
-                        Téléphone:{" "}
-                      </label>
-                      <div className="col-md-9">
+                  {/** PHONE */}
+                  <div className="form-group row">
+                    <label
+                      className="col-md-3 font-weight-bold"
+                      htmlFor="phone"
+                    >
+                      Téléphone:{" "}
+                    </label>
+                    <div className="col-md-9">
                       <input
                         disabled={saving}
                         placeholder="Téléphone ..."
@@ -702,7 +762,7 @@ export default () => {
                           errors.phone ? "is-invalid" : ""
                         }`}
                         ref={register({
-                          required: true,
+                          required: false,
                         })}
                       />
                       {/** Required Stock error */}
@@ -711,31 +771,42 @@ export default () => {
                           Téléphone est requis
                         </div>
                       )}
-                    </div></div>
+                    </div>
+                  </div>
 
-                    {/** WEBISTE */}
-                    <div className="form-group row">
-                      <label className="col-md-3 font-weight-bold" htmlFor="website">
-                        Site web:{" "}
-                      </label>
-                      <div className="col-md-9">
+                  {/** WEBISTE */}
+                  <div className="form-group row">
+                    <label
+                      className="col-md-3 font-weight-bold"
+                      htmlFor="website"
+                    >
+                      Site web:{" "}
+                    </label>
+                    <div className="col-md-9">
                       <input
                         disabled={saving}
                         placeholder="Site web ..."
                         type="text"
                         id="website"
                         name="website"
+                        ref={register({
+                          required: false,
+                        })}
                         defaultValue={user.website || ""}
                         className={`form-control form-control-sm shadow-sm`}
                       />
-                    </div></div>
+                    </div>
+                  </div>
 
-                    {/** ADDRESS */}
-                    <div className="form-group row">
-                      <label className="col-md-3 font-weight-bold" htmlFor="address">
-                        Adresse:{" "}
-                      </label>
-                      <div className="col-md-9">
+                  {/** ADDRESS */}
+                  <div className="form-group row">
+                    <label
+                      className="col-md-3 font-weight-bold"
+                      htmlFor="address"
+                    >
+                      Adresse:{" "}
+                    </label>
+                    <div className="col-md-9">
                       <input
                         disabled={saving}
                         placeholder="Adresse ..."
@@ -756,14 +827,15 @@ export default () => {
                           Adresse est requis
                         </div>
                       )}
-                    </div></div>
+                    </div>
+                  </div>
 
-                    {/** CITY */}
-                    <div className="form-group row">
-                      <label className="col-md-3 font-weight-bold" htmlFor="city">
-                        Ville:{" "}
-                      </label>
-                      <div className="col-md-9">
+                  {/** CITY */}
+                  <div className="form-group row">
+                    <label className="col-md-3 font-weight-bold" htmlFor="city">
+                      Ville:{" "}
+                    </label>
+                    <div className="col-md-9">
                       <input
                         disabled={saving}
                         placeholder="Ville ..."
@@ -782,14 +854,18 @@ export default () => {
                       {errors.city && errors.city.type === "required" && (
                         <div className="invalid-feedback">Ville est requis</div>
                       )}
-                    </div></div>
+                    </div>
+                  </div>
 
-                    {/** STATE */}
-                    <div className="form-group row">
-                      <label className="col-md-3 font-weight-bold" htmlFor="state">
-                        Région:{" "}
-                      </label>
-                      <div className="col-md-9">
+                  {/** STATE */}
+                  <div className="form-group row">
+                    <label
+                      className="col-md-3 font-weight-bold"
+                      htmlFor="state"
+                    >
+                      Région:{" "}
+                    </label>
+                    <div className="col-md-9">
                       <input
                         disabled={saving}
                         placeholder="Région ..."
@@ -810,44 +886,45 @@ export default () => {
                           Région est requis
                         </div>
                       )}
-                    </div></div>
-
-                    {/** COUNTRY */}
-                    <div className="form-group row">
-                      <label
-                        className="col-md-3 font-weight-bold"
-                        htmlFor="country"
-                      >
-                        Pays:{" "}
-                      </label>
-                      <div className="col-md-9">
-                        <select
-                          defaultValue={user?.country}
-                          className={`form-control form-control-sm shadow-sm ${
-                            errors.location ? "is-invalid" : ""
-                          }`}
-                          disabled={saving}
-                          ref={register({
-                            required: true,
-                          })}
-                          id="country"
-                          name="country"
-                        >
-                          {Object.keys(countries).map((key, index) => (
-                            <option key={index} value={countries[key].name}>
-                              {countries[key].name}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
                     </div>
+                  </div>
 
-                    {/** ZIP */}
-                    <div className="form-group row">
-                      <label className="col-md-3 font-weight-bold" htmlFor="zip">
-                        Code postal:{" "}
-                      </label>
-                      <div className="col-md-9">
+                  {/** COUNTRY */}
+                  <div className="form-group row">
+                    <label
+                      className="col-md-3 font-weight-bold"
+                      htmlFor="country"
+                    >
+                      Pays:{" "}
+                    </label>
+                    <div className="col-md-9">
+                      <select
+                        defaultValue={user?.country}
+                        className={`form-control form-control-sm shadow-sm ${
+                          errors.location ? "is-invalid" : ""
+                        }`}
+                        disabled={saving}
+                        ref={register({
+                          required: true,
+                        })}
+                        id="country"
+                        name="country"
+                      >
+                        {Object.keys(countries).map((key, index) => (
+                          <option key={index} value={countries[key].name}>
+                            {countries[key].name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {/** ZIP */}
+                  <div className="form-group row">
+                    <label className="col-md-3 font-weight-bold" htmlFor="zip">
+                      Code postal:{" "}
+                    </label>
+                    <div className="col-md-9">
                       <input
                         disabled={saving}
                         placeholder="Code postal ..."
@@ -868,32 +945,36 @@ export default () => {
                           Code postal est requis
                         </div>
                       )}
-                    </div></div>
-
-                    {/** ACTIVE USER */}
-                    <div className="custom-control custom-switch mt-2 mb-2 text-center">
-                      <input
-                        disabled={saving}
-                        defaultChecked={user?.active ? true : false}
-                        type="checkbox"
-                        className="custom-control-input"
-                        id="active"
-                        name="active"
-                        ref={register({
-                          required: false,
-                        })}
-                      />
-                      <label className="custom-control-label" htmlFor="active">
-                        Activer connexion utilisateur
-                      </label>
                     </div>
+                  </div>
 
-                    {/** NOTES */}
-                    <div className="form-group row">
-                      <label className="col-md-3 font-weight-bold" htmlFor="notes">
-                        Notes:{" "}
-                      </label>
-                      <div className="col-md-9">
+                  {/** ACTIVE USER */}
+                  <div className="custom-control custom-switch mt-2 mb-2 text-center">
+                    <input
+                      disabled={saving}
+                      defaultChecked={user?.active ? true : false}
+                      type="checkbox"
+                      className="custom-control-input"
+                      id="active"
+                      name="active"
+                      ref={register({
+                        required: false,
+                      })}
+                    />
+                    <label className="custom-control-label" htmlFor="active">
+                      Activer connexion utilisateur
+                    </label>
+                  </div>
+
+                  {/** NOTES */}
+                  <div className="form-group row">
+                    <label
+                      className="col-md-3 font-weight-bold"
+                      htmlFor="notes"
+                    >
+                      Notes:{" "}
+                    </label>
+                    <div className="col-md-9">
                       <textarea
                         rows={10}
                         disabled={saving}
@@ -904,87 +985,204 @@ export default () => {
                         defaultValue={user.notes || ""}
                         className={`form-control form-control-sm shadow-sm`}
                       />
-                    </div></div>
+                    </div>
+                  </div>
 
-                    {/** USER IMAGE */}
-                    <div className="form-group">
+                  {/** USER IMAGE */}
+                  <div className="form-group">
+                    <label
+                      className="col-md-3 font-weight-bold"
+                      htmlFor="validatedCustomFile"
+                    >
+                      Image:{" "}
+                    </label>
+                    <div className="custom-file col-md-9">
+                      <input
+                        disabled={saving}
+                        type="file"
+                        id="validatedCustomFile"
+                        name="file"
+                        onChange={(event) => setFile(event.target.files[0])}
+                        className={`custom-file-input shadow-sm`}
+                        accept="image/*"
+                      />
                       <label
-                        className="col-md-3 font-weight-bold"
+                        className="custom-file-label shadow-sm"
                         htmlFor="validatedCustomFile"
                       >
-                        Image:{" "}
+                        Choisir un fichier...
                       </label>
-                      <div className="custom-file col-md-9">
-                        <input
-                          disabled={saving}
-                          type="file"
-                          id="validatedCustomFile"
-                          name="file"
-                          onChange={(event) => setFile(event.target.files[0])}
-                          className={`custom-file-input shadow-sm`}
-                          accept="image/*"
-                        />
-                        <label
-                          className="custom-file-label shadow-sm"
-                          htmlFor="validatedCustomFile"
-                        >
-                          Choisir un fichier...
-                        </label>
-                      </div>
-
-                      {user.id !== undefined && (
-                        <div className="custom-control custom-switch mt-2 text-center">
-                          <input
-                            disabled={saving}
-                            type="checkbox"
-                            className="custom-control-input"
-                            id="updateImage"
-                            name="updateImage"
-                            ref={register({
-                              required: false,
-                            })}
-                          />
-                          <label
-                            className="custom-control-label"
-                            htmlFor="updateImage"
-                          >
-                            Mettre à jour l'image d'utilisateur
-                          </label>
-                        </div>
-                      )}
                     </div>
 
-                    <button
-                      disabled={saving}
-                      type="submit"
-                      className="btn btn-primary font-weight-bold text-center btn-block"
+                    {user.id !== undefined && (
+                      <div className="custom-control custom-switch mt-2 text-center">
+                        <input
+                          disabled={saving}
+                          type="checkbox"
+                          className="custom-control-input"
+                          id="updateImage"
+                          name="updateImage"
+                          ref={register({
+                            required: false,
+                          })}
+                        />
+                        <label
+                          className="custom-control-label"
+                          htmlFor="updateImage"
+                        >
+                          Mettre à jour l'image d'utilisateur
+                        </label>
+                      </div>
+                    )}
+                  </div>
+
+                  <div
+                    className="col-12"
+                    style={{ borderTope: "blue solid 2px" }}
+                  >
+                    <p className="h3 text-center font-weight-bold text-blue">
+                      Permissions
+                    </p>
+                  </div>
+
+                  {/** Groups */}
+                  <div className="form-group row">
+                    <label
+                      className="col-md-3 font-weight-bold"
+                      htmlFor="groups"
                     >
-                      {saving ? (
-                        <>
-                          <div
-                            className="spinner-border spinner-border-sm text-light"
-                            role="status"
-                          >
-                            <span className="sr-only">Loading...</span>
-                          </div>{" "}
-                          Enregistrement ...
-                        </>
-                      ) : (
-                        <>
-                          <FontAwesomeIcon icon="save" /> Enregistrer
-                        </>
+                      Groups:
+                    </label>
+                    <div className="col-md-9">
+                      {!groupsData.loading && (  
+                      <select
+                        multiple
+                        defaultValue={[
+                          user?.groups?.map((group, key) => group.id),
+                        ]}
+                        onClick={(event) => {
+                          if (
+                            departmentsData?.data === null ||
+                            departmentsData?.data?.length === 0
+                          ) {
+                            fetchGroups();
+                          }
+                        }}
+                        className={`form-control form-control-sm shadow-sm ${
+                          errors.groups ? "is-invalid" : ""
+                        }`}
+                        disabled={saving || groupsData?.loading}
+                        ref={register({
+                          required: false,
+                        })}
+                        id="groups"
+                        name="groups"
+                      >
+                        {groupsData?.data?.map((group, key) => (
+                          <option key={key} value={group?.id}>
+                            {group?.name}
+                          </option>
+                        ))}
+                      </select>
                       )}
-                    </button>
-                    <Link
-                      to="/products"
-                      type="submit"
-                      className="btn btn-warning font-weight-bold text-center btn-block"
+                    </div>
+                  </div>
+
+                  {/** ROLES */}
+                  <div className="form-group row">
+                    <label
+                      className="col-md-3 font-weight-bold"
+                      htmlFor="roles"
                     >
-                      <FontAwesomeIcon icon="undo" /> Naviguer vers les
-                      utilisateurs
-                    </Link>
-                  </form>
-                </div>
+                      Roles: 
+                    </label>
+                    <div className="col-md-9">
+                      {!rolesData.loading && (  
+                      <select
+                        multiple
+                        defaultValue={[
+                          user?.roles?.map((role, key) => role.id),
+                        ]}
+                        onClick={(event) => {
+                          if (
+                            rolesData?.data === null ||
+                            rolesData?.data?.length === 0
+                          ) {
+                            fetchRoles();
+                          }
+                        }}
+                        className={`form-control form-control-sm shadow-sm ${
+                          errors.roles ? "is-invalid" : ""
+                        }`}
+                        disabled={saving || rolesData?.loading}
+                        ref={register({
+                          required: false,
+                        })}
+                        id="roles"
+                        name="roles"
+                      >
+                        {rolesData?.data?.map((role, key) => (
+                          <option key={key} value={role?.id}>
+                            {role?.roleName}
+                          </option>
+                        ))}
+                      </select>
+                   
+                      )}
+                     </div>
+                  </div>
+
+                  {user.id !== undefined && (
+                      <div className="custom-control custom-switch mt-2 text-center">
+                        <input
+                          disabled={saving}
+                          type="checkbox"
+                          className="custom-control-input"
+                          id="updatePermissions"
+                          name="updatePermissions"
+                          ref={register({
+                            required: false,
+                          })}
+                        />
+                        <label
+                          className="custom-control-label"
+                          htmlFor="updatePermissions"
+                        >
+                          Mettre à jour les permissions d'utilisateur
+                        </label>
+                      </div>
+                    )}
+
+                  <button
+                    disabled={saving}
+                    type="submit"
+                    className="btn btn-primary font-weight-bold text-center btn-block"
+                  >
+                    {saving ? (
+                      <>
+                        <div
+                          className="spinner-border spinner-border-sm text-light"
+                          role="status"
+                        >
+                          <span className="sr-only">Loading...</span>
+                        </div>{" "}
+                        Enregistrement ...
+                      </>
+                    ) : (
+                      <>
+                        <FontAwesomeIcon icon="save" /> Enregistrer
+                      </>
+                    )}
+                  </button>
+                  <Link
+                    to="/products"
+                    type="submit"
+                    className="btn btn-warning font-weight-bold text-center btn-block"
+                  >
+                    <FontAwesomeIcon icon="undo" /> Naviguer vers les
+                    utilisateurs
+                  </Link>
+                </form>
               </div>
             )}
           </div>

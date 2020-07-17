@@ -1,11 +1,11 @@
 import axios from "axios";
 import authHeader from "./AuthHeader";
 
-const API_URL = "http://localhost:8080/api/v1/groups";
+const API_URL = "http://localhost:8080/api/v1/roles";
 
-class GroupService {
+class RoleService {
 
-  getGroups() {
+  getRoles() {
     return axios
       .get(`${API_URL}/`, {headers: authHeader()})
       .then((response) => {
@@ -20,4 +20,4 @@ class GroupService {
 
 }
 
-export default new GroupService();
+export default new RoleService();

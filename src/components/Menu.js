@@ -64,7 +64,7 @@ export default () => {
             </div>
             <div className="info">
               <Link to="#" className="d-block">
-              { loading ? "USER" : user.firstName + " " + user.lastName }
+              { (!loading && user != null) ? user?.firstName + " " + user?.lastName : "USER" }
               </Link>
             </div>
           </div>
