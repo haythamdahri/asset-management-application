@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { IMAGE_URL } from "../services/ConstantsService";
 import UserService from "../services/UserService";
 import { useParams, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

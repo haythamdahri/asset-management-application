@@ -7,6 +7,18 @@ const API_URL = "http://localhost:8080/api/v1/users";
 class UserService {
 
 
+
+  requestPasswordReset(email) {
+    return axios
+      .get(`${API_URL}/passwordresets`, {params: {email}})
+      .then((response) => {
+        return true;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
   updateAcountStatus(status, id) {
     switch (status) {
       case ENABLE:

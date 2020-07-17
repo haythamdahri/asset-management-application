@@ -53,6 +53,7 @@ import {
   faStreetView,
   faLayerGroup,
   faUserMinus,
+  faKey,
 } from "@fortawesome/free-solid-svg-icons";
 
 library.add(
@@ -101,7 +102,8 @@ library.add(
   faStreetView,
   faLayerGroup,
   faUserMinus,
-  faUserEdit
+  faUserEdit,
+  faKey
 );
 
 ReactDOM.render(

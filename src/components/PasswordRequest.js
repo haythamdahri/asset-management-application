@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import AuthService from "../services/AuthService";
+import UserService from "../services/UserService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import logo from "../images/logo.jpg";
 import "../styles/login.css";
@@ -11,10 +11,11 @@ export default () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
+  const [success, setSuccess] = useState(false);
   let abortController = new AbortController();
 
   useEffect(() => {
-    document.title = "Authentification";
+    document.title = "Réinitialisation mot de passe";
     document.body.style.backgroundColor = "#f7f9fb";
     document.body.style.fontSize = "14px";
     return () => {
@@ -26,18 +27,25 @@ export default () => {
     // Set loading to true
     // Unset error with message
     setLoading(true);
+    setSuccess(false);
     setMessage("");
     setError(false);
     // Login user using AuthService
     try {
-      await AuthService.signin(data);
-      // Rdirect user to home page
-      window.location.href = "/";
+      await UserService.requestPasswordReset(data.email);
+      setLoading(false);
+      setSuccess(true);
+      setMessage(
+        "Un email de réinitialisation du mot de passe est envoyé avec succés!"
+      );
+      setError(false);
     } catch (error) {
+        console.log(error);
       // Set error with message
-      setMessage("Email ou mot de passe est incorrecte!");
+      setMessage("Une erreur st survenue, veuillez ressayer!");
       setError(true);
       setLoading(false);
+      setSuccess(false);
     }
   };
 
@@ -53,13 +61,17 @@ export default () => {
                 </div>
                 <div className="card fat">
                   <div className="card-body">
-                    <h4 className="card-title" style={{marginBottom: '0'}}>Connexion</h4>
+                    <h4 className="card-title" style={{ marginBottom: "0" }}>
+                      Réinitialisation mot de passe
+                    </h4>
 
                     {/** Sign in error */}
-                    {error && (
+                    {(error || success) && !loading && (
                       <>
                         <div
-                          className="mt-4 alert alert-danger fade show font-weight-bold text-center mt-3"
+                          className={`mt-4 alert fade show font-weight-bold text-center mt-3 ${
+                            error ? "alert-danger" : "alert-success"
+                          }`}
                           role="alert"
                         >
                           <FontAwesomeIcon icon="exclamation" /> {message}
@@ -70,7 +82,7 @@ export default () => {
                       <div className="form-group">
                         <label htmlFor="email">Email</label>
                         <input
-                        placeholder="Email"
+                          placeholder="Email"
                           name="email"
                           ref={register({
                             required: true,
@@ -83,6 +95,9 @@ export default () => {
                           id="email"
                           aria-describedby="emailHelp"
                         />
+                        <div className="form-text text-muted">
+                          Saisir l'adresse Email de votre compte.
+                        </div>
                         {/** Required email error */}
                         {errors.email && errors.email.type === "required" && (
                           <div className="invalid-feedback">
@@ -93,29 +108,11 @@ export default () => {
                         {errors.email && errors.email.type === "pattern" && (
                           <div className="invalid-feedback">Invalid email</div>
                         )}
-                      </div>
-                      <div className="form-group">
-                        <label htmlFor="password">
-                          Mot de passe
-                          <Link to="/reset-password" className="float-right">
-                            Mot de passe oublié?
+                        <label htmlFor="signin">
+                          <Link to="/signin" className="float-right">
+                            Se connecter
                           </Link>
                         </label>
-                        <input
-                        placeholder="Mot de passe"
-                          name="password"
-                          ref={register({ required: true })}
-                          type="password"
-                          className={`form-control ${
-                            errors.password ? "is-invalid" : ""
-                          }`}
-                          id="password"
-                          autoComplete="on"
-                        />
-                        {/** Required password error */}
-                        <div className="invalid-feedback">
-                          Mot de passe est requis
-                        </div>
                       </div>
                       <button
                         disabled={loading}
@@ -124,7 +121,8 @@ export default () => {
                       >
                         {!loading ? (
                           <>
-                            <FontAwesomeIcon icon="sign-in-alt" /> Se connecter
+                            <FontAwesomeIcon icon="key" /> Envoyer les
+                            instructions
                           </>
                         ) : (
                           <>
@@ -134,16 +132,10 @@ export default () => {
                             >
                               <span className="sr-only">Loading...</span>
                             </div>{" "}
-                            Se connecter
+                            Envoi en cours ...
                           </>
                         )}
                       </button>
-                      <div className="mt-4 text-center">
-                        <a href="register.html">
-                          Contacter votre administrateur si vous facez des
-                          problèmes
-                        </a>
-                      </div>
                     </form>
                   </div>
                 </div>

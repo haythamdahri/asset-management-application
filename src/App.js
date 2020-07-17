@@ -22,6 +22,7 @@ import Contact from "./components/Contact";
 import Users from "./components/Users";
 import UserView from "./components/UserView";
 import UserForm from "./components/UserForm";
+import PasswordRequest from "./components/PasswordRequest";
 
 function App() {
   return (
@@ -62,13 +63,16 @@ function App() {
         <AuthenticatedGuard exact={true} path="/signin">
           <SignIn />
         </AuthenticatedGuard>
+        <AuthenticatedGuard exact={true} path="/reset-password">
+          <PasswordRequest />
+        </AuthenticatedGuard>
         <Route exact={true} path="/notfound">
           <NotFound />
         </Route>
         {/** Not Found Page */}
-        <Route path="">
+        <UserRoute path="">
           <Redirect to="/notfound" />
-        </Route>
+        </UserRoute>
       </Switch>
       {AuthService.isAuthenticated() && <Footer />}
     </Router>
