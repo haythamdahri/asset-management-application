@@ -28,13 +28,16 @@ export default () => {
     setUser({});
     try {
       const user = await UserService.getUser(id);
+      console.log(user);
       if (!user.hasOwnProperty("id")) {
         setUser(null);
         setLoading(false);
         setError(false);
         setUnauthorized(false);
       } else {
-        user.avatar.file = IMAGE_URL + "/" + user?.avatar?.id + "/file";
+        if( user.avatar !== null ) {
+          user.avatar.file = IMAGE_URL + "/" + user?.avatar?.id + "/file";
+        }
         if (active) {
           setUser(user);
           setLoading(false);
@@ -43,6 +46,7 @@ export default () => {
         }
       }
     } catch (e) {
+      console.log(e);
       if (active) {
         const status = e.response?.status || null;
         setLoading(false);
@@ -107,6 +111,8 @@ export default () => {
                 <div className="col-md-2 text-center mt-3 mb-3">
                   <img
                     src={user?.avatar?.file}
+                    height="150"
+                    width="150"
                     className="avatar img-circle hidden-print shadow shadow-sm"
                     style={{ border: "2px solid blue" }}
                     alt={"User" + user?.id}
@@ -137,10 +143,10 @@ export default () => {
                           <th scope="col">Groups</th>
                           <td>
                             {user?.groups?.map((group, key) => (
-                              <span key={key}>
+                              <Link to={`/groups/${group.id}`} key={key}>
                                 {group.name}
-                                {key === user.groups.length - 1 ? "" : ","}
-                              </span>
+                                {key === user.groups.length - 1 ? "" : " , "}
+                              </Link>
                             ))}
                           </td>
                         </tr>

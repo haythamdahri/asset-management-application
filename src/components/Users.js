@@ -265,10 +265,10 @@ export default () => {
                             <td>{user.notes}</td>
                             <td>
                               {user.groups?.map((group, key) => (
-                                <span key={key}>
+                                <Link to={`/groups/${group.id}`} key={key}>
                                   {group.name}
                                   {key === user.groups.length - 1 ? "" : ","}
-                                </span>
+                                </Link>
                               ))}
                             </td>
                             <td>

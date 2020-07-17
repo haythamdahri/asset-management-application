@@ -151,14 +151,13 @@ export default () => {
     setUser({});
     try {
       const user = await UserService.getUser(id);
-      console.log(user.roles);
+      console.log(user);
       if (!user.hasOwnProperty("id")) {
         setUser(null);
         setLoading(false);
         setUserError(false);
         setUnauthorized(false);
       } else {
-        user.avatar.file = IMAGE_URL + "/" + user?.avatar?.id + "/file";
         if (active) {
           setUser(user);
           setLoading(false);
@@ -210,10 +209,10 @@ export default () => {
     // Set FormData
     let formData = new FormData();
     formData.set("image", file);
-    formData.set("avatar", user.avatar.id);
-    formData.set("id", user.id?.toString() || "");
+    formData.set("avatar", user?.avatar?.id || '');
+    formData.set("id", user.id?.toString() || '');
     for (const [key, value] of Object.entries(data)) {
-      if( (key === "roles" || key === "groups") && value.length > 0) {
+      if ((key === "roles" || key === "groups") && value.length > 0) {
         formData.set(key, value.join(";"));
       } else {
         formData.set(key, value);
@@ -237,8 +236,9 @@ export default () => {
       });
     } catch (e) {
       const status = e.response?.status || null;
+      console.log(status)
       if (status !== null) {
-        if (status === 404)
+        if (status === 400)
           Toast.fire({
             icon: "error",
             title: `Les données d'entrées ne sont pas valides, veuillez ressayer!`,
@@ -264,6 +264,20 @@ export default () => {
               </div>
             </div>
 
+            {/** BACK BUTTON */}
+            {user !== null && !userError && !unauthorized && !loading && (
+            <div className="col-12 text-center">
+            <Link
+                      to={`/users/${user?.id}`}
+                      type="submit"
+                      className="btn btn-dark btn-sm mt-2 font-weight-bold text-center mx-2"
+                    >
+                      <FontAwesomeIcon icon="user" /> Retourner vers l'utilisateur
+                    </Link>
+            </div>
+            )}
+
+            {/** ERROR MESSAGE */}
             {(userError || unauthorized || user === null) && !loading && (
               <div className="col-12 mx-auto pt-5">
                 <div className="alert alert-warning text-center font-weight">
@@ -295,12 +309,14 @@ export default () => {
               </div>
             )}
 
+              
+            {/** USER FORM */}
             {user !== null && !userError && !unauthorized && !loading && (
-              <div className="col-md-9 mx-auto mt-4">
+              <div className="col-md-9 mx-auto mt-4 bg-white shadow rounded" style={{borderTop: '2px solid blue'}}>
                 <form
                   onSubmit={handleSubmit(onSubmit)}
                   noValidate
-                  className="shadow p-3 mb-5 bg-white rounded"
+                  className="p-3 mb-5"
                 >
                   {/** LASTNAME */}
                   <div className="form-group row">
@@ -609,7 +625,7 @@ export default () => {
                         name="employeeNumber"
                         defaultValue={user.employeeNumber || ""}
                         className={`form-control form-control-sm shadow-sm ${
-                          errors.email ? "is-invalid" : ""
+                          errors.employeeNumber ? "is-invalid" : ""
                         }`}
                         ref={register({
                           required: true,
@@ -622,6 +638,36 @@ export default () => {
                             Numéro d'employé est requis
                           </div>
                         )}
+                    </div>
+                  </div>
+
+                  {/** TITLE */}
+                  <div className="form-group row">
+                    <label
+                      className="col-md-3 font-weight-bold"
+                      htmlFor="employeeNumber"
+                    >
+                      Titre:{" "}
+                    </label>
+                    <div className="col-9">
+                      <input
+                        disabled={saving}
+                        placeholder="Titre ..."
+                        type="text"
+                        id="title"
+                        name="title"
+                        defaultValue={user.title || ""}
+                        className={`form-control form-control-sm shadow-sm ${
+                          errors.title ? "is-invalid" : ""
+                        }`}
+                        ref={register({
+                          required: true,
+                        })}
+                      />
+                      {/** Required Stock error */}
+                      {errors.title && errors.title.type === "required" && (
+                        <div className="invalid-feedback">Titre est requis</div>
+                      )}
                     </div>
                   </div>
 
@@ -654,6 +700,9 @@ export default () => {
                         id="manager"
                         name="manager"
                       >
+                        <option key={-1} value={0}>
+                                {" "}
+                              </option>
                         {usersData?.data?.map(
                           (manager, key) =>
                             manager?.id !== user?.id && (
@@ -982,6 +1031,9 @@ export default () => {
                         type="text"
                         id="notes"
                         name="notes"
+                        ref={register({
+                          required: false,
+                        })}
                         defaultValue={user.notes || ""}
                         className={`form-control form-control-sm shadow-sm`}
                       />
@@ -1054,36 +1106,36 @@ export default () => {
                       Groups:
                     </label>
                     <div className="col-md-9">
-                      {!groupsData.loading && (  
-                      <select
-                        multiple
-                        defaultValue={[
-                          user?.groups?.map((group, key) => group.id),
-                        ]}
-                        onClick={(event) => {
-                          if (
-                            departmentsData?.data === null ||
-                            departmentsData?.data?.length === 0
-                          ) {
-                            fetchGroups();
-                          }
-                        }}
-                        className={`form-control form-control-sm shadow-sm ${
-                          errors.groups ? "is-invalid" : ""
-                        }`}
-                        disabled={saving || groupsData?.loading}
-                        ref={register({
-                          required: false,
-                        })}
-                        id="groups"
-                        name="groups"
-                      >
-                        {groupsData?.data?.map((group, key) => (
-                          <option key={key} value={group?.id}>
-                            {group?.name}
-                          </option>
-                        ))}
-                      </select>
+                      {!groupsData.loading && (
+                        <select
+                          multiple
+                          defaultValue={[
+                            user?.groups?.map((group, key) => group.id),
+                          ]}
+                          onClick={(event) => {
+                            if (
+                              departmentsData?.data === null ||
+                              departmentsData?.data?.length === 0
+                            ) {
+                              fetchGroups();
+                            }
+                          }}
+                          className={`form-control form-control-sm shadow-sm ${
+                            errors.groups ? "is-invalid" : ""
+                          }`}
+                          disabled={saving || groupsData?.loading}
+                          ref={register({
+                            required: false,
+                          })}
+                          id="groups"
+                          name="groups"
+                        >
+                          {groupsData?.data?.map((group, key) => (
+                            <option key={key} value={group?.id}>
+                              {group?.name}
+                            </option>
+                          ))}
+                        </select>
                       )}
                     </div>
                   </div>
@@ -1094,94 +1146,108 @@ export default () => {
                       className="col-md-3 font-weight-bold"
                       htmlFor="roles"
                     >
-                      Roles: 
+                      Roles:
                     </label>
                     <div className="col-md-9">
-                      {!rolesData.loading && (  
-                      <select
-                        multiple
-                        defaultValue={[
-                          user?.roles?.map((role, key) => role.id),
-                        ]}
-                        onClick={(event) => {
-                          if (
-                            rolesData?.data === null ||
-                            rolesData?.data?.length === 0
-                          ) {
-                            fetchRoles();
-                          }
-                        }}
-                        className={`form-control form-control-sm shadow-sm ${
-                          errors.roles ? "is-invalid" : ""
-                        }`}
-                        disabled={saving || rolesData?.loading}
-                        ref={register({
-                          required: false,
-                        })}
-                        id="roles"
-                        name="roles"
-                      >
-                        {rolesData?.data?.map((role, key) => (
-                          <option key={key} value={role?.id}>
-                            {role?.roleName}
-                          </option>
-                        ))}
-                      </select>
-                   
-                      )}
-                     </div>
-                  </div>
-
-                  {user.id !== undefined && (
-                      <div className="custom-control custom-switch mt-2 text-center">
-                        <input
-                          disabled={saving}
-                          type="checkbox"
-                          className="custom-control-input"
-                          id="updatePermissions"
-                          name="updatePermissions"
+                      {!rolesData.loading && (
+                        <select
+                          multiple
+                          defaultValue={[
+                            user?.roles?.map((role, key) => role.id),
+                          ]}
+                          onClick={(event) => {
+                            if (
+                              rolesData?.data === null ||
+                              rolesData?.data?.length === 0
+                            ) {
+                              fetchRoles();
+                            }
+                          }}
+                          className={`form-control form-control-sm shadow-sm ${
+                            errors.roles ? "is-invalid" : ""
+                          }`}
+                          disabled={saving || rolesData?.loading}
                           ref={register({
                             required: false,
                           })}
-                        />
-                        <label
-                          className="custom-control-label"
-                          htmlFor="updatePermissions"
+                          id="roles"
+                          name="roles"
                         >
-                          Mettre à jour les permissions d'utilisateur
-                        </label>
-                      </div>
-                    )}
+                          {rolesData?.data?.map((role, key) => (
+                            <option key={key} value={role?.id}>
+                              {role?.roleName}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                    </div>
+                  </div>
 
-                  <button
-                    disabled={saving}
-                    type="submit"
-                    className="btn btn-primary font-weight-bold text-center btn-block"
-                  >
-                    {saving ? (
-                      <>
-                        <div
-                          className="spinner-border spinner-border-sm text-light"
-                          role="status"
-                        >
-                          <span className="sr-only">Loading...</span>
-                        </div>{" "}
-                        Enregistrement ...
-                      </>
-                    ) : (
-                      <>
-                        <FontAwesomeIcon icon="save" /> Enregistrer
-                      </>
-                    )}
-                  </button>
-                  <Link
-                    to="/products"
-                    type="submit"
-                    className="btn btn-warning font-weight-bold text-center btn-block"
-                  >
-                    <FontAwesomeIcon icon="undo" /> Naviguer vers les
-                    utilisateurs
-                  </Link>
+                  {user.id !== undefined && (
+                    <div className="custom-control custom-switch mt-2 text-center mb-2">
+                      <input
+                        disabled={saving}
+                        type="checkbox"
+                        className="custom-control-input"
+                        id="updatePermissions"
+                        name="updatePermissions"
+                        ref={register({
+                          required: false,
+                        })}
+                      />
+                      <label
+                        className="custom-control-label"
+                        htmlFor="updatePermissions"
+                      >
+                        Mettre à jour les permissions d'utilisateur
+                      </label>
+                    </div>
+                  )}
+
+                  <div className="col-12 text-center mb-4 mt-4">
+                    <button
+                      disabled={saving}
+                      type="submit"
+                      className="btn btn-primary font-weight-bold text-center w-50"
+                    >
+                      {saving ? (
+                        <>
+                          <div
+                            className="spinner-border spinner-border-sm text-light"
+                            role="status"
+                          >
+                            <span className="sr-only">Loading...</span>
+                          </div>{" "}
+                          Enregistrement ...
+                        </>
+                      ) : (
+                        <>
+                          <FontAwesomeIcon icon="save" /> Enregistrer
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  <hr />
+
+                  <div className="col-12 text-center">
+                    <Link
+                      to={`/users/${user?.id}`}
+                      type="submit"
+                      className="btn btn-warning font-weight-bold text-center mx-2"
+                    >
+                      <FontAwesomeIcon icon="user" /> Retourner vers
+                      l'utilisateur
+                    </Link>
+                    <Link
+                      to="/users"
+                      type="submit"
+                      className="btn btn-secondary font-weight-bold text-center mx-2"
+                    >
+                      <FontAwesomeIcon icon="undo" /> Naviguer vers les
+                      utilisateurs
+                    </Link>
+                  </div>
                 </form>
               </div>
             )}
