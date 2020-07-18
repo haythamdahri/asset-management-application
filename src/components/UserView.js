@@ -29,7 +29,6 @@ export default () => {
     setUser({});
     try {
       const user = await UserService.getUser(id);
-      console.log(user);
       if (!user.hasOwnProperty("id")) {
         setUser(null);
         setLoading(false);

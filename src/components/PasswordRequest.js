@@ -40,9 +40,9 @@ export default () => {
       );
       setError(false);
     } catch (e) {
-      const message = e?.response?.data?.message || null;
-      if( message === null ) {
-        setMessage("Une erreur st survenue, veuillez ressayer!");
+      let message = e?.response?.data?.message || null;
+      if( message === null) {
+        message = "Une erreur st survenue, veuillez ressayer!";
       } 
       // Set error with message
       setMessage(message);

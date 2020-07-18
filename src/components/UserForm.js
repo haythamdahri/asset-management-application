@@ -159,29 +159,29 @@ export default () => {
           setUserError(false);
           setUnauthorized(false);
         } else {
-            setUser(user);
-            setLoading(false);
-            setUserError(false);
-            setUnauthorized(false);
+          setUser(user);
+          setLoading(false);
+          setUserError(false);
+          setUnauthorized(false);
         }
       } catch (e) {
-          const status = e.response?.status || null;
-          setLoading(false);
-          setUser({});
-          switch (status) {
-            case 403:
-              setUnauthorized(true);
-              setUserError(false);
-              break;
-            case 404:
-              setUnauthorized(false);
-              setUserError(false);
-              setUser(null);
-              break;
-            default:
-              setUserError(true);
-              setUnauthorized(false);
-          }
+        const status = e.response?.status || null;
+        setLoading(false);
+        setUser({});
+        switch (status) {
+          case 403:
+            setUnauthorized(true);
+            setUserError(false);
+            break;
+          case 404:
+            setUnauthorized(false);
+            setUserError(false);
+            setUser(null);
+            break;
+          default:
+            setUserError(true);
+            setUnauthorized(false);
+        }
       }
     } else {
       setUser({});
@@ -197,7 +197,7 @@ export default () => {
       (data.updateImage !== null &&
         data.updateImage === true &&
         (file?.size === 0 || file === undefined || file === null)) ||
-      (user?.id === undefined && file?.size === 0)
+      (!user.hasOwnProperty("id") && file?.size === 0)
     ) {
       Swal.fire(
         "L'image d'utilisateur est invalide!",
@@ -233,16 +233,15 @@ export default () => {
       );
     } catch (e) {
       const status = e.response?.status || null;
-      if (status !== null) {
-        if (status === 400)
-          Swal.fire(
-            "Erreur!",
-            `${
-              e.response?.data.message ||
-              "Les données d'entrées ne sont pas valides, veuillez ressayer!"
-            }`,
-            "error"
-          );
+      if (status !== null && status === 400) {
+        Swal.fire(
+          "Erreur!",
+          `${
+            e.response?.data.message ||
+            "Les données d'entrées ne sont pas valides, veuillez ressayer!"
+          }`,
+          "error"
+        );
       } else {
         Swal.fire(
           "Erreur!",
@@ -703,9 +702,12 @@ export default () => {
                         })}
                       />
                       {/** Required JobTitle error */}
-                      {errors.jobTitle && errors.jobTitle.type === "required" && (
-                        <div className="invalid-feedback">Poste est requis</div>
-                      )}
+                      {errors.jobTitle &&
+                        errors.jobTitle.type === "required" && (
+                          <div className="invalid-feedback">
+                            Poste est requis
+                          </div>
+                        )}
                     </div>
                   </div>
 
@@ -1147,7 +1149,9 @@ export default () => {
                       {!groupsData.loading && (
                         <select
                           multiple
-                          defaultValue={user?.groups?.map((group, key) => group.id)}
+                          defaultValue={user?.groups?.map(
+                            (group, key) => group.id
+                          )}
                           onClick={(event) => {
                             if (
                               departmentsData?.data === null ||
@@ -1182,13 +1186,15 @@ export default () => {
                       className="col-md-3 font-weight-bold"
                       htmlFor="roles"
                     >
-                      Roles: 
+                      Roles:
                     </label>
                     <div className="col-md-9">
                       {!rolesData.loading && (
                         <select
                           multiple
-                          defaultValue={user?.roles?.map((role, key) => role.id)}
+                          defaultValue={user?.roles?.map(
+                            (role, key) => role.id
+                          )}
                           onClick={(event) => {
                             if (
                               rolesData?.data === null ||
