@@ -39,6 +39,17 @@ class UserService {
       });
   }
 
+  deleteUser(id) {
+    return axios
+      .delete(`${API_URL}/${id}`, {headers: authHeader()})
+      .then((response) => {
+        return true;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
   updateAcountStatus(status, id) {
     switch (status) {
       case ENABLE:

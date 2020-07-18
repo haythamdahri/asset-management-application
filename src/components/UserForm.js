@@ -60,8 +60,6 @@ export default () => {
 
   useEffect(() => {
     document.title = "Gestion Utilisateurs";
-    // Fetch Users if not a new user
-    fetchUser();
     // Fetch companies
     fetchCompanies();
     // Fetch lagnauges
@@ -76,6 +74,8 @@ export default () => {
     fetchGroups();
     // Fetch roles
     fetchRoles();
+    // Fetch Users if not a new user
+    fetchUser();
     return () => {
       abortController.abort();
     };
@@ -206,6 +206,12 @@ export default () => {
       );
       return;
     }
+    // CHECK PASSWORD
+    if( !user.hasOwnProperty("id") && !data.password ) {
+      setError("password", {type: "required", message: "Mot de passe est requis"});
+      window.scrollTo(0, 0);
+      return;
+    }
     // Set saving
     setSaving(true);
     // Set FormData
@@ -265,7 +271,7 @@ export default () => {
             </div>
 
             {/** BACK BUTTON */}
-            {user !== null &&
+            {(NEW_USER !== id || user.hasOwnProperty("id")) &&
               !userError &&
               !unauthorized &&
               !loading &&
@@ -459,6 +465,12 @@ export default () => {
                           });
                         }}
                       />
+                      {/** Required password error */}
+                      {errors.password && (
+                          <div className="invalid-feedback">
+                            {errors.password.message}
+                          </div>
+                        )}
                     </div>
                   </div>
 
@@ -1271,7 +1283,7 @@ export default () => {
                   <hr />
 
                   <div className="col-12 text-center">
-                    {NEW_USER !== id && (
+                    {(NEW_USER !== id || user.hasOwnProperty("id")) && (
                       <Link
                         to={`/users/${user?.id}`}
                         type="submit"

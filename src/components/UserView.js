@@ -1,15 +1,19 @@
-import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { useParams, Link, useHistory } from "react-router-dom";
 import UserService from "../services/UserService";
 import { IMAGE_URL } from "../services/ConstantsService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Moment from "react-moment";
+import Swal from "sweetalert2";
 
 export default () => {
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [unauthorized, setUnauthorized] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  let history = useHistory();
+
   // User Id Extraction from URL
   let { id } = useParams();
   let abortController = new AbortController();
@@ -64,6 +68,42 @@ export default () => {
     }
   };
 
+  const deleteUser = async () => {
+    // Confirm User Deletion
+    Swal.fire({
+      title: "Êtes-vous sûr de supprimer l'utilisateur?",
+      text: "Voulez-vous supprimer l'utilisateur?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Oui, supprimer!",
+      cancelButtonText: "Non, annuler",
+    }).then(async (result) => {
+      if (result.value) {
+        // Perform User delete
+        try {
+          setDeleting(true);
+          await UserService.deleteUser(id);
+          Swal.fire(
+            "Operation éffectuée!",
+            "L'utilisateur à été supprimé avec succés!",
+            "success"
+          );
+          history.push("/users");
+        } catch (err) {
+          Swal.fire(
+            "Erreur!",
+            err?.response?.data?.message ||
+              `Une erreur est survenue, veuillez ressayer!`,
+            "error"
+          );
+          setDeleting(false);
+        }
+      }
+    });
+  };
+
   return (
     <div className="content-wrapper bg-light pb-5">
       <section className="content">
@@ -93,6 +133,7 @@ export default () => {
                 </div>
               </div>
             )}
+
             {loading && !error && user !== null && (
               <div className="col-12 text-center pt-5 pb-5">
                 <div className="overlay dark">
@@ -100,6 +141,16 @@ export default () => {
                 </div>
               </div>
             )}
+
+            {/** DELTING PROGRESS */}
+            {deleting && (
+              <div className="col-12 mt-2 mb-3">
+                <div className="overlay text-center">
+                  <i className="fas fa-2x fa-sync-alt fa-spin"></i>
+                </div>
+              </div>
+            )}
+
             {!loading && !error && !unauthorized && user !== null && (
               <>
                 {/** USER DATA */}
@@ -200,7 +251,11 @@ export default () => {
                       <FontAwesomeIcon icon="user-edit" color="white" />
                     </button>
                   </Link>{" "}
-                  <button className="btn btn-danger btn-sm">
+                  <button
+                    onClick={() => deleteUser()}
+                    className="btn btn-danger btn-sm"
+                    disabled={deleting ? "disabled" : ""}
+                  >
                     <FontAwesomeIcon icon="user-minus" color="white" />
                   </button>
                 </div>

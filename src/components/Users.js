@@ -12,6 +12,7 @@ export default () => {
   const [error, setError] = useState(false);
   const [unauthorized, setUnauthorized] = useState(false);
   const [usersPage, setUsersPage] = useState(new Page());
+  const [deleting, setDeleting] = useState(false);
   let active = true;
   const searchInput = useRef(null);
 
@@ -63,7 +64,7 @@ export default () => {
         }
       }
     } finally {
-      if( search !== "" && search !== null ) {
+      if (search !== "" && search !== null) {
         searchInput.current.value = search;
       }
     }
@@ -90,9 +91,47 @@ export default () => {
   const onSearchSubmit = async (event) => {
     event.preventDefault();
     // Search users
-    if( !unauthorized && !error && !loading ) {
+    if (!unauthorized && !error && !loading) {
       getPageInNewSize(20);
     }
+  };
+
+  const deleteUser = async (id) => {
+    // Confirm User Deletion
+    Swal.fire({
+      title: "Êtes-vous sûr de supprimer l'utilisateur?",
+      text: "Voulez-vous supprimer l'utilisateur?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Oui, supprimer!",
+      cancelButtonText: "Non, annuler",
+    }).then(async (result) => {
+      if (result.value) {
+        // Perform User delete
+        try {
+          setDeleting(true);
+          await UserService.deleteUser(id);
+          Swal.fire(
+            "Operation éffectuée!",
+              "L'utilisateur à été supprimé avec succés!",
+            "success"
+          );
+          // Fetch users
+          fetchUsers();
+        } catch (err) {
+          Swal.fire(
+            "Erreur!",
+            err?.response?.data?.message ||
+            `Une erreur est survenue, veuillez ressayer!`,
+            "error"
+          );
+        } finally {
+          setDeleting(false);
+        }
+      }
+    });
   };
 
   return (
@@ -125,44 +164,42 @@ export default () => {
           <div className="container-fluid">
             <div className="row">
               {!unauthorized && !error && !loading && (
-                  <div className="col-12 text-center">
-                    <CustomPagination
-                      page={usersPage}
-                      loading={loading}
-                      nextPageEvent={getNextPage}
-                      previousPageEvent={getPreviousPage}
-                      pageSizeEvent={getPageInNewSize}
-                    />
-                  </div>
+                <div className="col-12 text-center">
+                  <CustomPagination
+                    page={usersPage}
+                    loading={loading}
+                    nextPageEvent={getNextPage}
+                    previousPageEvent={getPreviousPage}
+                    pageSizeEvent={getPageInNewSize}
+                  />
+                </div>
               )}
-                  {/** SEARCH */}
-                  <div className="col-sm-12 col-md-10 col-lg-10 col-xl-10 mx-auto mb-4">
-                    <form onSubmit={onSearchSubmit}>
-                      <div className="form-row">
-                        <div className="col-sm-12 col-md-10 col-lg-10 col-xl-10 mx-auto">
-                          <input
-                            type="search"
-                            id="userSearch"
-                            placeholder="Nom, Username, Email, Website, Zip ..."
-                            name="search"
-                            className="form-control"
-                            ref={searchInput}
-                            disabled={unauthorized || loading ? true : ""}
-                          />
-                        </div>
-                        <div className="col-sm-12 col-md-2 col-lg-2 col-xl-2 mx-auto">
-                          <button
-                            type="submit"
-                            className="btn btn-warning btn-block font-weight-bold"
-                          >
-                            <FontAwesomeIcon icon="search-dollar" /> Rechercher
-                          </button>
-                        </div>
-                      </div>
-                    </form>
+              {/** SEARCH */}
+              <div className="col-sm-12 col-md-10 col-lg-10 col-xl-10 mx-auto mb-4">
+                <form onSubmit={onSearchSubmit}>
+                  <div className="form-row">
+                    <div className="col-sm-12 col-md-10 col-lg-10 col-xl-10 mx-auto">
+                      <input
+                        type="search"
+                        id="userSearch"
+                        placeholder="Nom, Username, Email, Website, Zip ..."
+                        name="search"
+                        className="form-control"
+                        ref={searchInput}
+                        disabled={unauthorized || loading ? true : ""}
+                      />
+                    </div>
+                    <div className="col-sm-12 col-md-2 col-lg-2 col-xl-2 mx-auto">
+                      <button
+                        type="submit"
+                        className="btn btn-warning btn-block font-weight-bold"
+                      >
+                        <FontAwesomeIcon icon="search-dollar" /> Rechercher
+                      </button>
+                    </div>
                   </div>
-
-
+                </form>
+              </div>
 
               <div className="col-12 mb-3 text-center">
                 <Link to="/users/new/edit" className="btn btn-primary btn-sm">
@@ -170,6 +207,14 @@ export default () => {
                 </Link>
               </div>
 
+              {/** DELTING PROGRESS */}
+              {deleting && (
+              <div className="col-12 mt-2 mb-3">
+                <div className="overlay text-center">
+                  <i className="fas fa-2x fa-sync-alt fa-spin"></i>
+                </div>
+              </div>
+              )}
 
               <div
                 className="col-12 bg-white p-2 shadow shadow-sm rounded mb-5"
@@ -305,7 +350,12 @@ export default () => {
                               </Link>
                             </td>
                             <td>
-                              <button className="btn btn-danger btn-sm">
+                              <button
+                                onClick={(event) => deleteUser(user?.id)}
+                                className={`btn btn-danger btn-sm ${
+                                  deleting ? "disabled" : ""
+                                }`}
+                              >
                                 <FontAwesomeIcon
                                   icon="user-minus"
                                   color="white"
