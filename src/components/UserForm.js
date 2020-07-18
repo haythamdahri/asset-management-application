@@ -246,7 +246,7 @@ export default () => {
       } else {
         Swal.fire(
           "Erreur!",
-          `$Une erreur interne est survenue, veuillez ressayer!`,
+          `Une erreur interne est survenue, veuillez ressayer!`,
           "error"
         );
       }
@@ -675,6 +675,36 @@ export default () => {
                       {/** Required Stock error */}
                       {errors.title && errors.title.type === "required" && (
                         <div className="invalid-feedback">Titre est requis</div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/** JOBTITLE */}
+                  <div className="form-group row">
+                    <label
+                      className="col-md-3 font-weight-bold"
+                      htmlFor="jobTitle"
+                    >
+                      Poste:{" "}
+                    </label>
+                    <div className="col-9">
+                      <input
+                        disabled={saving}
+                        placeholder="Poste ..."
+                        type="text"
+                        id="jobTitle"
+                        name="jobTitle"
+                        defaultValue={user.jobTitle || ""}
+                        className={`form-control form-control-sm shadow-sm ${
+                          errors.jobTitle ? "is-invalid" : ""
+                        }`}
+                        ref={register({
+                          required: true,
+                        })}
+                      />
+                      {/** Required JobTitle error */}
+                      {errors.jobTitle && errors.jobTitle.type === "required" && (
+                        <div className="invalid-feedback">Poste est requis</div>
                       )}
                     </div>
                   </div>
