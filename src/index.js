@@ -54,7 +54,11 @@ import {
   faLayerGroup,
   faUserMinus,
   faKey,
+  faExclamationTriangle,
+  faUserPlus,
 } from "@fortawesome/free-solid-svg-icons";
+import 'moment/locale/fr';
+import Moment from 'react-moment';
 
 library.add(
   fab,
@@ -103,8 +107,13 @@ library.add(
   faLayerGroup,
   faUserMinus,
   faUserEdit,
-  faKey
+  faKey,
+  faExclamationTriangle,
+  faUserPlus
 );
+ 
+// Set the locale for every react-moment instance to French.
+Moment.globalLocale = 'fr';
 
 ReactDOM.render(
   <React.StrictMode>

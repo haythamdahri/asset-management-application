@@ -6,11 +6,31 @@ const API_URL = "http://localhost:8080/api/v1/users";
 
 class UserService {
 
-
-
   requestPasswordReset(email) {
     return axios
-      .get(`${API_URL}/passwordresets`, {params: {email}})
+      .get(`${API_URL}/passwordsreset`, {params: {email}})
+      .then((response) => {
+        return true;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
+  checkTokenValidity(token) {
+    return axios
+      .get(`${API_URL}/passwordsreset/tokensvalidity/${token}`)
+      .then((response) => {
+        return true;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
+  resetPassword(token, password) {
+    return axios
+      .put(`${API_URL}/passwordsreset`, {token, password}, {})
       .then((response) => {
         return true;
       })

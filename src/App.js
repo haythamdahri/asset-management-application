@@ -23,6 +23,7 @@ import Users from "./components/Users";
 import UserView from "./components/UserView";
 import UserForm from "./components/UserForm";
 import PasswordRequest from "./components/PasswordRequest";
+import PasswordReset from "./components/PasswordReset";
 
 function App() {
   return (
@@ -60,11 +61,20 @@ function App() {
         >
           <UserForm />
         </UserRoute>
+        <UserRoute
+          exact={true}
+          path="/users/new/edit"
+        >
+          <UserForm />
+        </UserRoute>
         <AuthenticatedGuard exact={true} path="/signin">
           <SignIn />
         </AuthenticatedGuard>
         <AuthenticatedGuard exact={true} path="/reset-password">
           <PasswordRequest />
+        </AuthenticatedGuard>
+        <AuthenticatedGuard exact={true} path="/reset-password/:token">
+          <PasswordReset />
         </AuthenticatedGuard>
         <Route exact={true} path="/notfound">
           <NotFound />

@@ -21,7 +21,7 @@ export default () => {
     return () => {
       abortController.abort();
     };
-  });
+  }, []);
 
   const onSubmit = async (data) => {
     // Set loading to true
@@ -39,10 +39,13 @@ export default () => {
         "Un email de réinitialisation du mot de passe est envoyé avec succés!"
       );
       setError(false);
-    } catch (error) {
-        console.log(error);
+    } catch (e) {
+      const message = e?.response?.data?.message || null;
+      if( message === null ) {
+        setMessage("Une erreur st survenue, veuillez ressayer!");
+      } 
       // Set error with message
-      setMessage("Une erreur st survenue, veuillez ressayer!");
+      setMessage(message);
       setError(true);
       setLoading(false);
       setSuccess(false);
@@ -65,7 +68,7 @@ export default () => {
                       Réinitialisation mot de passe
                     </h4>
 
-                    {/** Sign in error */}
+                    {/** Password reset request error */}
                     {(error || success) && !loading && (
                       <>
                         <div
@@ -74,7 +77,7 @@ export default () => {
                           }`}
                           role="alert"
                         >
-                          <FontAwesomeIcon icon="exclamation" /> {message}
+                          <FontAwesomeIcon icon="exclamation-triangle" /> {message}
                         </div>
                       </>
                     )}

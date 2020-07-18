@@ -11,6 +11,7 @@ import RoleService from "../services/RoleService";
 import LocationService from "../services/LocationService";
 import { countries } from "countries-list";
 import GroupService from "../services/GroupService";
+import { NEW_USER } from "../services/ConstantsService";
 
 export default () => {
   const {
@@ -55,11 +56,11 @@ export default () => {
   const [file, setFile] = useState(new File([], ""));
   // User Id Extraction from URL
   let { id } = useParams();
-  let active = true;
+  let abortController = new AbortController();
 
   useEffect(() => {
     document.title = "Gestion Utilisateurs";
-    // Fetch Users
+    // Fetch Users if not a new user
     fetchUser();
     // Fetch companies
     fetchCompanies();
@@ -76,7 +77,7 @@ export default () => {
     // Fetch roles
     fetchRoles();
     return () => {
-      active = false;
+      abortController.abort();
     };
   }, []);
 
@@ -148,47 +149,49 @@ export default () => {
     setLoading(true);
     setUserError(false);
     setUser({});
-    try {
-      const user = await UserService.getUser(id);
-      console.log(user);
-      if (!user.hasOwnProperty("id")) {
-        setUser(null);
-        setLoading(false);
-        setUserError(false);
-        setUnauthorized(false);
-      } else {
-        if (active) {
-          setUser(user);
+
+    if (id !== NEW_USER) {
+      try {
+        const user = await UserService.getUser(id);
+        if (!user.hasOwnProperty("id")) {
+          setUser(null);
           setLoading(false);
           setUserError(false);
           setUnauthorized(false);
-        }
-      }
-    } catch (e) {
-      if (active) {
-        const status = e.response?.status || null;
-        setLoading(false);
-        setUser({});
-        switch (status) {
-          case 403:
-            setUnauthorized(true);
+        } else {
+            setUser(user);
+            setLoading(false);
             setUserError(false);
-            break;
-          case 404:
-            setUnauthorized(false);
-            setUserError(false);
-            setUser(null);
-            break;
-          default:
-            setUserError(true);
             setUnauthorized(false);
         }
+      } catch (e) {
+          const status = e.response?.status || null;
+          setLoading(false);
+          setUser({});
+          switch (status) {
+            case 403:
+              setUnauthorized(true);
+              setUserError(false);
+              break;
+            case 404:
+              setUnauthorized(false);
+              setUserError(false);
+              setUser(null);
+              break;
+            default:
+              setUserError(true);
+              setUnauthorized(false);
+          }
       }
+    } else {
+      setUser({});
+      setLoading(false);
+      setUserError(false);
+      setUnauthorized(false);
     }
   };
 
   const onSubmit = async (data) => {
-    console.log(data);
     // Verify if data has file in case of update
     if (
       (data.updateImage !== null &&
@@ -208,8 +211,8 @@ export default () => {
     // Set FormData
     let formData = new FormData();
     formData.set("image", file);
-    formData.set("avatar", user?.avatar?.id || '');
-    formData.set("id", user.id?.toString() || '');
+    formData.set("avatar", user?.avatar?.id || "");
+    formData.set("id", user.id?.toString() || "");
     for (const [key, value] of Object.entries(data)) {
       if ((key === "roles" || key === "groups") && value.length > 0) {
         formData.set(key, value.join(";"));
@@ -220,33 +223,32 @@ export default () => {
     formData.set("active", data?.active?.toString() || "false");
     formData.set("updateImage", data.updateImage?.toString() || "false");
     // SEND POST TO SERVER
-    const Toast = Swal.mixin({
-      toast: true,
-      position: "top-end",
-      showConfirmButton: false,
-      timer: 3000,
-    });
     try {
       setUser(await UserService.saveUser(formData));
       setSaving(false);
-      Toast.fire({
-        icon: "success",
-        title: `L'utilisateur à été enregistré avec succés!`,
-      });
+      Swal.fire(
+        "Operation effectuée!",
+        `L'utilisateur à été enregistré avec succés!`,
+        "success"
+      );
     } catch (e) {
       const status = e.response?.status || null;
-      console.log(status)
       if (status !== null) {
         if (status === 400)
-          Toast.fire({
-            icon: "error",
-            title: `Les données d'entrées ne sont pas valides, veuillez ressayer!`,
-          });
+          Swal.fire(
+            "Erreur!",
+            `${
+              e.response?.data.message ||
+              "Les données d'entrées ne sont pas valides, veuillez ressayer!"
+            }`,
+            "error"
+          );
       } else {
-        Toast.fire({
-          icon: "error",
-          title: `Une erreur interne est survenue, veuillez ressayer!`,
-        });
+        Swal.fire(
+          "Erreur!",
+          `$Une erreur interne est survenue, veuillez ressayer!`,
+          "error"
+        );
       }
       setSaving(false);
     }
@@ -264,17 +266,22 @@ export default () => {
             </div>
 
             {/** BACK BUTTON */}
-            {user !== null && !userError && !unauthorized && !loading && (
-            <div className="col-12 text-center">
-            <Link
-                      to={`/users/${user?.id}`}
-                      type="submit"
-                      className="btn btn-dark btn-sm mt-2 font-weight-bold text-center mx-2"
-                    >
-                      <FontAwesomeIcon icon="user" /> Retourner vers l'utilisateur
-                    </Link>
-            </div>
-            )}
+            {user !== null &&
+              !userError &&
+              !unauthorized &&
+              !loading &&
+              user &&
+              NEW_USER !== id && (
+                <div className="col-12 text-center">
+                  <Link
+                    to={`/users/${user?.id}`}
+                    type="submit"
+                    className="btn btn-dark btn-sm mt-2 font-weight-bold text-center mx-2"
+                  >
+                    <FontAwesomeIcon icon="user" /> Retourner vers l'utilisateur
+                  </Link>
+                </div>
+              )}
 
             {/** ERROR MESSAGE */}
             {(userError || unauthorized || user === null) && !loading && (
@@ -308,10 +315,12 @@ export default () => {
               </div>
             )}
 
-              
             {/** USER FORM */}
             {user !== null && !userError && !unauthorized && !loading && (
-              <div className="col-md-9 mx-auto mt-4 bg-white shadow rounded" style={{borderTop: '2px solid blue'}}>
+              <div
+                className="col-md-9 mx-auto mt-4 bg-white shadow rounded"
+                style={{ borderTop: "2px solid blue" }}
+              >
                 <form
                   onSubmit={handleSubmit(onSubmit)}
                   noValidate
@@ -700,8 +709,8 @@ export default () => {
                         name="manager"
                       >
                         <option key={-1} value={0}>
-                                {" "}
-                              </option>
+                          {" "}
+                        </option>
                         {usersData?.data?.map(
                           (manager, key) =>
                             manager?.id !== user?.id && (
@@ -1108,9 +1117,7 @@ export default () => {
                       {!groupsData.loading && (
                         <select
                           multiple
-                          defaultValue={[
-                            user?.groups?.map((group, key) => group.id),
-                          ]}
+                          defaultValue={user?.groups?.map((group, key) => group.id)}
                           onClick={(event) => {
                             if (
                               departmentsData?.data === null ||
@@ -1145,15 +1152,13 @@ export default () => {
                       className="col-md-3 font-weight-bold"
                       htmlFor="roles"
                     >
-                      Roles:
+                      Roles: 
                     </label>
                     <div className="col-md-9">
                       {!rolesData.loading && (
                         <select
                           multiple
-                          defaultValue={[
-                            user?.roles?.map((role, key) => role.id),
-                          ]}
+                          defaultValue={user?.roles?.map((role, key) => role.id)}
                           onClick={(event) => {
                             if (
                               rolesData?.data === null ||
@@ -1230,14 +1235,16 @@ export default () => {
                   <hr />
 
                   <div className="col-12 text-center">
-                    <Link
-                      to={`/users/${user?.id}`}
-                      type="submit"
-                      className="btn btn-warning font-weight-bold text-center mx-2"
-                    >
-                      <FontAwesomeIcon icon="user" /> Retourner vers
-                      l'utilisateur
-                    </Link>
+                    {NEW_USER !== id && (
+                      <Link
+                        to={`/users/${user?.id}`}
+                        type="submit"
+                        className="btn btn-warning font-weight-bold text-center mx-2"
+                      >
+                        <FontAwesomeIcon icon="user" /> Retourner vers
+                        l'utilisateur
+                      </Link>
+                    )}
                     <Link
                       to="/users"
                       type="submit"

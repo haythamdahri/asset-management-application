@@ -20,7 +20,7 @@ export default () => {
     return () => {
       abortController.abort();
     };
-  });
+  }, []);
 
   const onSubmit = async (data) => {
     // Set loading to true

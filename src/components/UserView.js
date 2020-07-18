@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import UserService from "../services/UserService";
 import { IMAGE_URL } from "../services/ConstantsService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Moment from "react-moment";
 
 export default () => {
   const [user, setUser] = useState({});
@@ -11,13 +12,13 @@ export default () => {
   const [unauthorized, setUnauthorized] = useState(false);
   // User Id Extraction from URL
   let { id } = useParams();
-  let active = true;
+  let abortController = new AbortController();
 
   useEffect(() => {
     document.title = "Gestion Utilisateurs";
     fetchUser();
     return () => {
-      active = false;
+      abortController.abort();
     };
   }, []);
 
@@ -28,43 +29,37 @@ export default () => {
     setUser({});
     try {
       const user = await UserService.getUser(id);
-      console.log(user);
       if (!user.hasOwnProperty("id")) {
         setUser(null);
         setLoading(false);
         setError(false);
         setUnauthorized(false);
       } else {
-        if( user.avatar !== null ) {
+        if (user.avatar !== null) {
           user.avatar.file = IMAGE_URL + "/" + user?.avatar?.id + "/file";
         }
-        if (active) {
-          setUser(user);
-          setLoading(false);
-          setError(false);
-          setUnauthorized(false);
-        }
+        setUser(user);
+        setLoading(false);
+        setError(false);
+        setUnauthorized(false);
       }
     } catch (e) {
-      console.log(e);
-      if (active) {
-        const status = e.response?.status || null;
-        setLoading(false);
-        setUser({});
-        switch (status) {
-          case 403:
-            setUnauthorized(true);
-            setError(false);
-            break;
-          case 404:
-            setUnauthorized(false);
-            setError(false);
-            setUser(null);
-            break;
-          default:
-            setError(true);
-            setUnauthorized(false);
-        }
+      const status = e.response?.status || null;
+      setLoading(false);
+      setUser({});
+      switch (status) {
+        case 403:
+          setUnauthorized(true);
+          setError(false);
+          break;
+        case 404:
+          setUnauthorized(false);
+          setError(false);
+          setUser(null);
+          break;
+        default:
+          setError(true);
+          setUnauthorized(false);
       }
     }
   };
@@ -184,7 +179,11 @@ export default () => {
                         </tr>
                         <tr>
                           <th scope="col">Crée le</th>
-                          <td>{user?.creationDate}</td>
+                          <td>
+                            <Moment format="YYYY/MM/DD HH:MM:SS">
+                              {user?.creationDate}
+                            </Moment>
+                          </td>
                         </tr>
                         <tr>
                           <th scope="col">Connexion activée</th>
