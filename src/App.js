@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./App.css";
 import {
   BrowserRouter as Router,
@@ -9,10 +9,7 @@ import {
 import SignIn from "./components/SignIn";
 import NotFound from "./components/NotFound";
 import Home from "./components/Home";
-import {
-  AuthenticatedGuard,
-  UserRoute,
-} from "./services/AuthGuard";
+import { AuthenticatedGuard, UserRoute } from "./services/AuthGuard";
 import RoleType from "./models/RoleType";
 import Menu from "./components/Menu";
 import Footer from "./components/Footer";
@@ -24,10 +21,22 @@ import UserView from "./components/UserView";
 import UserForm from "./components/UserForm";
 import PasswordRequest from "./components/PasswordRequest";
 import PasswordReset from "./components/PasswordReset";
+import SimpleReactLightbox from "simple-react-lightbox";
 
 function App() {
+  useEffect(() => {
+    // Add event listener
+    window.addEventListener("storage", (e) => {
+      window.location.reload();
+    });
+    return () => {
+      window.removeEventListener("storage");
+    };
+  });
+
   return (
     <Router>
+      <SimpleReactLightbox>
       {AuthService.isAuthenticated() && (
         <>
           <Header />
@@ -42,29 +51,16 @@ function App() {
         <UserRoute exact={true} path="/contact">
           <Contact />
         </UserRoute>
-        <UserRoute
-          role={RoleType.ROLE_ADMIN}
-          exact={true}
-          path="/users"
-        >
+        <UserRoute role={RoleType.ROLE_ADMIN} exact={true} path="/users">
           <Users />
         </UserRoute>
-        <UserRoute
-          exact={true}
-          path="/users/:id"
-        >
+        <UserRoute exact={true} path="/users/:id">
           <UserView />
         </UserRoute>
-        <UserRoute
-          exact={true}
-          path="/users/:id/edit"
-        >
+        <UserRoute exact={true} path="/users/:id/edit">
           <UserForm />
         </UserRoute>
-        <UserRoute
-          exact={true}
-          path="/users/new/edit"
-        >
+        <UserRoute exact={true} path="/users/new/edit">
           <UserForm />
         </UserRoute>
         <AuthenticatedGuard exact={true} path="/signin">
@@ -85,6 +81,7 @@ function App() {
         </UserRoute>
       </Switch>
       {AuthService.isAuthenticated() && <Footer />}
+      </SimpleReactLightbox>
     </Router>
   );
 }

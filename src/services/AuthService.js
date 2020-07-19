@@ -2,8 +2,8 @@ import axios from "axios";
 import UserTokenModel from "../models/UserTokenModel";
 import authHeader from "./AuthHeader";
 
-const API_URL = "http://localhost:8080/api/v1/auth";
-const USER_API_URL = "http://localhost:8080/api/v1/users";
+const API_URL = `${process.env.REACT_APP_API_URL}/api/v1/auth`;
+const USER_API_URL = `${process.env.REACT_APP_API_URL}/api/v1/users`;
 const STORAGE_USER = "user";
 
 class AuthService {

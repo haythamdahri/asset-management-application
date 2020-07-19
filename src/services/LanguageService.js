@@ -1,7 +1,7 @@
 const { default: Axios } = require("axios");
 const { default: authHeader } = require("./AuthHeader");
 
-const API_URL = "http://localhost:8080/api/v1/languages";
+const API_URL = `${process.env.REACT_APP_API_URL}/api/v1/languages`;
 
 class LanguageService {
     getLanguages() {

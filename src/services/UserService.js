@@ -2,7 +2,7 @@ import axios from "axios";
 import authHeader from "./AuthHeader";
 import { ENABLE, DISABLE } from "./ConstantsService";
 
-const API_URL = "http://localhost:8080/api/v1/users";
+const API_URL = `${process.env.REACT_APP_API_URL}/api/v1/users`;
 
 class UserService {
 
@@ -106,7 +106,7 @@ class UserService {
 
   getAuthenticatedUserDetails() {
     return axios
-      .get(`${API_URL}/current`, { headers: authHeader() })
+      .get(`${API_URL}/profile`, { headers: authHeader() })
       .then((response) => {
         return response.data;
       })

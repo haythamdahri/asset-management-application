@@ -207,8 +207,11 @@ export default () => {
       return;
     }
     // CHECK PASSWORD
-    if( !user.hasOwnProperty("id") && !data.password ) {
-      setError("password", {type: "required", message: "Mot de passe est requis"});
+    if (!data.password && (!user.hasOwnProperty("id") || data.updatePassword) ) {
+      setError("password", {
+        type: "required",
+        message: "Mot de passe est requis",
+      });
       window.scrollTo(0, 0);
       return;
     }
@@ -217,8 +220,7 @@ export default () => {
     // Set FormData
     let formData = new FormData();
     formData.set("image", file);
-    formData.set("avatar", user?.avatar?.id || "");
-    formData.set("id", user.id?.toString() || "");
+    formData.set("id", user?.id);
     for (const [key, value] of Object.entries(data)) {
       if ((key === "roles" || key === "groups") && value.length > 0) {
         formData.set(key, value.join(";"));
@@ -226,8 +228,6 @@ export default () => {
         formData.set(key, value);
       }
     }
-    formData.set("active", data?.active?.toString() || "false");
-    formData.set("updateImage", data.updateImage?.toString() || "false");
     // SEND POST TO SERVER
     try {
       setUser(await UserService.saveUser(formData));
@@ -467,10 +467,10 @@ export default () => {
                       />
                       {/** Required password error */}
                       {errors.password && (
-                          <div className="invalid-feedback">
-                            {errors.password.message}
-                          </div>
-                        )}
+                        <div className="invalid-feedback">
+                          {errors.password.message}
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -520,6 +520,28 @@ export default () => {
                         )}
                     </div>
                   </div>
+
+                  {/** ACTIVE USER */}
+                  {user.hasOwnProperty("id") && (
+                    <div className="custom-control custom-switch mt-2 mb-2 text-center">
+                      <input
+                        disabled={saving}
+                        type="checkbox"
+                        className="custom-control-input"
+                        id="updatePassword"
+                        name="updatePassword"
+                        ref={register({
+                          required: false,
+                        })}
+                      />
+                      <label
+                        className="custom-control-label"
+                        htmlFor="updatePassword"
+                      >
+                        Mettre à jour le mot de passe
+                      </label>
+                    </div>
+                  )}
 
                   {/** EMAIL */}
                   <div className="form-group row">

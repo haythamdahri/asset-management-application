@@ -25,6 +25,7 @@
     "react-moment": "^0.9.7",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
+    "simple-react-lightbox": "^3.2.3-3",
     "sweetalert2": "^9.17.0"
   },
   "scripts": {
@@ -50,6 +51,7 @@
   },
   "devDependencies": {
     "css-loader": "^3.6.0",
+    "dotenv": "^8.2.0",
     "style-loader": "^1.2.1"
   }
 }

@@ -91,7 +91,7 @@ export default () => {
                         )}
                         {/** Invalid email error */}
                         {errors.email && errors.email.type === "pattern" && (
-                          <div className="invalid-feedback">Invalid email</div>
+                          <div className="invalid-feedback">Email est invalide</div>
                         )}
                       </div>
                       <div className="form-group">

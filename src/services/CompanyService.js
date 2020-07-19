@@ -1,7 +1,7 @@
 import Axios from "axios";
 import authHeader from "./AuthHeader";
 
-const API_URL = "http://localhost:8080/api/v1/companies";
+const API_URL = `${process.env.REACT_APP_API_URL}/api/v1/companies`;
 
 class CompanyService {
   getCompanies() {

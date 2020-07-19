@@ -59,6 +59,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import 'moment/locale/fr';
 import Moment from 'react-moment';
+require('dotenv').config()
+
 
 library.add(
   fab,
@@ -111,7 +113,7 @@ library.add(
   faExclamationTriangle,
   faUserPlus
 );
- 
+
 // Set the locale for every react-moment instance to French.
 Moment.globalLocale = 'fr';
 
@@ -121,9 +123,6 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById('root')
 );
-
-// Fontawesome Icons
-
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

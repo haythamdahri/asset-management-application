@@ -1,35 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { IMAGE_URL } from "../services/ConstantsService";
 import UserService from "../services/UserService";
 
 export default () => {
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(true);
-  let active = true;
+  const abortController = new AbortController();
 
   useEffect(() => {
-    if (active) {
-      fetchUser();
-    }
+    fetchUser();
     return () => {
-      active = false;
+      abortController.abort();
     };
   }, []);
 
   const fetchUser = async () => {
     try {
       const user = await UserService.getAuthenticatedUserDetails();
-      user.avatar.file = IMAGE_URL + "/" + user.avatar.id + "/file";
-      if (active) {
-        setUser(user);
-        setLoading(false);
-      }
+      user.avatar.file = process.env.REACT_APP_API_URL + "/api/v1/users/" + user?.id + "/avatar/file";
+      setUser(user);
+      setLoading(false);
     } catch (e) {
-      if (active) {
-        setUser(null);
-        setLoading(false);
-      }
+      setUser(null);
+      setLoading(false);
     }
   };
 
@@ -64,7 +57,9 @@ export default () => {
             </div>
             <div className="info">
               <Link to="#" className="d-block">
-              { (!loading && user != null) ? user?.firstName + " " + user?.lastName : "USER" }
+                {!loading && user != null
+                  ? user?.firstName + " " + user?.lastName
+                  : "USER"}
               </Link>
             </div>
           </div>
@@ -81,9 +76,7 @@ export default () => {
               <li className="nav-item">
                 <Link to="/users" className="nav-link">
                   <i className="nav-icon fas fa-users" />
-                  <p>
-                    Utilisateurs
-                  </p>
+                  <p>Utilisateurs</p>
                 </Link>
               </li>
             </ul>

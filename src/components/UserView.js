@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, Link, useHistory } from "react-router-dom";
 import UserService from "../services/UserService";
-import { IMAGE_URL } from "../services/ConstantsService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Moment from "react-moment";
 import Swal from "sweetalert2";
+import { SRLWrapper } from "simple-react-lightbox";
 
 export default () => {
   const [user, setUser] = useState({});
@@ -16,7 +16,7 @@ export default () => {
 
   // User Id Extraction from URL
   let { id } = useParams();
-  let abortController = new AbortController();
+  const abortController = new AbortController();
 
   useEffect(() => {
     document.title = "Gestion Utilisateurs";
@@ -40,7 +40,7 @@ export default () => {
         setUnauthorized(false);
       } else {
         if (user.avatar !== null) {
-          user.avatar.file = IMAGE_URL + "/" + user?.avatar?.id + "/file";
+          user.avatar.file = process.env.REACT_APP_API_URL + "/api/v1/users/" + user?.id + "/avatar/file";
         }
         setUser(user);
         setLoading(false);
@@ -155,14 +155,18 @@ export default () => {
               <>
                 {/** USER DATA */}
                 <div className="col-md-2 text-center mt-3 mb-3">
+                <SRLWrapper>
+                <a href={user?.avatar?.file} data-attribute="SRL">
                   <img
                     src={user?.avatar?.file}
                     height="150"
                     width="150"
                     className="avatar img-circle hidden-print shadow shadow-sm"
                     style={{ border: "2px solid blue" }}
-                    alt={"User" + user?.id}
+                    alt={`${user?.firstName} ${user?.lastName}`}
                   />
+                  </a>
+                  </SRLWrapper>
                 </div>
                 <div
                   className="col-md-8 bg-white mx-auto mt-3 mb-3"
