@@ -13,14 +13,14 @@ export default () => {
   const [unauthorized, setUnauthorized] = useState(false);
   const [usersPage, setUsersPage] = useState(new Page());
   const [deleting, setDeleting] = useState(false);
-  let active = true;
   const searchInput = useRef(null);
 
   useEffect(() => {
+    console.log("FETCHING USERS");
     document.title = "Gestion Utilisateurs";
     fetchUsers();
     return () => {
-      active = false;
+      setUsersPage(null);
     };
   }, []);
 
@@ -35,13 +35,10 @@ export default () => {
         search,
         usersPage?.pageable || new Page()
       );
-      if (active) {
         setLoading(false);
         setUsersPage(response);
         setError(false);
-      }
     } catch (e) {
-      if (active) {
         const status = e.response?.status || null;
         setLoading(false);
         setUsersPage(null);
@@ -62,7 +59,6 @@ export default () => {
             title: `Une erreur est survenue, veuillez ressayer!`,
           });
         }
-      }
     } finally {
       if (search !== "" && search !== null) {
         searchInput.current.value = search;
@@ -118,6 +114,8 @@ export default () => {
               "L'utilisateur à été supprimé avec succés!",
             "success"
           );
+          // Clear search
+          searchInput.current.value = '';
           // Fetch users
           fetchUsers();
         } catch (err) {

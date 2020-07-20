@@ -33,7 +33,7 @@ export default (props) => {
           </div>
         </div>
         <span className="align-self-center mb-1 mr-2 text-muted">
-          Afichage de {props?.page?.numberOfElements} sur {props?.page?.totalElements}
+          Afichage de {props?.page?.last ? props?.page?.totalElements : (props?.page?.numberOfElements * (props?.page?.number + 1))} sur {props?.page?.totalElements}
         </span>
         <span  
           style={{cursor: 'pointer', 'pointerEvents': `${(props?.page?.first || props?.loading) ? 'none' : ''}`}}
