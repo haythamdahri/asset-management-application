@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
-import UserService from "../services/UserService";
+import UserService from "../../services/UserService";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Swal from "sweetalert2";
-import CustomPagination from "../pagination/components/custom-pagination/CustomPagination";
-import CustomPaginationService from "../pagination/services/CustomPaginationService";
-import { Page } from "../pagination/Page";
+import CustomPagination from "../../pagination/components/custom-pagination/CustomPagination";
+import CustomPaginationService from "../../pagination/services/CustomPaginationService";
+import { Page } from "../../pagination/Page";
 
 export default () => {
   const [loading, setLoading] = useState(true);
@@ -300,7 +300,7 @@ export default () => {
                             <td>{user.email}</td>
                             <td>{user.phone}</td>
                             <td>{user.username}</td>
-                            <td>{user.department?.name}</td>
+                            <td>{user.entity?.name}</td>
                             <td>
                               <Link to={`/locations/${user.location?.id}`}>
                                 {user.location?.name}

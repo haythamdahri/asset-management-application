@@ -6,7 +6,7 @@ import {
   Route,
   Redirect,
 } from "react-router-dom";
-import SignIn from "./components/SignIn";
+import SignIn from "./components/authentication/SignIn";
 import NotFound from "./components/NotFound";
 import Home from "./components/Home";
 import { AuthenticatedGuard, UserRoute } from "./services/AuthGuard";
@@ -16,11 +16,11 @@ import Footer from "./components/Footer";
 import AuthService from "./services/AuthService";
 import Header from "./components/Header";
 import Contact from "./components/Contact";
-import Users from "./components/Users";
-import UserView from "./components/UserView";
-import UserForm from "./components/UserForm";
-import PasswordRequest from "./components/PasswordRequest";
-import PasswordReset from "./components/PasswordReset";
+import Users from "./components/users/Users";
+import UserView from "./components/users/UserView";
+import UserForm from "./components/users/UserForm";
+import PasswordRequest from "./components/authentication/PasswordRequest";
+import PasswordReset from "./components/authentication/PasswordReset";
 import SimpleReactLightbox from "simple-react-lightbox";
 
 function App() {

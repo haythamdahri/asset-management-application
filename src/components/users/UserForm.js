@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
-import UserService from "../services/UserService";
+import UserService from "../../services/UserService";
 import { useParams, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
-import CompanyService from "../services/CompanyService";
-import LanguageService from "../services/LanguageService";
-import DepartmentService from "../services/DepartmentService";
-import RoleService from "../services/RoleService";
-import LocationService from "../services/LocationService";
+import OrganizationService from "../../services/OrganizationService";
+import LanguageService from "../../services/LanguageService";
+import EntityService from "../../services/EntityService";
+import RoleService from "../../services/RoleService";
+import LocationService from "../../services/LocationService";
 import { countries } from "countries-list";
-import GroupService from "../services/GroupService";
-import { NEW_USER } from "../services/ConstantsService";
+import GroupService from "../../services/GroupService";
+import { NEW_USER } from "../../services/ConstantsService";
 
 export default () => {
   const {
@@ -27,7 +27,7 @@ export default () => {
   const [userError, setUserError] = useState(false);
   const [unauthorized, setUnauthorized] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [companiesData, setCompaniesData] = useState({
+  const [organizationsData, setOrganizationsData] = useState({
     loading: true,
     data: [],
   });
@@ -36,7 +36,7 @@ export default () => {
     data: [],
   });
   const [usersData, setUsersData] = useState({ loading: false, data: [] });
-  const [departmentsData, setDepartmentsData] = useState({
+  const [entitiesData, setEntitiesData] = useState({
     loading: false,
     data: [],
   });
@@ -61,13 +61,13 @@ export default () => {
   useEffect(() => {
     document.title = "Gestion Utilisateurs";
     // Fetch companies
-    fetchCompanies();
+    fetchOrganizations();
     // Fetch lagnauges
     fetchLanguages();
     // Fetch users
     fetchUsers();
     // Fetch departments
-    fetchDepartments();
+    fetchEntities();
     // Fetch locations
     fetchLocations();
     // Fetch groups
@@ -81,12 +81,12 @@ export default () => {
     };
   }, []);
 
-  const fetchCompanies = async () => {
+  const fetchOrganizations = async () => {
     try {
-      const companies = await CompanyService.getCompanies();
-      setCompaniesData({ loading: false, data: companies });
+      const organizations = await OrganizationService.getOrganizations();
+      setOrganizationsData({ loading: false, data: organizations });
     } catch (e) {
-      setCompaniesData({ loading: false, data: [] });
+      setOrganizationsData({ loading: false, data: [] });
     }
   };
 
@@ -108,12 +108,12 @@ export default () => {
     }
   };
 
-  const fetchDepartments = async () => {
+  const fetchEntities = async () => {
     try {
-      const departments = await DepartmentService.getDepartments();
-      setDepartmentsData({ loading: false, data: departments });
+      const entities = await EntityService.getEntities();
+      setEntitiesData({ loading: false, data: entities });
     } catch (e) {
-      setDepartmentsData({ loading: false, data: [] });
+      setEntitiesData({ loading: false, data: [] });
     }
   };
 
@@ -573,38 +573,38 @@ export default () => {
                     </div>
                   </div>
 
-                  {/** COMPANY */}
+                  {/** Organization */}
                   <div className="form-group row">
                     <label
                       className="col-md-3 font-weight-bold"
-                      htmlFor="company"
+                      htmlFor="organization"
                     >
-                      Société:{" "}
+                      Organisme:{" "}
                     </label>
                     <div className="col-md-9">
                       <select
-                        defaultValue={user?.company?.id}
+                        defaultValue={user?.organization?.id}
                         onClick={(event) => {
                           if (
-                            companiesData?.data === null ||
-                            companiesData?.data?.length === 0
+                            organizationsData?.data === null ||
+                            organizationsData?.data?.length === 0
                           ) {
-                            fetchCompanies();
+                            fetchOrganizations();
                           }
                         }}
                         className={`form-control form-control-sm shadow-sm ${
                           errors.company ? "is-invalid" : ""
                         }`}
-                        disabled={saving || companiesData?.loading}
+                        disabled={saving || organizationsData?.loading}
                         ref={register({
                           required: true,
                         })}
-                        id="company"
-                        name="company"
+                        id="organization"
+                        name="organization"
                       >
-                        {companiesData?.data?.map((company, key) => (
-                          <option key={key} value={company.id}>
-                            {company?.name}
+                        {organizationsData?.data?.map((organization, key) => (
+                          <option key={key} value={organization.id}>
+                            {organization?.name}
                           </option>
                         ))}
                       </select>
@@ -633,7 +633,7 @@ export default () => {
                         className={`form-control form-control-sm shadow-sm ${
                           errors.language ? "is-invalid" : ""
                         }`}
-                        disabled={saving || companiesData?.loading}
+                        disabled={saving || languagesData?.loading}
                         ref={register({
                           required: true,
                         })}
@@ -789,38 +789,38 @@ export default () => {
                     </div>
                   </div>
 
-                  {/** DEPARTMENT */}
+                  {/** ENTITY */}
                   <div className="form-group row">
                     <label
                       className="col-md-3 font-weight-bold"
-                      htmlFor="department"
+                      htmlFor="entity"
                     >
-                      Département:{" "}
+                      Entité:{" "}
                     </label>
                     <div className="col-md-9">
                       <select
                         defaultValue={user?.department?.id}
                         onClick={(event) => {
                           if (
-                            departmentsData?.data === null ||
-                            departmentsData?.data?.length === 0
+                            entitiesData?.data === null ||
+                            entitiesData?.data?.length === 0
                           ) {
-                            fetchDepartments();
+                            fetchEntities();
                           }
                         }}
                         className={`form-control form-control-sm shadow-sm ${
                           errors.department ? "is-invalid" : ""
                         }`}
-                        disabled={saving || departmentsData?.loading}
+                        disabled={saving || entitiesData?.loading}
                         ref={register({
                           required: true,
                         })}
-                        id="department"
-                        name="department"
+                        id="entity"
+                        name="entity"
                       >
-                        {departmentsData?.data?.map((department, key) => (
-                          <option key={key} value={department?.id}>
-                            {department?.name}
+                        {entitiesData?.data?.map((entity, key) => (
+                          <option key={key} value={entity?.id}>
+                            {entity?.name}
                           </option>
                         ))}
                       </select>
@@ -1188,8 +1188,8 @@ export default () => {
                           )}
                           onClick={(event) => {
                             if (
-                              departmentsData?.data === null ||
-                              departmentsData?.data?.length === 0
+                              groupsData?.data === null ||
+                              groupsData?.data?.length === 0
                             ) {
                               fetchGroups();
                             }

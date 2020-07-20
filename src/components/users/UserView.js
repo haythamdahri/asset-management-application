@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useHistory } from "react-router-dom";
-import UserService from "../services/UserService";
+import UserService from "../../services/UserService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Moment from "react-moment";
 import Swal from "sweetalert2";
@@ -176,8 +176,8 @@ export default () => {
                     <table className="table table-striped">
                       <thead align="center">
                         <tr>
-                          <th scope="col">Société</th>
-                          <td>{user?.company?.name}</td>
+                          <th scope="col">Organisme</th>
+                          <td>{user?.organization?.name}</td>
                         </tr>
                       </thead>
                       <tbody align="center">
@@ -225,10 +225,10 @@ export default () => {
                           </td>
                         </tr>
                         <tr>
-                          <th scope="col">Département</th>
+                          <th scope="col">Entité</th>
                           <td>
-                            <Link to={`/departments/${user?.department?.id}`}>
-                              {user?.department?.name}
+                            <Link to={`/entities/${user?.entity?.id}`}>
+                              {user?.entity?.name}
                             </Link>
                           </td>
                         </tr>

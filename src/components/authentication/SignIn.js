@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import AuthService from "../services/AuthService";
+import AuthService from "../../services/AuthService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import logo from "../images/logo.jpg";
-import "../styles/login.css";
+import logo from "../../images/logo.jpg";
+import "../../styles/login.css";
 import { Link } from "react-router-dom";
 
 export default () => {
