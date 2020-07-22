@@ -79,6 +79,12 @@ export default () => {
                   <p>Utilisateurs</p>
                 </Link>
               </li>
+              <li className="nav-item">
+                <Link to="/groups" className="nav-link">
+                  <i className="nav-icon fas fa-layer-group" />
+                  <p>Groupes</p>
+                </Link>
+              </li>
             </ul>
           </nav>
           {/* /.sidebar-menu */}

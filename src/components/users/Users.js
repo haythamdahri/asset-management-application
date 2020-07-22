@@ -361,7 +361,7 @@ export default () => {
                             </td>
                             <td>
                               <Link to={`/users/${user?.id}`}>
-                                <button className="btn btn-danger btn-sm">
+                                <button className="btn btn-secondary btn-sm">
                                   <FontAwesomeIcon
                                     icon="street-view"
                                     color="white"

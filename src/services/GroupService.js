@@ -16,6 +16,33 @@ class GroupService {
       });
   }
 
+  getGroupsPage(name, pageable) {
+    const params = {
+      name: name !== "" ? name : "",
+      page: pageable.pageNumber,
+      size: pageable.pageSize,
+    };
+    return axios
+      .get(`${API_URL}/pages`, { params, headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
+  deleteGroupe(id) {
+    return axios
+      .delete(`${API_URL}/${id}`, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
 
 
 }
