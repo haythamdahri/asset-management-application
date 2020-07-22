@@ -11,6 +11,7 @@ import Header from "../Header";
 import Contact from "../Contact";
 import Users from "../users/Users";
 import Groups from "../groups/Groups";
+import GroupForm from "../groups/GroupForm";
 import UserView from "../users/UserView";
 import UserForm from "../users/UserForm";
 import PasswordRequest from "../authentication/PasswordRequest";
@@ -50,11 +51,17 @@ export default () => {
           <UserRoute exact={true} path="/users/:id/edit">
             <UserForm />
           </UserRoute>
-          <UserRoute exact={true} path="/users/new/edit">
+          <UserRoute exact={true} path="/users/create">
             <UserForm />
           </UserRoute>
           <UserRoute exact={true} path="/groups">
             <Groups />
+          </UserRoute>
+          <UserRoute exact={true} path="/groups/:id/edit">
+            <GroupForm />
+          </UserRoute>
+          <UserRoute exact={true} path="/groups/create">
+            <GroupForm />
           </UserRoute>
           <AuthenticatedGuard exact={true} path="/signin">
             <SignIn />

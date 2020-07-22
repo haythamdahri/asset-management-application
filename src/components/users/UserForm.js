@@ -63,7 +63,6 @@ export default () => {
   useEffect(() => {
     setLoading(true);
     UserService.canEditUser().then((response) => {
-      console.log(`RESPONSE: ${response}`);
       if (response.hasRole) {
         // Fetch companies
         fetchOrganizations();
@@ -1203,6 +1202,7 @@ export default () => {
                     <div className="col-md-9">
                       {!groupsData.loading && (
                         <select
+                        style={{height: '100px'}}
                           multiple
                           defaultValue={user?.groups?.map(
                             (group, key) => group.id
@@ -1246,6 +1246,7 @@ export default () => {
                     <div className="col-md-9">
                       {!rolesData.loading && (
                         <select
+                        style={{height: '200px'}}
                           multiple
                           defaultValue={user?.roles?.map(
                             (role, key) => role.id

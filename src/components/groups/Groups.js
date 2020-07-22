@@ -108,7 +108,7 @@ export default () => {
         // Perform User delete
         try {
           setDeleting(true);
-          await GroupService.deleteGroupe(id);
+          await GroupService.deleteGroup(id);
           Swal.fire(
             "Operation éffectuée!",
             "Le groupe à été supprimé avec succés!",
@@ -201,7 +201,7 @@ export default () => {
               </div>
 
               <div className="col-12 mb-3 text-center">
-                <Link to="/users/new/edit" className="btn btn-primary btn-sm">
+                <Link to="/groups/create" className="btn btn-primary btn-sm">
                   <FontAwesomeIcon icon="user-plus" /> Ajouter un groupe
                 </Link>
               </div>
@@ -252,7 +252,7 @@ export default () => {
                               </div>
                               <div className="card-footer">
                                 <div className="text-right">
-                                  <Link to={`/users/${group.id}/edit`}>
+                                  <Link to={`/groups/${group.id}/edit`}>
                                     <button className="btn btn-primary btn-sm mr-3">
                                       <FontAwesomeIcon
                                         icon="edit"

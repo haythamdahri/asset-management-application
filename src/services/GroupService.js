@@ -32,9 +32,31 @@ class GroupService {
       });
   }
 
-  deleteGroupe(id) {
+  deleteGroup(id) {
     return axios
       .delete(`${API_URL}/${id}`, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
+  getGroup(id) {
+    return axios
+      .get(`${API_URL}/${id}`, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
+  saveGroup(name) {
+    return axios
+      .post(`${API_URL}/`, name, { headers: authHeader() })
       .then((response) => {
         return response.data;
       })

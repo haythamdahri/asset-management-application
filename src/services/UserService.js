@@ -164,6 +164,17 @@ class UserService {
       });
   }
 
+  async checkUserAdmin() {
+    return axios
+      .get(`${API_URL}/roles/checking/admin`, { headers: authHeader() })
+      .then((response) => {
+        return true;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
 }
 
 export default new UserService();
