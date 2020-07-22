@@ -24,6 +24,7 @@ export default () => {
   } = useForm();
   const [user, setUser] = useState({});
   const [loading, setLoading] = useState(true);
+  const [reload, setReload] = useState(false);
   const [userError, setUserError] = useState(false);
   const [unauthorized, setUnauthorized] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -57,29 +58,49 @@ export default () => {
   // User Id Extraction from URL
   let { id } = useParams();
   let abortController = new AbortController();
+  document.title = "Gestion Utilisateurs";
 
   useEffect(() => {
-    document.title = "Gestion Utilisateurs";
-    // Fetch companies
-    fetchOrganizations();
-    // Fetch lagnauges
-    fetchLanguages();
-    // Fetch users
-    fetchUsers();
-    // Fetch departments
-    fetchEntities();
-    // Fetch locations
-    fetchLocations();
-    // Fetch groups
-    fetchGroups();
-    // Fetch roles
-    fetchRoles();
-    // Fetch Users if not a new user
-    fetchUser();
+    setLoading(true);
+    UserService.canEditUser().then((response) => {
+      console.log(`RESPONSE: ${response}`);
+      if (response.hasRole) {
+        // Fetch companies
+        fetchOrganizations();
+        // Fetch lagnauges
+        fetchLanguages();
+        // Fetch users
+        fetchUsers();
+        // Fetch departments
+        fetchEntities();
+        // Fetch locations
+        fetchLocations();
+        // Fetch groups
+        fetchGroups();
+        // Fetch roles
+        fetchRoles();
+        // Fetch Users if not a new user
+        fetchUser();
+      } else {
+        setLoading(false);
+        setUserError(false);
+        setUnauthorized(true);
+      }
+    }).catch((err) => {
+      const status = err?.response?.data?.status;
+      if( status === 403 ) {
+        setUnauthorized(true);
+        setUserError(false);
+      } else {
+        setUnauthorized(false);
+        setUserError(true);
+      }
+      setLoading(false);
+    });
     return () => {
       abortController.abort();
     };
-  }, []);
+  }, [reload]);
 
   const fetchOrganizations = async () => {
     try {
@@ -207,7 +228,7 @@ export default () => {
       return;
     }
     // CHECK PASSWORD
-    if (!data.password && (!user.hasOwnProperty("id") || data.updatePassword) ) {
+    if (!data.password && (!user.hasOwnProperty("id") || data.updatePassword)) {
       setError("password", {
         type: "required",
         message: "Mot de passe est requis",
@@ -220,7 +241,7 @@ export default () => {
     // Set FormData
     let formData = new FormData();
     formData.set("image", file);
-    formData.set("id", user?.id);
+    formData.set("id", user?.id || null);
     for (const [key, value] of Object.entries(data)) {
       if ((key === "roles" || key === "groups") && value.length > 0) {
         formData.set(key, value.join(";"));
@@ -298,7 +319,7 @@ export default () => {
                     {unauthorized && "Vous n'êtes pas autorisé!"}
                     {user === null && "Aucun utilisateur n'a été trouvé"}
                     <button
-                      onClick={() => fetchUser()}
+                      onClick={() => setReload(!reload)}
                       className="btn btn-warning font-weight-bold ml-2"
                     >
                       <FontAwesomeIcon icon="sync" /> Ressayer

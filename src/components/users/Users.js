@@ -16,7 +16,6 @@ export default () => {
   const searchInput = useRef(null);
 
   useEffect(() => {
-    console.log("FETCHING USERS");
     document.title = "Gestion Utilisateurs";
     fetchUsers();
     return () => {

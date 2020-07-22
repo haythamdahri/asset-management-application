@@ -153,6 +153,17 @@ class UserService {
       });
   }
 
+  async canEditUser() {
+    return axios
+      .get(`${API_URL}/roles/checking/users`, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
 }
 
 export default new UserService();

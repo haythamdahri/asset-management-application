@@ -30,7 +30,7 @@ function App() {
       window.location.reload();
     });
     return () => {
-      window.removeEventListener("storage");
+      window.removeEventListener("storage", () => {});
     };
   });
 

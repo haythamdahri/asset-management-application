@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, Link, useHistory } from "react-router-dom";
 import UserService from "../../services/UserService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -16,13 +16,13 @@ export default () => {
 
   // User Id Extraction from URL
   let { id } = useParams();
-  const abortController = new AbortController();
+  const ref = useRef(true);
 
   useEffect(() => {
     document.title = "Gestion Utilisateurs";
     fetchUser();
     return () => {
-      abortController.abort();
+      ref.current = false;
     };
   }, []);
 
@@ -155,18 +155,20 @@ export default () => {
               <>
                 {/** USER DATA */}
                 <div className="col-md-2 text-center mt-3 mb-3">
-                <SRLWrapper>
-                <a href={user?.avatar?.file} data-attribute="SRL">
-                  <img
-                    src={user?.avatar?.file}
-                    height="150"
-                    width="150"
-                    className="avatar img-circle hidden-print shadow shadow-sm"
-                    style={{ border: "2px solid blue" }}
-                    alt={`${user?.firstName} ${user?.lastName}`}
-                  />
-                  </a>
-                  </SRLWrapper>
+                  {ref.current && (
+                    <SRLWrapper>
+                    <a href={`${user?.avatar?.file}?date=${Date.now()}`} data-attribute="SRL">
+                      <img
+                        src={`${user?.avatar?.file}?date=${Date.now()}`}
+                        height="150"
+                        width="150"
+                        className="avatar img-circle hidden-print shadow shadow-sm"
+                        style={{ border: "2px solid blue" }}
+                        alt={`${user?.firstName} ${user?.lastName}`}
+                      />
+                      </a>
+                      </SRLWrapper>
+                  )}
                 </div>
                 <div
                   className="col-md-8 bg-white mx-auto mt-3 mb-3"
