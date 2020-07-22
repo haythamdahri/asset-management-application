@@ -11,6 +11,7 @@ import RoleService from "../../services/RoleService";
 import LocationService from "../../services/LocationService";
 import { countries } from "countries-list";
 import GroupService from "../../services/GroupService";
+import CKEditor from 'ckeditor4-react';
 
 export default () => {
   const {
@@ -210,6 +211,10 @@ export default () => {
     }
   };
 
+  const onEditorChange = (event) => {
+    setUser({...user, notes: event.editor.getData()});
+  }
+
   const onSubmit = async (data) => {
     // Verify if data has file in case of update
     if (
@@ -240,6 +245,7 @@ export default () => {
     let formData = new FormData();
     formData.set("image", file);
     formData.set("id", user?.id || null);
+    formData.set("notes", user?.notes || "");
     for (const [key, value] of Object.entries(data)) {
       if ((key === "roles" || key === "groups") && value.length > 0) {
         formData.set(key, value.join(";"));
@@ -1116,7 +1122,7 @@ export default () => {
                       Notes:{" "}
                     </label>
                     <div className="col-md-9">
-                      <textarea
+                      <CKEditor
                         rows={10}
                         disabled={saving}
                         placeholder="Notes ..."
@@ -1126,6 +1132,7 @@ export default () => {
                         ref={register({
                           required: false,
                         })}
+                        onChange={onEditorChange}
                         defaultValue={user.notes || ""}
                         className={`form-control form-control-sm shadow-sm`}
                       />

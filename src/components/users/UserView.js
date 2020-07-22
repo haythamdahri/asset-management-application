@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Moment from "react-moment";
 import Swal from "sweetalert2";
 import { SRLWrapper } from "simple-react-lightbox";
+import CKEditor from 'ckeditor4-react';
 
 export default () => {
   const [user, setUser] = useState({});
@@ -245,6 +246,12 @@ export default () => {
                         <tr>
                           <th scope="col">Connexion activée</th>
                           <td>{user?.active ? "Oui" : "Non"}</td>
+                        </tr>
+                        <tr>
+                          <th scope="col">Notes</th>
+                          <td>
+                            <CKEditor data={user?.notes} readOnly={true} />
+                          </td>
                         </tr>
                       </tbody>
                     </table>

@@ -1,10 +1,22 @@
 import axios from "axios";
 import authHeader from "./AuthHeader";
 import { ENABLE, DISABLE } from "./ConstantsService";
+import EventEmitter from 'eventemitter3';
+
 
 const API_URL = `${process.env.REACT_APP_API_URL}/api/v1/users`;
 
 class UserService {
+
+  constructor() {
+    const eventEmitter = new EventEmitter();
+    this.Emitter = {
+      on: (event, fn) => eventEmitter.on(event, fn),
+      once: (event, fn) => eventEmitter.once(event, fn),
+      off: (event, fn) => eventEmitter.off(event, fn),
+      emit: (event, payload) => eventEmitter.emit(event, payload)
+    }
+  }
 
   requestPasswordReset(email) {
     return axios

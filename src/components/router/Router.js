@@ -74,12 +74,25 @@ export default () => {
           <AuthenticatedGuard exact={true} path="/signin">
             <SignIn />
           </AuthenticatedGuard>
-          <AuthenticatedGuard exact={true} path="/reset-password">
-            <PasswordRequest />
-          </AuthenticatedGuard>
-          <AuthenticatedGuard exact={true} path="/reset-password/:token">
-            <PasswordReset />
-          </AuthenticatedGuard>
+          {AuthService.isAuthenticated() ? (
+            <>
+              <UserRoute exact={true} path="/reset-password">
+                <PasswordRequest />
+              </UserRoute>
+              <UserRoute exact={true} path="/reset-password/:token">
+                <PasswordReset />
+              </UserRoute>
+            </>
+          ) : (
+            <>
+              <AuthenticatedGuard exact={true} path="/reset-password">
+                <PasswordRequest />
+              </AuthenticatedGuard>
+              <AuthenticatedGuard exact={true} path="/reset-password/:token">
+                <PasswordReset />
+              </AuthenticatedGuard>
+            </>
+          )}
           <Route exact={true} path="/notfound">
             <NotFound />
           </Route>

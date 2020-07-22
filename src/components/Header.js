@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AuthService from "../services/AuthService";
@@ -35,6 +35,41 @@ export default () => {
               Contact
             </Link>
           </li>
+          {/** USER */}
+          {AuthService.isAuthenticated() && (
+            <li className="nav-item dropdown">
+              <Link
+                id="dropdownSubMenu1"
+                to="#"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+                className="nav-link dropdown-toggle"
+              >
+                <FontAwesomeIcon icon="id-badge" /> Paramettre Utilisateur
+              </Link>
+              <ul
+                aria-labelledby="dropdownSubMenu1"
+                className="dropdown-menu border-0 shadow"
+                style={{ left: 0, right: "inherit" }}
+              >
+                <li>
+                  <Link
+                    className="dropdown-item active"
+                    to="#"
+                    onClick={onSignOut}
+                  >
+                    <FontAwesomeIcon icon="sign-out-alt" /> Se déconnecter
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/reset-password" className="dropdown-item">
+                    <FontAwesomeIcon icon="sync" /> Réinitialiser mot de passe
+                  </Link>
+                </li>
+              </ul>
+            </li>
+          )}
         </ul>
         {/* SEARCH FORM */}
         <form className="form-inline ml-3">
@@ -54,21 +89,16 @@ export default () => {
         </form>
         {/* Right navbar links */}
         <ul className="navbar-nav ml-auto">
-          <li className="nav-item d-none d-sm-inline-block">
-            <Link className="nav-link" to="#" onClick={onSignOut}>
-              <FontAwesomeIcon icon="sign-out-alt" /> Se déconnecter
-            </Link>
-          </li>
           {/* Messages Dropdown Menu */}
           <li className="nav-item dropdown">
-            <Link className="nav-link" data-toggle="dropdown" to="/">
+            <Link className="nav-link" to="/">
               <i className="far fa-comments" />
               <span className="badge badge-danger navbar-badge">3</span>
             </Link>
           </li>
           {/* Notifications Dropdown Menu */}
           <li className="nav-item dropdown">
-            <Link className="nav-link" data-toggle="dropdown" to="#">
+            <Link className="nav-link" to="#">
               <i className="far fa-bell" />
               <span className="badge badge-warning navbar-badge">15</span>
             </Link>

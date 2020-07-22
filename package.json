@@ -13,7 +13,9 @@
     "@testing-library/user-event": "^7.2.1",
     "axios": "^0.19.2",
     "bootstrap": "^4.5.0",
+    "ckeditor4-react": "^1.1.1",
     "countries-list": "^2.5.4",
+    "eventemitter3": "^4.0.4",
     "jquery": "^3.5.1",
     "jwt-decode": "^2.2.0",
     "moment": "^2.27.0",
@@ -25,6 +27,7 @@
     "react-moment": "^0.9.7",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
+    "react-select": "^3.1.0",
     "simple-react-lightbox": "^3.2.3-3",
     "sweetalert2": "^9.17.0"
   },

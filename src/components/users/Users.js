@@ -34,30 +34,30 @@ export default () => {
         search,
         usersPage?.pageable || new Page()
       );
-        setLoading(false);
-        setUsersPage(response);
-        setError(false);
+      setLoading(false);
+      setUsersPage(response);
+      setError(false);
     } catch (e) {
-        const status = e.response?.status || null;
-        setLoading(false);
-        setUsersPage(null);
-        if (status === 403) {
-          setUnauthorized(true);
-          setError(false);
-        } else {
-          setError(true);
-          setUnauthorized(false);
-          const Toast = Swal.mixin({
-            toast: true,
-            position: "top-end",
-            showConfirmButton: false,
-            timer: 3000,
-          });
-          Toast.fire({
-            icon: "error",
-            title: `Une erreur est survenue, veuillez ressayer!`,
-          });
-        }
+      const status = e.response?.status || null;
+      setLoading(false);
+      setUsersPage(null);
+      if (status === 403) {
+        setUnauthorized(true);
+        setError(false);
+      } else {
+        setError(true);
+        setUnauthorized(false);
+        const Toast = Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 3000,
+        });
+        Toast.fire({
+          icon: "error",
+          title: `Une erreur est survenue, veuillez ressayer!`,
+        });
+      }
     } finally {
       if (search !== "" && search !== null) {
         searchInput.current.value = search;
@@ -110,18 +110,18 @@ export default () => {
           await UserService.deleteUser(id);
           Swal.fire(
             "Operation éffectuée!",
-              "L'utilisateur à été supprimé avec succés!",
+            "L'utilisateur à été supprimé avec succés!",
             "success"
           );
           // Clear search
-          searchInput.current.value = '';
+          searchInput.current.value = "";
           // Fetch users
           fetchUsers();
         } catch (err) {
           Swal.fire(
             "Erreur!",
             err?.response?.data?.message ||
-            `Une erreur est survenue, veuillez ressayer!`,
+              `Une erreur est survenue, veuillez ressayer!`,
             "error"
           );
         } finally {
@@ -206,11 +206,11 @@ export default () => {
 
               {/** DELTING PROGRESS */}
               {deleting && (
-              <div className="col-12 mt-2 mb-3">
-                <div className="overlay text-center">
-                  <i className="fas fa-2x fa-sync-alt fa-spin"></i>
+                <div className="col-12 mt-2 mb-3">
+                  <div className="overlay text-center">
+                    <i className="fas fa-2x fa-sync-alt fa-spin"></i>
+                  </div>
                 </div>
-              </div>
               )}
 
               <div
@@ -314,7 +314,11 @@ export default () => {
                                   : ""}
                               </Link>
                             </td>
-                            <td>{user.notes}</td>
+                            <td
+                              dangerouslySetInnerHTML={{
+                                __html: `${user.notes.slice(0, 20)} ${user.notes.length > 20 ? '...' : ''}`,
+                              }}
+                            ></td>
                             <td>
                               {user.groups?.map((group, key) => (
                                 <Link to={`/groups/${group.id}`} key={key}>

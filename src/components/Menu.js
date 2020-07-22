@@ -8,6 +8,9 @@ export default () => {
   const abortController = new AbortController();
 
   useEffect(() => {
+    UserService.Emitter.on('USER_UPDATED', (user) => {
+      setUser(user);
+    });
     fetchUser();
     return () => {
       abortController.abort();
@@ -52,7 +55,7 @@ export default () => {
               <Link to="/profile">
                 <img
                   src={
-                    loading
+                    loading || user === null
                       ? "/dist/img/boxed-bg.jpg"
                       : user?.avatar?.file
                   }

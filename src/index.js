@@ -3,8 +3,6 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.css';
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fab } from "@fortawesome/free-brands-svg-icons";
@@ -57,10 +55,11 @@ import {
   faExclamationTriangle,
   faUserPlus,
   faTrashAlt,
+  faIdBadge,
 } from "@fortawesome/free-solid-svg-icons";
 import 'moment/locale/fr';
 import Moment from 'react-moment';
-require('dotenv').config()
+require('dotenv').config();
 
 
 library.add(
@@ -113,7 +112,8 @@ library.add(
   faKey,
   faExclamationTriangle,
   faUserPlus,
-  faTrashAlt
+  faTrashAlt,
+  faIdBadge
 );
 
 // Set the locale for every react-moment instance to French.
