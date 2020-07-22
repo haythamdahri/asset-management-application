@@ -24,6 +24,7 @@ import {
   Route,
   Redirect,
 } from "react-router-dom";
+import Profile from "../profile/Profile";
 
 export default () => {
   return (
@@ -66,6 +67,9 @@ export default () => {
           </UserRoute>
           <UserRoute exact={true} path="/groups/view/:id">
             <GroupView />
+          </UserRoute>
+          <UserRoute exact={true} path="/profile">
+            <Profile />
           </UserRoute>
           <AuthenticatedGuard exact={true} path="/signin">
             <SignIn />

@@ -82,9 +82,8 @@ class UserService {
   }
 
   updateUserImage(formData) {
-    
     return axios
-      .post(`${API_URL}/image`, formData, { headers: authHeader() })
+      .put(`${API_URL}/profile/image`, formData, { headers: authHeader() })
       .then((response) => {
         return response.data;
       })

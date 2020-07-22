@@ -17,7 +17,11 @@ export default () => {
   const fetchUser = async () => {
     try {
       const user = await UserService.getAuthenticatedUserDetails();
-      user.avatar.file = process.env.REACT_APP_API_URL + "/api/v1/users/" + user?.id + "/avatar/file";
+      user.avatar.file =
+        process.env.REACT_APP_API_URL +
+        "/api/v1/users/" +
+        user?.id +
+        "/avatar/file";
       setUser(user);
       setLoading(false);
     } catch (e) {
@@ -45,18 +49,20 @@ export default () => {
           {/* Sidebar user panel (optional) */}
           <div className="user-panel mt-3 pb-3 mb-3 d-flex">
             <div className="image">
-              <img
-                src={
-                  loading
-                    ? "../../public/dist/img/boxed-bg.jpg"
-                    : user?.avatar?.file
-                }
-                className="img-circle elevation-2"
-                alt="User"
-              />
+              <Link to="/profile">
+                <img
+                  src={
+                    loading
+                      ? "/dist/img/boxed-bg.jpg"
+                      : user?.avatar?.file
+                  }
+                  className="img-circle elevation-2"
+                  alt="User"
+                />
+              </Link>
             </div>
             <div className="info">
-              <Link to="#" className="d-block">
+              <Link to="/profile" className="d-block">
                 {!loading && user != null
                   ? user?.firstName + " " + user?.lastName
                   : "USER"}
