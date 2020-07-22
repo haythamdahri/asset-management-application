@@ -199,7 +199,7 @@ export default () => {
               </div>
 
               <div className="col-12 mb-3 text-center">
-                <Link to="/users/new/edit" className="btn btn-primary btn-sm">
+                <Link to="/users/create" className="btn btn-primary btn-sm">
                   <FontAwesomeIcon icon="user-plus" /> Ajouter un utilisateur
                 </Link>
               </div>

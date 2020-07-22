@@ -271,7 +271,7 @@ export default () => {
                                       color="white"
                                     />
                                   </button>
-                                  <Link to={`/groups/${group?.id}`}>
+                                  <Link to={`/groups/view/${group?.id}`}>
                                     <button className="btn btn-light btn-sm ml-3">
                                       <FontAwesomeIcon
                                         icon="eye"

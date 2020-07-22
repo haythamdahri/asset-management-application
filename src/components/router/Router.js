@@ -13,6 +13,7 @@ import Users from "../users/Users";
 import Groups from "../groups/Groups";
 import GroupForm from "../groups/GroupForm";
 import UserView from "../users/UserView";
+import GroupView from "../groups/GroupView";
 import UserForm from "../users/UserForm";
 import PasswordRequest from "../authentication/PasswordRequest";
 import PasswordReset from "../authentication/PasswordReset";
@@ -45,7 +46,7 @@ export default () => {
           <UserRoute role={RoleType.ROLE_ADMIN} exact={true} path="/users">
             <Users />
           </UserRoute>
-          <UserRoute exact={true} path="/users/:id">
+          <UserRoute exact={true} path="/users/view/:id">
             <UserView />
           </UserRoute>
           <UserRoute exact={true} path="/users/:id/edit">
@@ -62,6 +63,9 @@ export default () => {
           </UserRoute>
           <UserRoute exact={true} path="/groups/create">
             <GroupForm />
+          </UserRoute>
+          <UserRoute exact={true} path="/groups/view/:id">
+            <GroupView />
           </UserRoute>
           <AuthenticatedGuard exact={true} path="/signin">
             <SignIn />

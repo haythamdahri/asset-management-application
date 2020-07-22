@@ -11,7 +11,6 @@ import RoleService from "../../services/RoleService";
 import LocationService from "../../services/LocationService";
 import { countries } from "countries-list";
 import GroupService from "../../services/GroupService";
-import { NEW_USER } from "../../services/ConstantsService";
 
 export default () => {
   const {
@@ -170,7 +169,7 @@ export default () => {
     setUserError(false);
     setUser({});
 
-    if (id !== NEW_USER) {
+    if (id !== undefined) {
       try {
         const user = await UserService.getUser(id);
         if (!user.hasOwnProperty("id")) {
@@ -291,15 +290,14 @@ export default () => {
             </div>
 
             {/** BACK BUTTON */}
-            {(NEW_USER !== id || user.hasOwnProperty("id")) &&
+            {(id !== undefined || user.hasOwnProperty("id")) &&
               !userError &&
               !unauthorized &&
               !loading &&
-              user &&
-              NEW_USER !== id && (
+              user && (
                 <div className="col-12 text-center">
                   <Link
-                    to={`/users/${user?.id}`}
+                    to={`/users/view/${user?.id}`}
                     type="submit"
                     className="btn btn-dark btn-sm mt-2 font-weight-bold text-center mx-2"
                   >
@@ -1327,9 +1325,9 @@ export default () => {
                   <hr />
 
                   <div className="col-12 text-center">
-                    {(NEW_USER !== id || user.hasOwnProperty("id")) && (
+                    {(id !== undefined || user.hasOwnProperty("id")) && (
                       <Link
-                        to={`/users/${user?.id}`}
+                        to={`/users/view/${user?.id}`}
                         type="submit"
                         className="btn btn-warning font-weight-bold text-center mx-2"
                       >

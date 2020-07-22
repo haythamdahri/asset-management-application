@@ -27,6 +27,8 @@ export default () => {
   useEffect(() => {
     // Set loading
     setIsLoading(true);
+    setIsGroupError(false);
+    setGroup({});
     // Check user permissions
     UserService.checkUserAdmin()
       .then(() => {
@@ -91,7 +93,8 @@ export default () => {
 
   const onSubmit = async (data) => {
     setIsSaving(true);
-    GroupService.saveGroup({ id, name: data.name, roles: data.roles })
+    console.log(data);
+    GroupService.saveGroup({ id, ...data})
       .then((group) => {
         setGroup(group);
         setIsSaving(false);
@@ -316,7 +319,7 @@ export default () => {
                   <div className="col-12 text-center">
                     {(id !== undefined || group.hasOwnProperty("id")) && (
                       <Link
-                        to={`/groups/${group?.id}`}
+                        to={`/groups/view/${group?.id}`}
                         type="submit"
                         className="btn btn-warning font-weight-bold text-center mx-2"
                       >
