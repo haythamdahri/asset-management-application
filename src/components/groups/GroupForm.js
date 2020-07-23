@@ -6,6 +6,8 @@ import { useForm } from "react-hook-form";
 import { useParams, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Swal from "sweetalert2";
+import CKEditor from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 export default () => {
   const { register, handleSubmit, errors } = useForm();
@@ -91,10 +93,14 @@ export default () => {
     }
   };
 
+  const onEditorChange = (event, editor) => {
+    setGroup({ ...group, description: editor.getData() });
+  };
+
   const onSubmit = async (data) => {
     setIsSaving(true);
     console.log(data);
-    GroupService.saveGroup({ id, ...data})
+    GroupService.saveGroup({ id, ...data, description: group.description })
       .then((group) => {
         setGroup(group);
         setIsSaving(false);
@@ -196,7 +202,7 @@ export default () => {
                   noValidate
                   className="p-3 mb-5"
                 >
-                  {/** LASTNAME */}
+                  {/** NAME */}
                   <div className="form-group row">
                     <label className="col-md-3 font-weight-bold" htmlFor="name">
                       Nom:{" "}
@@ -225,6 +231,24 @@ export default () => {
                     </div>
                   </div>
 
+                  {/** Description */}
+                  <div className="form-group row">
+                    <label
+                      className="col-md-3 font-weight-bold"
+                      htmlFor="notes"
+                    >
+                      Description:{" "}
+                    </label>
+                    <div className="col-md-9">
+                      <CKEditor
+                        editor={ClassicEditor}
+                        data={group?.description}
+                        disabled={isSaving}
+                        onChange={onEditorChange}
+                      />
+                    </div>
+                  </div>
+
                   {/** ROLES */}
                   <div className="form-group row">
                     <label
@@ -236,7 +260,7 @@ export default () => {
                     <div className="col-md-9">
                       {!rolesData.loading && (
                         <select
-                        style={{height: '200px'}}
+                          style={{ height: "200px" }}
                           multiple
                           defaultValue={group?.roles?.map(
                             (role, key) => role.id

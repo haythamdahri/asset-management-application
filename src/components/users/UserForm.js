@@ -11,7 +11,8 @@ import RoleService from "../../services/RoleService";
 import LocationService from "../../services/LocationService";
 import { countries } from "countries-list";
 import GroupService from "../../services/GroupService";
-import CKEditor from 'ckeditor4-react';
+import CKEditor from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 export default () => {
   const {
@@ -211,8 +212,8 @@ export default () => {
     }
   };
 
-  const onEditorChange = (event) => {
-    setUser({...user, notes: event.editor.getData()});
+  const onEditorChange = (event, editor) => {
+    setUser({...user, notes: editor.getData()});
   }
 
   const onSubmit = async (data) => {
@@ -1122,19 +1123,11 @@ export default () => {
                       Notes:{" "}
                     </label>
                     <div className="col-md-9">
-                      <CKEditor
-                        rows={10}
+                        <CKEditor
+                        editor={ClassicEditor}
+                        data={user?.notes}
                         disabled={saving}
-                        placeholder="Notes ..."
-                        type="text"
-                        id="notes"
-                        name="notes"
-                        ref={register({
-                          required: false,
-                        })}
                         onChange={onEditorChange}
-                        defaultValue={user.notes || ""}
-                        className={`form-control form-control-sm shadow-sm`}
                       />
                     </div>
                   </div>

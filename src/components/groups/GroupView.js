@@ -3,6 +3,8 @@ import { useParams, Link, useHistory } from "react-router-dom";
 import GroupService from "../../services/GroupService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Swal from "sweetalert2";
+import CKEditor from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 export default () => {
   const [group, setGroup] = useState({});
@@ -175,6 +177,23 @@ export default () => {
                       </thead>
                       <tbody align="center">
                         <tr>
+                          <th scope="col">Description</th>
+                          <td>
+                          {group?.description && group?.description?.length > 0 && (
+                          <CKEditor
+                            editor={ClassicEditor}
+                            data={group?.description}
+                            config={{
+                              toolbar: [],
+                              removePlugins: ["Heading", "Link"],
+                              isReadOnly: true,
+                            }}
+                            disabled={true}
+                          />
+                          )}
+                          </td>
+                        </tr>
+                        <tr>
                           <th scope="col">Roles</th>
                           <td>
                             <ul
@@ -187,7 +206,6 @@ export default () => {
                               {group?.roles?.map((role, key) => (
                                 <li className="list-group-item" key={key}>
                                   {role.roleName}
-                                  {key === group.roles.length - 1 ? "" : " , "}
                                 </li>
                               ))}
                               {(group?.roles === null || group?.roles?.length === 0) && (

@@ -115,6 +115,17 @@ class UserService {
       });
   }
 
+  saveUserProfile(data) {
+    return axios
+      .put(`${API_URL}/profile`, data, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;  
+      });
+  }
+
   getAuthenticatedUserDetails() {
     return axios
       .get(`${API_URL}/profile`, { headers: authHeader() })

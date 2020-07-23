@@ -5,7 +5,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Moment from "react-moment";
 import Swal from "sweetalert2";
 import { SRLWrapper } from "simple-react-lightbox";
-import CKEditor from 'ckeditor4-react';
+import CKEditor from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 export default () => {
   const [user, setUser] = useState({});
@@ -41,7 +42,11 @@ export default () => {
         setUnauthorized(false);
       } else {
         if (user.avatar !== null) {
-          user.avatar.file = process.env.REACT_APP_API_URL + "/api/v1/users/" + user?.id + "/avatar/file";
+          user.avatar.file =
+            process.env.REACT_APP_API_URL +
+            "/api/v1/users/" +
+            user?.id +
+            "/avatar/file";
         }
         setUser(user);
         setLoading(false);
@@ -158,17 +163,20 @@ export default () => {
                 <div className="col-md-2 text-center mt-3 mb-3">
                   {ref.current && (
                     <SRLWrapper>
-                    <a href={`${user?.avatar?.file}?date=${Date.now()}`} data-attribute="SRL">
-                      <img
-                        src={`${user?.avatar?.file}?date=${Date.now()}`}
-                        height="150"
-                        width="150"
-                        className="avatar img-circle hidden-print shadow shadow-sm"
-                        style={{ border: "2px solid blue" }}
-                        alt={`${user?.firstName} ${user?.lastName}`}
-                      />
+                      <a
+                        href={`${user?.avatar?.file}?date=${Date.now()}`}
+                        data-attribute="SRL"
+                      >
+                        <img
+                          src={`${user?.avatar?.file}?date=${Date.now()}`}
+                          height="150"
+                          width="150"
+                          className="avatar img-circle hidden-print shadow shadow-sm"
+                          style={{ border: "2px solid blue" }}
+                          alt={`${user?.firstName} ${user?.lastName}`}
+                        />
                       </a>
-                      </SRLWrapper>
+                    </SRLWrapper>
                   )}
                 </div>
                 <div
@@ -196,7 +204,7 @@ export default () => {
                           <th scope="col">Groups</th>
                           <td>
                             {user?.groups?.map((group, key) => (
-                              <Link to={`/groups/${group.id}`} key={key}>
+                              <Link to={`/groups/view/${group.id}`} key={key}>
                                 {group.name}
                                 {key === user.groups.length - 1 ? "" : " , "}
                               </Link>
@@ -250,7 +258,16 @@ export default () => {
                         <tr>
                           <th scope="col">Notes</th>
                           <td>
-                            <CKEditor data={user?.notes} readOnly={true} />
+                            <CKEditor
+                              editor={ClassicEditor}
+                              data={user?.notes}
+                              config={{
+                                toolbar: [],
+                                removePlugins: ["Heading", "Link"],
+                                isReadOnly: true,
+                              }}
+                              disabled={true}
+                            />
                           </td>
                         </tr>
                       </tbody>
