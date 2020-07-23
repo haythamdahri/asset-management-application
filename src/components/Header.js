@@ -46,7 +46,7 @@ export default () => {
                 aria-expanded="false"
                 className="nav-link dropdown-toggle"
               >
-                <FontAwesomeIcon icon="id-badge" /> Paramettre Utilisateur
+                <FontAwesomeIcon icon="id-badge" /> Parametres Utilisateur
               </Link>
               <ul
                 aria-labelledby="dropdownSubMenu1"

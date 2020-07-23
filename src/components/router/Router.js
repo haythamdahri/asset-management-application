@@ -44,7 +44,7 @@ export default () => {
           <UserRoute exact={true} path="/contact">
             <Contact />
           </UserRoute>
-          <UserRoute role={RoleType.ROLE_ADMIN} exact={true} path="/users">
+          <UserRoute exact={true} path="/users">
             <Users />
           </UserRoute>
           <UserRoute exact={true} path="/users/view/:id">

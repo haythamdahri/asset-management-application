@@ -11,7 +11,7 @@ export default ({ user, setUser }) => {
   });
 
   return (
-    <div className="col-12">
+    <div className="col-12" key={user?.id}>
       <ul className="list-group list-group-unbordered mb-3">
         <li
           className="list-group-item"
@@ -73,7 +73,7 @@ export default ({ user, setUser }) => {
           <b className="ml-5">Groupes</b>
           <span className="float-right mr-5">
             {user?.groups?.map((group, key) => (
-              <Link to={`/groups/view/${group.id}`} key={key}>
+              <Link key={key} to={`/groups/view/${group.id}`} key={key}>
                 {group.name}
                 {key === user.groups.length - 1 ? "" : " , "}
               </Link>

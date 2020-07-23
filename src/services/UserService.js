@@ -115,6 +115,17 @@ class UserService {
       });
   }
 
+  getUsersCounter() {
+    return axios
+      .get(`${API_URL}/counter`, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;  
+      });
+  }
+
   saveUserProfile(data) {
     return axios
       .put(`${API_URL}/profile`, data, { headers: authHeader() })
