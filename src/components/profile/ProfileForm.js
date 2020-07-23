@@ -27,6 +27,7 @@ export default ({ user, setUser }) => {
     loading: false,
     data: [],
   });
+  const [notes, setNotes] = useState(user?.notes || '');
 
   document.title = "Gestion Utilisateurs";
 
@@ -55,7 +56,7 @@ export default ({ user, setUser }) => {
   };
 
   const onEditorChange = (event, editor) => {
-    setUser({ ...user, notes: editor.getData() });
+    setNotes(editor.getData());
   };
 
   const onSubmit = async (data) => {
@@ -71,7 +72,7 @@ export default ({ user, setUser }) => {
     // Set saving
     setSaving(true);
     // Set Data
-    data["notes"] = user?.notes || "";
+    data["notes"] = notes;
     // SEND POST TO SERVER
       console.log(data);
     try {

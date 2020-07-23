@@ -12,6 +12,10 @@ export default () => {
   const [error, setError] = useState(false);
   const [unauthorized, setUnauthorized] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [rolesMore, setRolesMore] = useState({
+    expanded: false,
+    itemsCount: 5,
+  });
   let history = useHistory();
 
   // User Id Extraction from URL
@@ -179,18 +183,19 @@ export default () => {
                         <tr>
                           <th scope="col">Description</th>
                           <td>
-                          {group?.description && group?.description?.length > 0 && (
-                          <CKEditor
-                            editor={ClassicEditor}
-                            data={group?.description}
-                            config={{
-                              toolbar: [],
-                              removePlugins: ["Heading", "Link"],
-                              isReadOnly: true,
-                            }}
-                            disabled={true}
-                          />
-                          )}
+                            {group?.description &&
+                              group?.description?.length > 0 && (
+                                <CKEditor
+                                  editor={ClassicEditor}
+                                  data={group?.description}
+                                  config={{
+                                    toolbar: [],
+                                    removePlugins: ["Heading", "Link"],
+                                    isReadOnly: true,
+                                  }}
+                                  disabled={true}
+                                />
+                              )}
                           </td>
                         </tr>
                         <tr>
@@ -204,14 +209,48 @@ export default () => {
                               }}
                             >
                               {group?.roles?.map((role, key) => (
-                                <li className="list-group-item" key={key}>
-                                  {role.roleName}
-                                </li>
+                                <>
+                                  {key < rolesMore.itemsCount && (
+                                    <li className="list-group-item" key={key}>
+                                      {role.roleName}
+                                    </li>
+                                  )}
+                                </>
                               ))}
-                              {(group?.roles === null || group?.roles?.length === 0) && (
+
+                              {group?.roles?.length > 5 && !rolesMore.expanded && (
+                                <Link
+                                  to="#"
+                                  onClick={() =>
+                                    setRolesMore({
+                                      itemsCount: group?.roles?.length,
+                                      expanded: true,
+                                    })
+                                  }
+                                >
+                                  Voir plus
+                                </Link>
+                              )}
+                              {group?.roles?.length > 5 && rolesMore.expanded && (
+                                <Link
+                                  to="#"
+                                  onClick={() =>
+                                    setRolesMore({
+                                      itemsCount: 5,
+                                      expanded: false,
+                                    })
+                                  }
+                                >
+                                  Voir moins
+                                </Link>
+                              )}
+
+                              {(group?.roles === null ||
+                                group?.roles?.length === 0) && (
                                 <li className="list-group-item">
-                                    <FontAwesomeIcon icon="exclamation-circle" /> Aucun role assigné a ce groupe
-                              </li>
+                                  <FontAwesomeIcon icon="exclamation-circle" />{" "}
+                                  Aucun role assigné a ce groupe
+                                </li>
                               )}
                             </ul>
                           </td>
