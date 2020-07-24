@@ -35,12 +35,19 @@ export default () => {
     setUser({});
     try {
       const user = await UserService.getUser(id);
+      UserService.getAuthenticatedUserOrganization().then((organization) => {
+        setUser({...user, organization});
+      })
       if (!user.hasOwnProperty("id")) {
         setUser(null);
         setLoading(false);
         setError(false);
         setUnauthorized(false);
       } else {
+        // Fetch user organization
+        UserService.getAuthenticatedUserOrganization().then((organization) => {
+          setUser({...user, organization: organization});
+        });
         if (user.avatar !== null) {
           user.avatar.file =
             process.env.REACT_APP_API_URL +

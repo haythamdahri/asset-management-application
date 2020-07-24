@@ -236,7 +236,11 @@ export default () => {
                         </div>
                         <div className="col-md-8">
                           <div className="card-body">
-                            <h1 className="card-title mb-5 font-weight-bold">{organization?.name}</h1>
+                            <h1 className="card-title mb-5 font-weight-bold">
+                              <Link to={`/organizations/view/${organization?.id}`}>
+                                {organization?.name}
+                              </Link>
+                            </h1>
                             <p className="card-text  mt-5">
                               <small className="text-muted mx-auto text-center block-center">
                                 <Link

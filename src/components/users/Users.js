@@ -291,7 +291,7 @@ export default () => {
                         usersPage?.content?.map((user, key) => (
                           <tr key={key}>
                             <td>
-                              <Link to={`/users/${user.id}`}>
+                              <Link to={`/users/view/${user.id}`}>
                                 {user.firstName} {user.lastName}
                               </Link>
                             </td>

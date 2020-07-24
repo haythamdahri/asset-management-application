@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import CKEditor from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
@@ -12,50 +12,50 @@ export default ({ user, setUser }) => {
 
   return (
     <div className="col-12" key={user?.id}>
-      <ul className="list-group list-group-unbordered mb-3">
-        <li
+      <ul key="UL1" className="list-group list-group-unbordered mb-3">
+        <li key="LI1"
           className="list-group-item"
           style={{ borderTop: "2px solid black" }}
         >
           <b className="ml-5">Nom</b>
           <span className="float-right mr-5">{user?.lastName}</span>
         </li>
-        <li
+        <li key="LI2"
           className="list-group-item"
           style={{ borderTop: "2px solid black" }}
         >
           <b className="ml-5">Prénom</b>
           <span className="float-right mr-5">{user?.firstName}</span>
         </li>
-        <li
+        <li key="LI3"
           className="list-group-item"
           style={{ borderTop: "2px solid black" }}
         >
           <b className="ml-5">Email</b>
           <span className="float-right mr-5">{user?.email}</span>
         </li>
-        <li
+        <li key="LI4"
           className="list-group-item"
           style={{ borderTop: "2px solid black" }}
         >
           <b className="ml-5">Téléphone</b>
           <span className="float-right mr-5">{user?.phone}</span>
         </li>
-        <li
+        <li key="LI5"
           className="list-group-item"
           style={{ borderTop: "2px solid black" }}
         >
           <b className="ml-5">Localisation</b>
           <span className="float-right mr-5">{user?.location?.name}</span>
         </li>
-        <li
+        <li key="LI6"
           className="list-group-item"
           style={{ borderTop: "2px solid black" }}
         >
           <b className="ml-5">Entité</b>
           <span className="float-right mr-5">{user?.entity?.name}</span>
         </li>
-        <li
+        <li key="LI7"
           className="list-group-item"
           style={{ borderTop: "2px solid black" }}
         >
@@ -66,7 +66,7 @@ export default ({ user, setUser }) => {
             </Link>
           </span>
         </li>
-        <li
+        <li key="LI8"
           className="list-group-item"
           style={{ borderTop: "2px solid black" }}
         >
@@ -80,21 +80,21 @@ export default ({ user, setUser }) => {
             ))}
           </span>
         </li>
-        <li
+        <li key="LI9"
           className="list-group-item"
           style={{ borderTop: "2px solid black" }}
         >
           <b className="ml-5">Poste</b>
           <span className="float-right mr-5">{user?.jobTitle}</span>
         </li>
-        <li
+        <li key="LI10"
           className="list-group-item"
           style={{ borderTop: "2px solid black" }}
         >
           <b className="ml-5">Numéro d'employé</b>
           <span className="float-right mr-5">{user?.employeeNumber}</span>
         </li>
-        <li
+        <li key="LI11"
           className="list-group-item"
           style={{
             borderTop: "2px solid black",
@@ -132,13 +132,13 @@ export default ({ user, setUser }) => {
               }}
             >
               {user?.roles?.map((role, key) => (
-                <>
+                <div key={key}>
                   {key < rolesMore.itemsCount && (
                     <li className="list-group-item" key={key}>
                       {role.roleName}
                     </li>
                   )}
-                </>
+                </div>
               ))}
 
               {user?.roles?.length > 5 && !rolesMore.expanded && (

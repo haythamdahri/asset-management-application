@@ -26,6 +26,10 @@ export default () => {
     setIsUserError(false);
     try {
       const user = await UserService.getAuthenticatedUserDetails();
+      // Fetch user organization
+      UserService.getAuthenticatedUserOrganization().then((organization) => {
+        setUser({...user, organization: organization});
+      });
       user.avatar.file =
         process.env.REACT_APP_API_URL +
         "/api/v1/users/" +
@@ -84,12 +88,12 @@ export default () => {
             </div>
             <div className="col-sm-6">
               <ol className="breadcrumb float-sm-right">
-                <li className="breadcrumb-item">
+                <li className="breadcrumb-item" key="LI1">
                   <Link to="/">
                     <FontAwesomeIcon icon="home" /> Acceuil
                   </Link>
                 </li>
-                <li className="breadcrumb-item active">Profil</li>
+                <li className="breadcrumb-item active" key="LI2">Profil</li>
               </ol>
             </div>
           </div>
@@ -216,7 +220,7 @@ export default () => {
                   <div className="card" style={{borderTop: '2px solid blue'}}>
                     <div className="card-header p-2">
                       <ul className="nav nav-pills">
-                        <li className="nav-item">
+                        <li className="nav-item" key="LI3">
                           <a
                             className="nav-link active"
                             href="#profileDetails"
@@ -225,7 +229,7 @@ export default () => {
                             Détails profil
                           </a>
                         </li>
-                        <li className="nav-item">
+                        <li className="nav-item" key="LI4">
                           <a
                             className="nav-link"
                             href="#settings"

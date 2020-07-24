@@ -14,10 +14,6 @@ export default () => {
   const [isError, setIsError] = useState(false);
   const [isUnAuthorized, setIsUnAuthorized] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [organizationUsersData, setOrganizationUsersData] = useState({
-    isLoading: true,
-    data: [],
-  });
   const [usersMore, setUsersMore] = useState({
     expanded: false,
     itemsCount: 5,
@@ -51,10 +47,6 @@ export default () => {
         setIsError(false);
         setIsUnAuthorized(false);
       } else {
-        UserService.getOrganizationUsers(organization?.id).then((users) => {
-          console.log(users);
-          setOrganizationUsersData({ data: users, isLoading: false });
-        });
         setOrganization({ ...organization });
         setIsLoading(false);
         setIsError(false);
@@ -185,7 +177,7 @@ export default () => {
                           data-attribute="SRL"
                         >
                           <img
-                            className="profile-user-img img-fluid img-circle"
+                            className="profile-user-img img-fluid img-thumbnail shadow shadow-sm"
                             src={
                               !isLoading && organization !== null
                                 ? `${
@@ -290,8 +282,8 @@ export default () => {
                                 letterSpacing: "1px",
                               }}
                             >
-                              {!organizationUsersData.isLoading &&
-                                organizationUsersData?.data?.map((user, key) => (
+                              {!isLoading &&
+                                organization?.users?.map((user, key) => (
                                   <div key={key}>
                                     {key < usersMore.itemsCount && (
                                       <li className="list-group-item" key={key}>
@@ -302,18 +294,6 @@ export default () => {
                                     )}
                                   </div>
                                 ))}
-                              {organizationUsersData?.isLoading && (
-                                <div className="col-12 text-center">
-                                  {" "}
-                                  <div
-                                    className="spinner-border text-primary"
-                                    role="status"
-                                  >
-                                    <span className="sr-only">Loading...</span>
-                                  </div>
-                                </div>
-                              )}
-
                               {organization?.users?.length > 5 &&
                                 !usersMore.expanded && (
                                   <Link
@@ -343,8 +323,8 @@ export default () => {
                                   </Link>
                                 )}
 
-                              {(!organizationUsersData.isLoading &&
-                                organizationUsersData?.data?.length === 0) && (
+                              {(!isLoading &&
+                                (organization?.users?.length === 0 || organization?.users === null)) && (
                                 <li className="list-group-item">
                                   <FontAwesomeIcon icon="exclamation-circle" />{" "}
                                   Aucun utilisateur n'a rejoint l'organisme

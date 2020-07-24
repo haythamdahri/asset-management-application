@@ -226,7 +226,10 @@ export default () => {
                     <div className="card-body pb-0">
                       <div className="row d-flex align-items-stretch">
                         {groupsPage?.content?.map((group, key) => (
-                          <div className="col-12 col-sm-6 col-md-4 d-flex align-items-stretch justify-content-center mx-auto" key={key}>
+                          <div
+                            className="col-12 col-sm-6 col-md-4 d-flex align-items-stretch justify-content-center mx-auto"
+                            key={key}
+                          >
                             <div
                               className="card bg-light"
                               style={{ borderTop: "2px solid blue" }}
@@ -238,7 +241,11 @@ export default () => {
                                 <div className="row">
                                   <div className="col-7">
                                     <h2 className="lead mt-4">
-                                      <b>{group?.name}</b>
+                                      <b>
+                                        <Link to={`/groups/view/${group?.id}`}>
+                                          {group?.name}
+                                        </Link>
+                                      </b>
                                     </h2>
                                   </div>
                                   <div className="col-5 text-center">

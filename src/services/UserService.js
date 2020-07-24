@@ -219,9 +219,9 @@ class UserService {
       });
   }
 
-  async getOrganizationUsers(organizationId) {
+  async getAuthenticatedUserOrganization() {
     return axios
-      .get(`${API_URL}/search/organizations/${organizationId}`, { headers: authHeader() })
+      .get(`${API_URL}/profile/organization`, { headers: authHeader() })
       .then((response) => {
         return response.data;
       })
