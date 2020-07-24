@@ -301,12 +301,12 @@ export default () => {
                             <td>{user.username}</td>
                             <td>{user.entity?.name}</td>
                             <td>
-                              <Link to={`/locations/${user.location?.id}`}>
+                              <Link to={`/locations/view/${user.location?.id}`}>
                                 {user.location?.name}
                               </Link>
                             </td>
                             <td>
-                              <Link to={`/users/${user.manager?.id}`}>
+                              <Link to={`/users/view/${user.manager?.id}`}>
                                 {user.manager
                                   ? user.manager?.firstName +
                                     " " +
@@ -321,7 +321,7 @@ export default () => {
                             ></td>
                             <td>
                               {user.groups?.map((group, key) => (
-                                <Link to={`/groups/${group.id}`} key={key}>
+                                <Link to={`/groups/view/${group.id}`} key={key}>
                                   {group.name}
                                   {key === user.groups.length - 1 ? "" : ","}
                                 </Link>
@@ -364,7 +364,7 @@ export default () => {
                               </button>
                             </td>
                             <td>
-                              <Link to={`/users/${user?.id}`}>
+                              <Link to={`/users/view/${user?.id}`}>
                                 <button className="btn btn-secondary btn-sm">
                                   <FontAwesomeIcon
                                     icon="street-view"

@@ -197,11 +197,33 @@ class UserService {
       });
   }
 
+  async canEditOrganization() {
+    return axios
+      .get(`${API_URL}/roles/checking/organizations`, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
   async checkUserAdmin() {
     return axios
       .get(`${API_URL}/roles/checking/admin`, { headers: authHeader() })
       .then((response) => {
         return true;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
+  async getOrganizationUsers(organizationId) {
+    return axios
+      .get(`${API_URL}/search/organizations/${organizationId}`, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
       })
       .catch((err) => {
         throw err;

@@ -3,7 +3,6 @@ import SignIn from "../authentication/SignIn";
 import NotFound from "../NotFound";
 import Home from "../Home";
 import { AuthenticatedGuard, UserRoute } from "../../services/AuthGuard";
-import RoleType from "../../models/RoleType";
 import Menu from "../Menu";
 import Footer from "../Footer";
 import AuthService from "../../services/AuthService";
@@ -25,6 +24,9 @@ import {
   Redirect,
 } from "react-router-dom";
 import Profile from "../profile/Profile";
+import Organizations from "../organizations/Organizations";
+import OrganizationView from "../organizations/OrganizationView";
+import OrganizationForm from "../organizations/OrganizationForm";
 
 export default () => {
   return (
@@ -71,28 +73,27 @@ export default () => {
           <UserRoute exact={true} path="/profile">
             <Profile />
           </UserRoute>
+          <UserRoute exact={true} path="/organizations">
+            <Organizations />
+          </UserRoute>
+          <UserRoute exact={true} path="/organizations/:id/edit">
+            <OrganizationForm />
+          </UserRoute>
+          <UserRoute exact={true} path="/organizations/create">
+            <OrganizationForm />
+          </UserRoute>
+          <UserRoute exact={true} path="/organizations/view/:id">
+            <OrganizationView />
+          </UserRoute>
           <AuthenticatedGuard exact={true} path="/signin">
             <SignIn />
           </AuthenticatedGuard>
-          {AuthService.isAuthenticated() ? (
-            <>
-              <UserRoute exact={true} path="/reset-password">
-                <PasswordRequest />
-              </UserRoute>
-              <UserRoute exact={true} path="/reset-password/:token">
-                <PasswordReset />
-              </UserRoute>
-            </>
-          ) : (
-            <>
-              <AuthenticatedGuard exact={true} path="/reset-password">
-                <PasswordRequest />
-              </AuthenticatedGuard>
-              <AuthenticatedGuard exact={true} path="/reset-password/:token">
-                <PasswordReset />
-              </AuthenticatedGuard>
-            </>
-          )}
+          <Route exact={true} path="/reset-password">
+            <PasswordRequest />
+          </Route>
+          <Route exact={true} path="/reset-password/:token">
+            <PasswordReset />
+          </Route>
           <Route exact={true} path="/notfound">
             <NotFound />
           </Route>

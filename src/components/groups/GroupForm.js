@@ -22,6 +22,7 @@ export default () => {
     loading: false,
     data: [],
   });
+  document.title = "Gestion Groupes";
 
   // Group Id Extraction from URL
   let { id } = useParams();
@@ -30,6 +31,7 @@ export default () => {
     // Set loading
     setIsLoading(true);
     setIsGroupError(false);
+    setIsUnauthorized(false);
     setGroup({});
     // Check user permissions
     UserService.checkUserAdmin()
@@ -139,7 +141,7 @@ export default () => {
           <div className="row">
             <div className="col-12">
               <div className="ribbon-wrapper ribbon-lg">
-                <div className="ribbon bg-success text-lg">Utilisateur</div>
+                <div className="ribbon bg-success text-lg">Groupe</div>
               </div>
             </div>
 
@@ -150,7 +152,7 @@ export default () => {
               !isLoading && (
                 <div className="col-12 text-center">
                   <Link
-                    to={`/groups/${group?.id}`}
+                    to={`/groups/view/${group?.id}`}
                     type="submit"
                     className="btn btn-dark btn-sm mt-2 font-weight-bold text-center mx-2"
                   >
@@ -174,7 +176,7 @@ export default () => {
                     >
                       <FontAwesomeIcon icon="sync" /> Ressayer
                     </button>{" "}
-                    <Link to={`/users`}>
+                    <Link to={`/groups`}>
                       <button className="btn btn-light font-weight-bold ml-2">
                         <FontAwesomeIcon icon="users" /> Gestion groupes
                       </button>
@@ -263,6 +265,9 @@ export default () => {
                           style={{ height: "200px" }}
                           multiple
                           defaultValue={group?.roles?.map(
+                            (role, key) => role.id
+                          )}
+                          defaultChecked={group?.roles?.map(
                             (role, key) => role.id
                           )}
                           onClick={(event) => {

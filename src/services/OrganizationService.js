@@ -1,11 +1,21 @@
-import Axios from "axios";
+import axios from "axios";
 import authHeader from "./AuthHeader";
 
 const API_URL = `${process.env.REACT_APP_API_URL}/api/v1/organizations`;
 
 class OrganizationService {
   getOrganizations() {
-    return Axios.get(`${API_URL}/`, { headers: authHeader() })
+    return axios.get(`${API_URL}/`, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw new Error(err);
+      });
+  }
+
+  getOrganization(id) {
+    return axios.get(`${API_URL}/${id}`, { headers: authHeader() })
       .then((response) => {
         return response.data;
       })
@@ -15,12 +25,50 @@ class OrganizationService {
   }
 
   getOrganizationsCounter() {
-    return Axios.get(`${API_URL}/counter`, { headers: authHeader() })
+    return axios.get(`${API_URL}/counter`, { headers: authHeader() })
       .then((response) => {
         return response.data;
       })
       .catch((err) => {
         throw new Error(err);
+      });
+  }
+
+  getOrganizationsPage(search, pageable) {
+    const params = {
+      search: search !== "" ? search : "",
+      page: pageable?.pageNumber,
+      size: pageable?.pageSize,
+    };
+    return axios
+      .get(`${API_URL}/page`, { params, headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
+  deleteOrganization(id) {
+    return axios
+      .delete(`${API_URL}/${id}`, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
+  saveOrganization(formData) {
+    return axios
+      .put(`${API_URL}/`, formData, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
       });
   }
 }

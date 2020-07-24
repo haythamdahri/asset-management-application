@@ -139,14 +139,14 @@ export default () => {
                     <div className="card-body box-profile">
                       <div className="text-center">
                         <SRLWrapper>
-                          {(!isLoading && !isUserError) ? (
+                          {(!isLoading && user !== null) ? (
                           <a
                             href={`${user?.avatar?.file}?date=${Date.now()}&loading=${isLoading}`}
                             data-attribute="SRL"
                           >
                           <img
                             className="profile-user-img img-fluid img-circle"
-                            src={(!isLoading && !isUserError) ? `${user?.avatar?.file}?date=${Date.now()}&loading=${isLoading}` : `/dist/img/boxed-bg.jpg?date=${Date.now()}&loading=${isLoading}`}
+                            src={(!isLoading && user !== null) ? `${user?.avatar?.file}?date=${Date.now()}&loading=${isLoading}` : `/dist/img/boxed-bg.jpg?date=${Date.now()}&loading=${isLoading}`}
                             alt={user?.username}
                             style={{
                               maxHeight: "150px",

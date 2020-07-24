@@ -27,14 +27,14 @@ export default ({ user, setUser }) => {
     loading: false,
     data: [],
   });
-  const [notes, setNotes] = useState(user?.notes || '');
+  const [notes, setNotes] = useState(user?.notes || "");
 
   document.title = "Gestion Utilisateurs";
 
   useEffect(() => {
-      console.log(user);
-      fetchLanguages();
-      fetchLocations();
+    console.log(user);
+    fetchLanguages();
+    fetchLocations();
   }, []);
 
   const fetchLanguages = async () => {
@@ -61,20 +61,44 @@ export default ({ user, setUser }) => {
 
   const onSubmit = async (data) => {
     // CHECK PASSWORD
-    if (!data.password && data.updatePassword) {
-      setError("password", {
-        type: "required",
-        message: "Mot de passe est requis",
-      });
-      window.scrollTo(0, 0);
-      return;
+    if (data.updatePassword) {
+      if (!data.password) {
+        setError("password", {
+          type: "required",
+          message: "Mot de passe est requis",
+        });
+        window.scrollTo(0, 0);
+        return;
+      } else if (!data.passwordConfirm) {
+        setError("passwordConfirm", {
+          type: "required",
+          message: "Confirmation du mot de passe est requise",
+        });
+        window.scrollTo(0, 0);
+        return;
+      } else if (
+        data.password &&
+        data.passwordConfirm &&
+        data.password !== data.passwordConfirm
+      ) {
+        setError("password", {
+          type: "required",
+          message: "Les mots de passe ne correspondent pas!",
+        });
+        setError("passwordConfirm", {
+          type: "required",
+          message: "Les mots de passe ne correspondent pas!",
+        });
+        window.scrollTo(0, 0);
+        return;
+      }
     }
     // Set saving
     setSaving(true);
     // Set Data
     data["notes"] = notes;
     // SEND POST TO SERVER
-      console.log(data);
+    console.log(data);
     try {
       const user = await UserService.saveUserProfile(data);
       user.avatar.file =
@@ -83,7 +107,7 @@ export default ({ user, setUser }) => {
         user?.id +
         "/avatar/file";
       setUser(user);
-      UserService.Emitter.emit('USER_UPDATED', user);
+      UserService.Emitter.emit("USER_UPDATED", user);
       setSaving(false);
       Swal.fire(
         "Operation effectuée!",
@@ -273,12 +297,11 @@ export default ({ user, setUser }) => {
               }}
             />
             {/** Required price error */}
-            {errors.passwordConfirm &&
-              errors.passwordConfirm.type === "notMatch" && (
-                <div className="invalid-feedback">
-                  {errors.passwordConfirm.message}
-                </div>
-              )}
+            {errors.passwordConfirm && (
+              <div className="invalid-feedback">
+                {errors.passwordConfirm.message}
+              </div>
+            )}
           </div>
         </div>
 

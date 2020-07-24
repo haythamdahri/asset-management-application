@@ -11,8 +11,8 @@ import RoleService from "../../services/RoleService";
 import LocationService from "../../services/LocationService";
 import { countries } from "countries-list";
 import GroupService from "../../services/GroupService";
-import CKEditor from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import CKEditor from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 export default () => {
   const {
@@ -63,40 +63,44 @@ export default () => {
 
   useEffect(() => {
     setLoading(true);
-    UserService.canEditUser().then((response) => {
-      if (response.hasRole) {
-        // Fetch companies
-        fetchOrganizations();
-        // Fetch lagnauges
-        fetchLanguages();
-        // Fetch users
-        fetchUsers();
-        // Fetch departments
-        fetchEntities();
-        // Fetch locations
-        fetchLocations();
-        // Fetch groups
-        fetchGroups();
-        // Fetch roles
-        fetchRoles();
-        // Fetch Users if not a new user
-        fetchUser();
-      } else {
+    setUserError(false);
+    setUnauthorized(false);
+    UserService.canEditUser()
+      .then((response) => {
+        if (response.hasRole) {
+          // Fetch companies
+          fetchOrganizations();
+          // Fetch lagnauges
+          fetchLanguages();
+          // Fetch users
+          fetchUsers();
+          // Fetch departments
+          fetchEntities();
+          // Fetch locations
+          fetchLocations();
+          // Fetch groups
+          fetchGroups();
+          // Fetch roles
+          fetchRoles();
+          // Fetch Users if not a new user
+          fetchUser();
+        } else {
+          setLoading(false);
+          setUserError(false);
+          setUnauthorized(true);
+        }
+      })
+      .catch((err) => {
+        const status = err?.response?.data?.status;
+        if (status === 403) {
+          setUnauthorized(true);
+          setUserError(false);
+        } else {
+          setUnauthorized(false);
+          setUserError(true);
+        }
         setLoading(false);
-        setUserError(false);
-        setUnauthorized(true);
-      }
-    }).catch((err) => {
-      const status = err?.response?.data?.status;
-      if( status === 403 ) {
-        setUnauthorized(true);
-        setUserError(false);
-      } else {
-        setUnauthorized(false);
-        setUserError(true);
-      }
-      setLoading(false);
-    });
+      });
     return () => {
       abortController.abort();
     };
@@ -213,8 +217,8 @@ export default () => {
   };
 
   const onEditorChange = (event, editor) => {
-    setUser({...user, notes: editor.getData()});
-  }
+    setUser({ ...user, notes: editor.getData() });
+  };
 
   const onSubmit = async (data) => {
     // Verify if data has file in case of update
@@ -232,13 +236,37 @@ export default () => {
       return;
     }
     // CHECK PASSWORD
-    if (!data.password && (!user.hasOwnProperty("id") || data.updatePassword)) {
-      setError("password", {
-        type: "required",
-        message: "Mot de passe est requis",
-      });
-      window.scrollTo(0, 0);
-      return;
+    if (data.updatePassword) {
+      if (!data.password) {
+        setError("password", {
+          type: "required",
+          message: "Mot de passe est requis",
+        });
+        window.scrollTo(0, 0);
+        return;
+      } else if (!data.passwordConfirm) {
+        setError("passwordConfirm", {
+          type: "required",
+          message: "Confirmation du mot de passe est requise",
+        });
+        window.scrollTo(0, 0);
+        return;
+      } else if (
+        data.password &&
+        data.passwordConfirm &&
+        data.password !== data.passwordConfirm
+      ) {
+        setError("password", {
+          type: "required",
+          message: "Les mots de passe ne correspondent pas!",
+        });
+        setError("passwordConfirm", {
+          type: "required",
+          message: "Les mots de passe ne correspondent pas!",
+        });
+        window.scrollTo(0, 0);
+        return;
+      }
     }
     // Set saving
     setSaving(true);
@@ -537,8 +565,7 @@ export default () => {
                         }}
                       />
                       {/** Required price error */}
-                      {errors.passwordConfirm &&
-                        errors.passwordConfirm.type === "notMatch" && (
+                      {errors.passwordConfirm && (
                           <div className="invalid-feedback">
                             {errors.passwordConfirm.message}
                           </div>
@@ -1123,7 +1150,7 @@ export default () => {
                       Notes:{" "}
                     </label>
                     <div className="col-md-9">
-                        <CKEditor
+                      <CKEditor
                         editor={ClassicEditor}
                         data={user?.notes}
                         disabled={saving}
@@ -1200,9 +1227,12 @@ export default () => {
                     <div className="col-md-9">
                       {!groupsData.loading && (
                         <select
-                        style={{height: '100px'}}
+                          style={{ height: "100px" }}
                           multiple
                           defaultValue={user?.groups?.map(
+                            (group, key) => group.id
+                          )}
+                          defaultChecked={user?.groups?.map(
                             (group, key) => group.id
                           )}
                           onClick={(event) => {
@@ -1244,9 +1274,12 @@ export default () => {
                     <div className="col-md-9">
                       {!rolesData.loading && (
                         <select
-                        style={{height: '200px'}}
+                          style={{ height: "200px" }}
                           multiple
                           defaultValue={user?.roles?.map(
+                            (role, key) => role.id
+                          )}
+                          defaultChecked={user?.roles?.map(
                             (role, key) => role.id
                           )}
                           onClick={(event) => {

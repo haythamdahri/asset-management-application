@@ -188,7 +188,7 @@ export default () => {
                       <thead align="center">
                         <tr>
                           <th scope="col">Organisme</th>
-                          <td>{user?.organization?.name}</td>
+                          <td><Link to={`/organizations/view/${user?.organization?.id}`} >{user?.organization?.name}</Link></td>
                         </tr>
                       </thead>
                       <tbody align="center">

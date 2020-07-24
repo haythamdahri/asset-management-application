@@ -112,7 +112,7 @@ export default () => {
           <div className="row">
             <div className="col-12">
               <div className="ribbon-wrapper ribbon-lg">
-                <div className="ribbon bg-success text-lg">Groups</div>
+                <div className="ribbon bg-success text-lg">Groupe</div>
               </div>
             </div>
 
@@ -263,7 +263,7 @@ export default () => {
                 <div className="col-md-2 mx-auto mt-3 mb-3">
                   <Link to={`/groups/${group.id}/edit`}>
                     <button className="btn btn-secondary btn-sm">
-                      <FontAwesomeIcon icon="user-edit" color="white" />
+                      <FontAwesomeIcon icon="edit" color="white" />
                     </button>
                   </Link>{" "}
                   <button
@@ -271,7 +271,7 @@ export default () => {
                     className="btn btn-danger btn-sm"
                     disabled={deleting ? "disabled" : ""}
                   >
-                    <FontAwesomeIcon icon="user-minus" color="white" />
+                    <FontAwesomeIcon icon="trash-alt" color="white" />
                   </button>
                 </div>
               </>

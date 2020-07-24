@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import UserService from "../../services/UserService";
+import AuthService from "../../services/AuthService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import logo from "../../images/logo.jpg";
 import "../../styles/login.css";
@@ -17,7 +18,6 @@ export default () => {
   useEffect(() => {
     document.title = "Réinitialisation mot de passe";
     document.body.style.backgroundColor = "#f7f9fb";
-    document.body.style.fontSize = "14px";
     return () => {
       abortController.abort();
     };
@@ -53,7 +53,8 @@ export default () => {
   };
 
   return (
-    <div className="my-login-page">
+    
+    <div className={`my-login-page ${AuthService.isAuthenticated() ? 'content-wrapper' : ''}`}>
       <div className="col-12 mt-5">
         <section className="h-100">
           <div className="container h-100">
