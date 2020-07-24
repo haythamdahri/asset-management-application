@@ -29,7 +29,7 @@ class ProcessService {
 
   updateProcessStatus(id, status) {
     return axios
-      .put(`${API_URL}/${id}/status`, { params: {status}, headers: authHeader() })
+      .put(`${API_URL}/${id}/status`,{}, { headers: authHeader(), params: {status} })
       .then((response) => {
         return response.data;
       })
