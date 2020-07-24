@@ -8,7 +8,7 @@ export default () => {
   const abortController = new AbortController();
 
   useEffect(() => {
-    UserService.Emitter.on('USER_UPDATED', (user) => {
+    UserService.emitter.on('USER_UPDATED', (user) => {
       setUser(user);
     });
     fetchUser();

@@ -20,7 +20,7 @@ class OrganizationService {
         return response.data;
       })
       .catch((err) => {
-        throw new Error(err);
+        throw err;
       });
   }
 

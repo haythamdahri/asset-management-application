@@ -32,7 +32,6 @@ export default ({ user, setUser }) => {
   document.title = "Gestion Utilisateurs";
 
   useEffect(() => {
-    console.log(user);
     fetchLanguages();
     fetchLocations();
   }, []);
@@ -107,7 +106,7 @@ export default ({ user, setUser }) => {
         user?.id +
         "/avatar/file";
       setUser({ ...updatedUser, organization });
-      UserService.Emitter.emit("USER_UPDATED", user);
+      UserService.emitter.emit("USER_UPDATED", user);
       setSaving(false);
       Swal.fire(
         "Operation effectuée!",

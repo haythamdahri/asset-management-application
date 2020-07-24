@@ -141,7 +141,7 @@ export default () => {
         await ProcessService.updateProcessStatus(process?.id, status);
         Swal.fire(
           "Operation éffectuée!",
-          `Le statut du processus à été ${status ? 'rejecté' : 'approuvé'} avec succés!`,
+          `Le statut du processus à été ${status ? 'approuvé' : 'rejeté'} avec succés!`,
           "success"
         );
         // Set process status
@@ -252,13 +252,14 @@ export default () => {
                         <th>Description</th>
                         <th>Organisme</th>
                         <th>Statut</th>
+                        <th>Processus Superieur</th>
                         <th colSpan={4}>Actions</th>
                       </tr>
                     </thead>
                     <tbody className="text-center">
                       {isLoading && (
                         <tr>
-                          <td colSpan={6} className="text-center bg-light">
+                          <td colSpan={9} className="text-center bg-light">
                             <div
                               className="spinner-border text-primary"
                               role="status"
@@ -273,7 +274,7 @@ export default () => {
                         processesPage?.content?.length === 0 && (
                           <tr>
                             <td
-                              colSpan={7}
+                              colSpan={9}
                               className="text-center alert alert-dark"
                             >
                               <h2 className="font-weight-bold">
@@ -286,7 +287,7 @@ export default () => {
                       {(isError || isUnAuthorized) && (
                         <tr>
                           <td
-                            colSpan={7}
+                            colSpan={9}
                             className={`text-center alert ${
                               isError ? "alert-warning" : "alert-danger"
                             }`}
@@ -350,6 +351,13 @@ export default () => {
                               )}
                             </td>
                             <td>
+                              <Link
+                                to={`/processes/view/${process?.parentProcess?.id}`}
+                              >
+                                {process?.parentProcess?.name}
+                              </Link>
+                            </td>
+                            <td>
                               <button
                                 onClick={(event) => updateProcessStatus(process, !process?.status)}
                                 className={`btn btn-${process?.status ? 'danger' : 'success'} btn-sm ${
@@ -390,7 +398,7 @@ export default () => {
                               <Link to={`/processes/view/${process?.id}`}>
                                 <button className="btn btn-secondary btn-sm">
                                   <FontAwesomeIcon
-                                    icon="street-view"
+                                    icon="binoculars"
                                     color="white"
                                   />
                                 </button>

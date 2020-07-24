@@ -62,7 +62,7 @@ export default () => {
         user?.id
       }/avatar/file?date=${Date.now()}`;
       setUser(user);
-      UserService.Emitter.emit('USER_UPDATED', user);
+      UserService.emitter.emit('USER_UPDATED', user);
       Toast.fire({
         icon: "success",
         title: `Image has been updated successfully!`,
@@ -219,8 +219,8 @@ export default () => {
                 <div className="col-md-9">
                   <div className="card" style={{borderTop: '2px solid blue'}}>
                     <div className="card-header p-2">
-                      <ul className="nav nav-pills">
-                        <li className="nav-item" key="LI3">
+                      <ul className="nav nav-tabs nav-pills with-arrow lined flex-column flex-sm-row text-center col-12">
+                        <li className="nav-item flex-sm-fill" key="LI3">
                           <a
                             className="nav-link active"
                             href="#profileDetails"
@@ -229,7 +229,7 @@ export default () => {
                             Détails profil
                           </a>
                         </li>
-                        <li className="nav-item" key="LI4">
+                        <li className="nav-item flex-sm-fill" key="LI4">
                           <a
                             className="nav-link"
                             href="#settings"

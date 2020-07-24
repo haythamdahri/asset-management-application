@@ -10,7 +10,7 @@ class UserService {
 
   constructor() {
     const eventEmitter = new EventEmitter();
-    this.Emitter = {
+    this.emitter = {
       on: (event, fn) => eventEmitter.on(event, fn),
       once: (event, fn) => eventEmitter.once(event, fn),
       off: (event, fn) => eventEmitter.off(event, fn),

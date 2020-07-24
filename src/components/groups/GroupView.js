@@ -49,7 +49,7 @@ export default () => {
         setUnauthorized(false);
       }
     } catch (e) {
-      const status = e.response?.status || null;
+      const status = e?.response?.status || null;
       setLoading(false);
       setGroup({});
       switch (status) {
@@ -128,7 +128,7 @@ export default () => {
                       onClick={() => fetchUser()}
                       className="btn btn-warning font-weight-bold ml-2"
                     >
-                      <FontAwesomeIcon icon="sync" /> Ressayer
+                      <FontAwesomeIcon icon="sync" /> Ressayer {unauthorized}
                     </button>
                   </h2>
                 </div>

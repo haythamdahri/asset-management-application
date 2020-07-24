@@ -53,9 +53,11 @@ export default () => {
         setIsUnAuthorized(false);
       }
     } catch (e) {
-      const status = e.response?.status || null;
+      console.log(e);
+      const status = e?.response?.status || null;
       setIsLoading(false);
       setOrganization({});
+      console.log(status)
       switch (status) {
         case 403:
           setIsUnAuthorized(true);
@@ -216,8 +218,8 @@ export default () => {
                     style={{ borderTop: "blue solid 2px" }}
                   >
                     <div className="card-header d-flex p-0">
-                      <ul className="nav nav-pills ml-auto p-2 mx-auto">
-                        <li className="nav-item">
+                      <ul className="nav nav-tabs nav-pills with-arrow lined flex-column flex-sm-row text-center col-12">
+                        <li className="nav-item flex-sm-fill">
                           <a
                             className="nav-link active"
                             href="#organizations"
@@ -226,7 +228,7 @@ export default () => {
                             Organisme
                           </a>
                         </li>
-                        <li className="nav-item">
+                        <li className="nav-item flex-sm-fill">
                           <a
                             className="nav-link"
                             href="#employees"
@@ -245,7 +247,7 @@ export default () => {
                             <table className="table table-striped">
                               <thead align="center">
                                 <tr>
-                                  <th scope="col">Name</th>
+                                  <th scope="col">Nom</th>
                                   <td>{organization?.name}</td>
                                 </tr>
                               </thead>

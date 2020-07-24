@@ -27,7 +27,7 @@ class AuthService {
       history.push("/signin");
     }
     // Unsubscribe from UserService Emitter
-    UserService.Emitter.off('USER_UPDATED');
+    UserService.emitter.off('USER_UPDATED');
   }
 
   getCurrentUser() {
