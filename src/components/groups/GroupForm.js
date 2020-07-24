@@ -101,7 +101,6 @@ export default () => {
 
   const onSubmit = async (data) => {
     setIsSaving(true);
-    console.log(data);
     GroupService.saveGroup({ id, ...data, description: group.description })
       .then((group) => {
         setGroup(group);
@@ -244,7 +243,7 @@ export default () => {
                     <div className="col-md-9">
                       <CKEditor
                         editor={ClassicEditor}
-                        data={group?.description}
+                        data={group?.description || ""}
                         disabled={isSaving}
                         onChange={onEditorChange}
                       />

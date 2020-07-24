@@ -16,9 +16,31 @@ class ProcessService {
       });
   }
 
+  deleteProcess(id) {
+    return axios
+      .delete(`${API_URL}/${id}`, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
+  updateProcessStatus(id, status) {
+    return axios
+      .put(`${API_URL}/${id}/status`, { params: {status}, headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
   getProcessesPage(search, pageable) {
     const params = {
-      search: search !== "" ? search : "",
+      name: search !== "" ? search : "",
       page: pageable?.pageNumber,
       size: pageable?.pageSize,
     };

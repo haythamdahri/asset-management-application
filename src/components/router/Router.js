@@ -27,6 +27,8 @@ import Profile from "../profile/Profile";
 import Organizations from "../organizations/Organizations";
 import OrganizationView from "../organizations/OrganizationView";
 import OrganizationForm from "../organizations/OrganizationForm";
+import Processes from "../processes/Processes";
+import OrganizationProcesses from "../processes/OrganizationProcesses";
 
 export default () => {
   return (
@@ -79,11 +81,17 @@ export default () => {
           <UserRoute exact={true} path="/organizations/:id/edit">
             <OrganizationForm />
           </UserRoute>
+          <UserRoute exact={true} path="/organizations/:id/processes">
+            <OrganizationProcesses />
+          </UserRoute>
           <UserRoute exact={true} path="/organizations/create">
             <OrganizationForm />
           </UserRoute>
           <UserRoute exact={true} path="/organizations/view/:id">
             <OrganizationView />
+          </UserRoute>
+          <UserRoute exact={true} path="/processes">
+            <Processes />
           </UserRoute>
           <AuthenticatedGuard exact={true} path="/signin">
             <SignIn />

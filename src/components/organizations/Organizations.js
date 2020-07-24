@@ -274,6 +274,14 @@ export default () => {
                                     Voir l'organisme
                                   </button>
                                 </Link>
+                                <Link
+                                  to={`/organizations/${organization?.id}/processes`}
+                                >
+                                  <button className="btn btn-secondary btn-sm ml-3">
+                                    <FontAwesomeIcon icon="microchip" color="black" />{" "}
+                                    Voir les processus d'organisme
+                                  </button>
+                                </Link>
                               </small>
                             </p>
                           </div>

@@ -100,6 +100,12 @@ export default () => {
                   <p>Organismes</p>
                 </Link>
               </li>
+              <li className="nav-item">
+                <Link to="/processes" className="nav-link">
+                  <i className="nav-icon fas fa-microchip" />
+                  <p>Processus</p>
+                </Link>
+              </li>
             </ul>
           </nav>
           {/* /.sidebar-menu */}

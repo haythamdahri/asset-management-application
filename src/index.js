@@ -56,6 +56,8 @@ import {
   faUserPlus,
   faTrashAlt,
   faIdBadge,
+  faMicrochip,
+  faMinusCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import 'moment/locale/fr';
 import Moment from 'react-moment';
@@ -113,7 +115,9 @@ library.add(
   faExclamationTriangle,
   faUserPlus,
   faTrashAlt,
-  faIdBadge
+  faIdBadge,
+  faMicrochip,
+  faMinusCircle
 );
 
 // Set the locale for every react-moment instance to French.

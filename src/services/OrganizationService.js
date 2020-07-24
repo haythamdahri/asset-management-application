@@ -50,6 +50,23 @@ class OrganizationService {
       });
   }
 
+  getOrganizationProcessesPage(id, search, pageable) {
+    const params = {
+      id,
+      search: search !== "" ? search : "",
+      page: pageable?.pageNumber,
+      size: pageable?.pageSize,
+    };
+    return axios
+      .get(`${API_URL}/organizations/${id}/page`, { params, headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
   deleteOrganization(id) {
     return axios
       .delete(`${API_URL}/${id}`, { headers: authHeader() })
