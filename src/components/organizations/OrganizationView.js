@@ -13,7 +13,19 @@ export default () => {
   const [isError, setIsError] = useState(false);
   const [isUnAuthorized, setIsUnAuthorized] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [organizationUsersData, setOrganizationUsersData] = useState({
+    isLoading: true,
+    data: [],
+  });
+  const [organizationProcessesData, setOrganizationProcessesData] = useState({
+    isLoading: true,
+    data: [],
+  });
   const [usersMore, setUsersMore] = useState({
+    expanded: false,
+    itemsCount: 5,
+  });
+  const [processesMore, setProcessesMore] = useState({
     expanded: false,
     itemsCount: 5,
   });
@@ -46,6 +58,18 @@ export default () => {
         setIsError(false);
         setIsUnAuthorized(false);
       } else {
+        // Fetch organization users
+        OrganizationService.getOrganizationUsers(organization?.id).then(
+          (users) => {
+            setOrganizationUsersData({ isLoading: false, data: users });
+          }
+        );
+        // Fetch organization processes
+        OrganizationService.getOrganizationProcesses(organization?.id).then(
+          (processes) => {
+            setOrganizationProcessesData({ isLoading: false, data: processes });
+          }
+        );
         setOrganization({ ...organization });
         setIsLoading(false);
         setIsError(false);
@@ -56,7 +80,7 @@ export default () => {
       const status = e?.response?.status || null;
       setIsLoading(false);
       setOrganization({});
-      console.log(status)
+      console.log(status);
       switch (status) {
         case 403:
           setIsUnAuthorized(true);
@@ -71,10 +95,10 @@ export default () => {
           setIsError(true);
           setIsUnAuthorized(false);
       }
-    };
+    }
     return () => {
       aborderController.abort();
-    }
+    };
   };
 
   const deleteOrganization = async () => {
@@ -236,6 +260,15 @@ export default () => {
                             Employés
                           </a>
                         </li>
+                        <li className="nav-item flex-sm-fill">
+                          <a
+                            className="nav-link"
+                            href="#processes"
+                            data-toggle="tab"
+                          >
+                            Processus
+                          </a>
+                        </li>
                       </ul>
                     </div>
 
@@ -273,6 +306,7 @@ export default () => {
                             </table>
                           </div>
                         </div>
+
                         {/* /.tab-pane */}
                         <div className="tab-pane" id="employees">
                           <div className="col-12">
@@ -283,25 +317,33 @@ export default () => {
                                 letterSpacing: "1px",
                               }}
                             >
-                              {!isLoading &&
-                                organization?.users?.map((user, key) => (
-                                  <div key={key}>
-                                    {key < usersMore.itemsCount && (
-                                      <li className="list-group-item" key={key}>
-                                        <Link to={`/users/view/${user?.id}`}>
-                                          {user?.firstName} {user?.lastName}
-                                        </Link>
-                                      </li>
-                                    )}
-                                  </div>
-                                ))}
-                              {organization?.users?.length > 5 &&
+                              {!organizationUsersData.isLoading &&
+                                organizationUsersData?.data != null &&
+                                organizationUsersData?.data !== "" &&
+                                organizationUsersData?.data?.map(
+                                  (user, key) => (
+                                    <div key={key}>
+                                      {key < usersMore.itemsCount && (
+                                        <li
+                                          className="list-group-item"
+                                          key={key}
+                                        >
+                                          <Link to={`/users/view/${user?.id}`}>
+                                            {user?.firstName} {user?.lastName}
+                                          </Link>
+                                        </li>
+                                      )}
+                                    </div>
+                                  )
+                                )}
+                              {organizationUsersData?.data?.length > 5 &&
                                 !usersMore.expanded && (
                                   <Link
                                     to="#"
                                     onClick={() =>
                                       setUsersMore({
-                                        itemsCount: organization?.users?.length,
+                                        itemsCount:
+                                          organizationUsersData?.data?.length,
                                         expanded: true,
                                       })
                                     }
@@ -309,7 +351,7 @@ export default () => {
                                     Voir plus
                                   </Link>
                                 )}
-                              {organization?.users?.length > 5 &&
+                              {organizationUsersData?.data?.length > 5 &&
                                 usersMore.expanded && (
                                   <Link
                                     to="#"
@@ -324,18 +366,115 @@ export default () => {
                                   </Link>
                                 )}
 
-                              {(!isLoading &&
-                                (organization?.users?.length === 0 || organization?.users === null)) && (
-                                <li className="list-group-item">
-                                  <FontAwesomeIcon icon="exclamation-circle" />{" "}
-                                  Aucun utilisateur n'a rejoint l'organisme
-                                </li>
+                              {!organizationUsersData?.isLoading &&
+                                (organizationUsersData?.data === "" ||
+                                  organizationUsersData?.data?.length === 0 ||
+                                  organizationUsersData?.data === null) && (
+                                  <li className="list-group-item">
+                                    <FontAwesomeIcon icon="exclamation-circle" />{" "}
+                                    Aucun utilisateur n'a rejoint l'organisme
+                                  </li>
+                                )}
+
+                              {organizationUsersData?.isLoading && (
+                                <div className="col-12 text-center pt-5 pb-5">
+                                  <div className="overlay dark">
+                                    <i className="fas fa-2x fa-sync-alt fa-spin"></i>
+                                  </div>
+                                </div>
                               )}
                             </ul>
                           </div>
                         </div>
+
+                        {/* /.tab-content */}
+
+                        {/* /.tab-pane */}
+                        <div className="tab-pane" id="processes">
+                          <div className="col-12">
+                            <ul
+                              className="list-group list-group-flush font-weight-bold text-secondary text-center"
+                              style={{
+                                borderTop: "solid 2px blue",
+                                letterSpacing: "1px",
+                              }}
+                            >
+                              {!organizationProcessesData.isLoading &&
+                                organizationProcessesData?.data != null &&
+                                organizationProcessesData?.data !== "" &&
+                                organizationProcessesData?.data?.map(
+                                  (process, key) => (
+                                    <div key={key}>
+                                      {key < processesMore.itemsCount && (
+                                        <li
+                                          className="list-group-item"
+                                          key={key}
+                                        >
+                                          <Link
+                                            to={`/processes/view/${process?.id}`}
+                                          >
+                                            {process?.name}
+                                          </Link>
+                                        </li>
+                                      )}
+                                    </div>
+                                  )
+                                )}
+                              {organizationProcessesData?.data?.length > 5 &&
+                                !processesMore.expanded && (
+                                  <Link
+                                    to="#"
+                                    onClick={() =>
+                                      setProcessesMore({
+                                        itemsCount:
+                                          organizationProcessesData?.data
+                                            ?.length,
+                                        expanded: true,
+                                      })
+                                    }
+                                  >
+                                    Voir plus
+                                  </Link>
+                                )}
+                              {organizationProcessesData?.data?.length > 5 &&
+                                processesMore.expanded && (
+                                  <Link
+                                    to="#"
+                                    onClick={() =>
+                                      setProcessesMore({
+                                        itemsCount: 5,
+                                        expanded: false,
+                                      })
+                                    }
+                                  >
+                                    Voir moins
+                                  </Link>
+                                )}
+
+                              {!organizationProcessesData?.isLoading &&
+                                (organizationProcessesData?.data === "" ||
+                                organizationProcessesData?.data?.length === 0 ||
+                                organizationProcessesData?.data === null) && (
+                                  <li className="list-group-item">
+                                    <FontAwesomeIcon icon="exclamation-circle" />{" "}
+                                    Aucun processus n'a été associé a cet
+                                    organisme
+                                  </li>
+                                )}
+
+                              {organizationProcessesData?.isLoading && (
+                                <div className="col-12 text-center pt-5 pb-5">
+                                  <div className="overlay dark">
+                                    <i className="fas fa-2x fa-sync-alt fa-spin"></i>
+                                  </div>
+                                </div>
+                              )}
+                            </ul>
+                          </div>
+                        </div>
+
+                        {/* /.tab-content */}
                       </div>
-                      {/* /.tab-content */}
                     </div>
                   </div>
 

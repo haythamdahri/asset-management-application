@@ -6,8 +6,6 @@ import { Page } from "../../pagination/Page";
 import OrganizationService from "../../services/OrganizationService";
 import Swal from "sweetalert2";
 import CustomPaginationService from "../../pagination/services/CustomPaginationService";
-import CKEditor from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 export default () => {
   const [isLoading, setIsLoading] = useState(true);

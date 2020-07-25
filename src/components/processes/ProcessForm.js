@@ -7,6 +7,7 @@ import OrganizationService from "../../services/OrganizationService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import CKEditor from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import Swal from "sweetalert2";
 
 export default () => {
   const { register, handleSubmit, errors } = useForm();
@@ -76,12 +77,13 @@ export default () => {
   };
 
   const fetchOrganizationProcesses = async (organizationId) => {
-    setProcessesData({ ...processesData, loading: true});
+    setProcessesData({ ...processesData, loading: true });
     try {
       const processes = await OrganizationService.getOrganizationProcesses(
         organizationId
       );
-      setProcessesData({ loading: false, data: processes || [] });
+      console.log(processes)
+      setProcessesData({ loading: false, data: processes?.filter(p => p?.id !== process?.id) || [] });
     } catch (e) {
       setProcessesData({ loading: false, data: [] });
     }
@@ -123,6 +125,42 @@ export default () => {
 
   const onSubmit = (data) => {
     console.log(data);
+    setIsSaving(true);
+    const processRequest = {
+      ...data,
+      id: process?.id,
+      description: process.description
+    };
+    ProcessService.saveProcess(processRequest)
+      .then((orgnization) => {
+        setProcess(orgnization);
+        setIsSaving(false);
+        Swal.fire(
+          "Operation effectuée!",
+          `Le processus à été enregistré avec succés!`,
+          "success"
+        );
+      })
+      .catch((err) => {
+        const status = err.response?.status || null;
+        if (status !== null && status === 400) {
+          Swal.fire(
+            "Erreur!",
+            `${
+              err.response?.data.message ||
+              "Les données d'entrées ne sont pas valides, veuillez ressayer!"
+            }`,
+            "error"
+          );
+        } else {
+          Swal.fire(
+            "Erreur!",
+            `Une erreur interne est survenue, veuillez ressayer!`,
+            "error"
+          );
+        }
+        setIsSaving(false);
+      });
   };
 
   return (
@@ -180,7 +218,6 @@ export default () => {
                 </div>
               )}
 
-              
             {isLoading && !isProcessError && process !== null && (
               <div className="col-12 text-center pt-5 pb-5">
                 <div className="overlay dark">
@@ -254,26 +291,25 @@ export default () => {
                     </div>
 
                     {/** APPROVE PROCESS */}
-                    {process.hasOwnProperty("id") && (
-                      <div className="custom-control custom-switch mt-2 mb-2 text-center">
-                        <input
-                          disabled={isSaving}
-                          type="checkbox"
-                          className="custom-control-input"
-                          id="status"
-                          name="status"
-                          ref={register({
-                            required: false,
-                          })}
-                        />
-                        <label
-                          className="custom-control-label"
-                          htmlFor="status"
-                        >
-                          Approuver le processus
-                        </label>
-                      </div>
-                    )}
+                    <div className="custom-control custom-switch mt-2 mb-2 text-center">
+                      <input
+                        disabled={isSaving}
+                        type="checkbox"
+                        className="custom-control-input"
+                        id="status"
+                        name="status"
+                        ref={register({
+                          required: false,
+                        })}
+                        onChange={(e) => {
+                          process.status = !process?.status
+                        }}
+                        defaultChecked={process?.status}
+                      />
+                      <label className="custom-control-label" htmlFor="status">
+                        Approuver le processus
+                      </label>
+                    </div>
 
                     {/** Organization */}
                     <div className="form-group row">
@@ -285,7 +321,9 @@ export default () => {
                       </label>
                       <div className="col-md-9">
                         <select
-                          onChange={(e) => fetchOrganizationProcesses(e.target.value)}
+                          onChange={(e) =>
+                            fetchOrganizationProcesses(e.target.value)
+                          }
                           defaultValue={process?.organization?.id}
                           onClick={(event) => {
                             if (
@@ -318,26 +356,24 @@ export default () => {
                     <div className="form-group row">
                       <label
                         className="col-md-3 font-weight-bold"
-                        htmlFor="language"
+                        htmlFor="parentProcess"
                       >
                         Processus Parent:{" "}
                       </label>
                       <div className="col-md-9">
                         <select
-                          defaultValue={process?.language?.id}
+                          defaultValue={process?.parentProcess?.id}
                           className={`form-control form-control-sm shadow-sm ${
-                            errors.language ? "is-invalid" : ""
+                            errors.parentProcess ? "is-invalid" : ""
                           }`}
                           disabled={isSaving || processesData?.loading}
                           ref={register({
                             required: false,
                           })}
-                          id="language"
-                          name="language"
+                          id="parentProcess"
+                          name="parentProcess"
                         >
-                        <option key={-1} value="">
-                          
-                        </option>
+                          <option key={-1} value=""></option>
                           {processesData?.data?.map((process, key) => (
                             <option key={key} value={process?.id}>
                               {process?.name}
@@ -423,9 +459,7 @@ export default () => {
                       </label>
                       <div className="col-md-9">
                         <select
-                          defaultValue={
-                            process?.classification?.integrity
-                          }
+                          defaultValue={process?.classification?.integrity}
                           className={`form-control form-control-sm shadow-sm ${
                             errors.integrity ? "is-invalid" : ""
                           }`}
@@ -476,26 +510,32 @@ export default () => {
                     </div>
 
                     {/** APPROVE CLASSIFICATION */}
-                    {process.hasOwnProperty("id") && (
-                      <div className="custom-control custom-switch mt-2 mb-2 text-center">
-                        <input
-                          disabled={isSaving}
-                          type="checkbox"
-                          className="custom-control-input"
-                          id="classificationStatus"
-                          name="classificationStatus"
-                          ref={register({
-                            required: false,
-                          })}
-                        />
-                        <label
-                          className="custom-control-label"
-                          htmlFor="classificationStatus"
-                        >
-                          Approuver la classification du processus
-                        </label>
-                      </div>
-                    )}
+                    <div className="custom-control custom-switch mt-2 mb-2 text-center">
+                      <input
+                        disabled={isSaving}
+                        type="checkbox"
+                        className="custom-control-input"
+                        id="classificationStatus"
+                        name="classificationStatus"
+                        ref={register({
+                          required: false,
+                        })}
+                        onChange={(e) => {
+                          if( process?.classification ) {
+                            process.classification.status = !process?.classification?.status
+                          } else {
+                            process.classification = {status: true};
+                          }
+                        }}
+                        defaultChecked={process?.classification?.status}
+                      />
+                      <label
+                        className="custom-control-label"
+                        htmlFor="classificationStatus"
+                      >
+                        Approuver la classification du processus
+                      </label>
+                    </div>
 
                     <div className="col-12 text-center mb-4 mt-4">
                       <button

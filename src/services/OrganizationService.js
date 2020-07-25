@@ -89,11 +89,20 @@ class OrganizationService {
       });
   }
 
-
-
   getOrganizationProcesses(organizationId) {
     return axios
       .get(`${API_URL}/${organizationId}/processes`, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
+  getOrganizationUsers(organizationId) {
+    return axios
+      .get(`${API_URL}/${organizationId}/users`, { headers: authHeader() })
       .then((response) => {
         return response.data;
       })

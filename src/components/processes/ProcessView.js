@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Swal from "sweetalert2";
 import CKEditor from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import { SRLWrapper } from "simple-react-lightbox";
+import Moment from "react-moment";
 
 export default () => {
   const [process, setProcess] = useState({});
@@ -31,7 +31,7 @@ export default () => {
     return () => {
       ref.current = false;
     };
-  }, []);
+  }, [id]);
 
   const fetchProcess = async () => {
     setIsUnAuthorized(false);
@@ -283,11 +283,22 @@ export default () => {
                             <tbody align="center">
                               <tr>
                                 <th scope="col">Description</th>
-                                <td>{process?.description}</td>
+                                <td>
+                                  <CKEditor
+                                    editor={ClassicEditor}
+                                    data={process?.description}
+                                    config={{
+                                      toolbar: [],
+                                      removePlugins: ["Heading", "Link"],
+                                      isReadOnly: true,
+                                    }}
+                                    disabled={true}
+                                  />
+                                </td>
                               </tr>
                               <tr>
-                                <th scope="col">Processus Parent</th>
-                                <td>{process?.parentProcess}</td>
+                                <th scope="col">Processus Superieur</th>
+                                <td><Link to={`/processes/view/${process?.parentProcess?.id}`}>{process?.parentProcess?.name}</Link></td>
                               </tr>
                               <tr>
                                 <th scope="col">Organisme</th>
@@ -370,11 +381,23 @@ export default () => {
                       {/* /.tab-pane */}
                       <div className="tab-pane" id="classification">
                         <div className="col-12">
-                          <div className={`shadow shadow-sm alert ${process?.classification?.status ? 'alert-success' : 'alert-danger'}`}>
+                          <div
+                            className={`shadow shadow-sm alert ${
+                              process?.classification?.status
+                                ? "alert-success"
+                                : "alert-danger"
+                            }`}
+                          >
                             <h5>
-                              <i className="icon fas fa-ban" /> Statut de la classification!
+                              <i className="icon fas fa-ban" /> Statut de la
+                              classification!
                             </h5>
-                            La classification du processus est {`${process?.classification?.status ? 'approuvé' : 'rejeté'}`}
+                            La classification du processus est{" "}
+                            {`${
+                              process?.classification?.status
+                                ? "approuvé"
+                                : "rejeté"
+                            }`}
                           </div>
                         </div>
 
@@ -404,7 +427,9 @@ export default () => {
                           <div className="callout callout-info">
                             <h5>Date d'identification</h5>
                             <p>
-                              {process?.classification?.identificationDate}
+                              <Moment format="YYYY/MM/DD HH:MM:SS">
+                                {process?.identificationDate}
+                              </Moment>
                             </p>
                           </div>
                           {process?.classification !== null && (

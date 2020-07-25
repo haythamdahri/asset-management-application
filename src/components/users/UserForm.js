@@ -637,6 +637,7 @@ export default () => {
                     <div className="col-md-9">
                       <select
                         defaultValue={user?.organization?.id}
+                        defaultChecked={user?.organization?.id}
                         onClick={(event) => {
                           if (
                             organizationsData?.data === null ||
@@ -1153,7 +1154,7 @@ export default () => {
                     <div className="col-md-9">
                       <CKEditor
                         editor={ClassicEditor}
-                        data={user?.notes}
+                        data={user?.notes || ""}
                         disabled={saving}
                         onChange={onEditorChange}
                       />

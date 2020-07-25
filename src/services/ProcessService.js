@@ -49,6 +49,17 @@ class ProcessService {
       });
   }
 
+  saveProcess(processRequest) {
+    return axios
+      .post(`${API_URL}/`,processRequest, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
   getProcess(id) {
     return axios
       .get(`${API_URL}/${id}`,{ headers: authHeader() })

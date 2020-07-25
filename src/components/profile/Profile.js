@@ -26,10 +26,6 @@ export default () => {
     setIsUserError(false);
     try {
       const user = await UserService.getAuthenticatedUserDetails();
-      // Fetch user organization
-      UserService.getAuthenticatedUserOrganization().then((organization) => {
-        setUser({...user, organization: organization});
-      });
       user.avatar.file =
         process.env.REACT_APP_API_URL +
         "/api/v1/users/" +
