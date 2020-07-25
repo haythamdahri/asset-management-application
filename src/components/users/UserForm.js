@@ -65,6 +65,7 @@ export default () => {
     setLoading(true);
     setUserError(false);
     setUnauthorized(false);
+    setUser({});
     UserService.canEditUser()
       .then((response) => {
         if (response.hasRole) {

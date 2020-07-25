@@ -88,6 +88,21 @@ class OrganizationService {
         throw err;
       });
   }
+
+
+
+  getOrganizationProcesses(organizationId) {
+    return axios
+      .get(`${API_URL}/${organizationId}/processes`, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
+
 }
 
 export default new OrganizationService();

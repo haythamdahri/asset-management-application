@@ -38,6 +38,39 @@ class ProcessService {
       });
   }
 
+  updateProcessClassificationStatus(id, status) {
+    return axios
+      .put(`${API_URL}/${id}/classification/status`,{}, { headers: authHeader(), params: {status} })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
+  getProcess(id) {
+    return axios
+      .get(`${API_URL}/${id}`,{ headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
+  getCustomProcesses(excludedProcessId) {
+    return axios
+      .get(`${API_URL}/custom`,{ params: {id: excludedProcessId}, headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
   getProcessesPage(search, pageable) {
     const params = {
       name: search !== "" ? search : "",

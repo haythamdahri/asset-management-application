@@ -197,6 +197,17 @@ class UserService {
       });
   }
 
+  async canEditProcess() {
+    return axios
+      .get(`${API_URL}/roles/checking/processes`, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
   async canEditOrganization() {
     return axios
       .get(`${API_URL}/roles/checking/organizations`, { headers: authHeader() })

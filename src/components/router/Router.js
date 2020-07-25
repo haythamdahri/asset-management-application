@@ -29,6 +29,7 @@ import OrganizationView from "../organizations/OrganizationView";
 import OrganizationForm from "../organizations/OrganizationForm";
 import Processes from "../processes/Processes";
 import ProcessView from "../processes/ProcessView";
+import ProcessForm from "../processes/ProcessForm";
 
 export default () => {
   return (
@@ -92,6 +93,12 @@ export default () => {
           </UserRoute>
           <UserRoute exact={true} path="/processes/view/:id">
             <ProcessView />
+          </UserRoute>
+          <UserRoute exact={true} path="/processes/:id/edit">
+            <ProcessForm />
+          </UserRoute>
+          <UserRoute exact={true} path="/processes/create">
+            <ProcessForm />
           </UserRoute>
           <AuthenticatedGuard exact={true} path="/signin">
             <SignIn />

@@ -209,13 +209,13 @@ export default () => {
                               }}
                             >
                               {group?.roles?.map((role, key) => (
-                                <>
+                                <div key={key}>
                                   {key < rolesMore.itemsCount && (
                                     <li className="list-group-item" key={key}>
                                       {role.roleName}
                                     </li>
                                   )}
-                                </>
+                                </div>
                               ))}
 
                               {group?.roles?.length > 5 && !rolesMore.expanded && (

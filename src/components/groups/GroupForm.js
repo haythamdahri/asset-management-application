@@ -12,7 +12,7 @@ import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 export default () => {
   const { register, handleSubmit, errors } = useForm();
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isUnauthorized, setIsUnauthorized] = useState(false);
   const [isGroupError, setIsGroupError] = useState(false);
   const [isSaving, setIsSaving] = useState(false);

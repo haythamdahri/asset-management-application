@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, Link, useHistory } from "react-router-dom";
 import OrganizationService from "../../services/OrganizationService";
-import UserService from "../../services/UserService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Swal from "sweetalert2";
 import CKEditor from "@ckeditor/ckeditor5-react";

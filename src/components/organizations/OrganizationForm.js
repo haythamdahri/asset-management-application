@@ -7,12 +7,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Swal from "sweetalert2";
 import CKEditor from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import EventEmitter from "eventemitter3";
 
 export default () => {
   const { register, handleSubmit, errors } = useForm();
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isUnauthorized, setIsUnauthorized] = useState(false);
   const [isOrganizationError, setIsOrganizationError] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -20,7 +19,7 @@ export default () => {
   const [organization, setOrganization] = useState({});
   const [file, setFile] = useState(new File([], ""));
 
-  // Group Id Extraction from URL
+  // Organization Id Extraction from URL
   let { id } = useParams();
   document.title = "Gestion Organismes";
 
@@ -62,7 +61,7 @@ export default () => {
 
   const fetchOrganization = async () => {
     try {
-      // Get group
+      // Get process
       const organization = await OrganizationService.getOrganization(id);
       setOrganization(organization);
       setIsLoading(false);
