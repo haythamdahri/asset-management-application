@@ -22,6 +22,7 @@ export default () => {
     loading: false,
     data: [],
   });
+  const [description, setDescription] = useState("");
   document.title = "Gestion Groupes";
 
   // Group Id Extraction from URL
@@ -72,6 +73,7 @@ export default () => {
       // Get group
       const group = await GroupService.getGroup(id);
       setGroup(group);
+      setDescription(group.description);
       setIsLoading(false);
       setIsUnauthorized(false);
       setIsGroupError(false);
@@ -96,12 +98,13 @@ export default () => {
   };
 
   const onEditorChange = (event, editor) => {
-    setGroup({ ...group, description: editor.getData() });
+    setDescription(editor.getData());
   };
 
   const onSubmit = async (data) => {
+    console.log(data);
     setIsSaving(true);
-    GroupService.saveGroup({ id, ...data, description: group.description })
+    GroupService.saveGroup({ id, ...data, description })
       .then((group) => {
         setGroup(group);
         setIsSaving(false);

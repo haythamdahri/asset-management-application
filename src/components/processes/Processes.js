@@ -368,7 +368,7 @@ export default () => {
                                       icon={process.status ? 'minus-circle' : 'check-circle'}
                                       color="white"
                                     />
-                                    {process?.status ? ' Rejecter' : ' Approuver'}
+                                    {process?.status ? ' Rejeter' : ' Approuver'}
                               </button>
                             </td>
                             <td>

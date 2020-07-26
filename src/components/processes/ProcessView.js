@@ -350,27 +350,9 @@ export default () => {
                                       color="white"
                                     />
                                     {process?.status
-                                      ? " Rejecter"
+                                      ? " Rejeter"
                                       : " Approuver"}
                                   </button>
-                                </td>
-                              </tr>
-                              <tr>
-                                <th scope="col">Description</th>
-                                <td>
-                                  {process?.description &&
-                                    process?.description?.length > 0 && (
-                                      <CKEditor
-                                        editor={ClassicEditor}
-                                        data={process?.description || ""}
-                                        config={{
-                                          toolbar: [],
-                                          removePlugins: ["Heading", "Link"],
-                                          isReadOnly: true,
-                                        }}
-                                        disabled={true}
-                                      />
-                                    )}
                                 </td>
                               </tr>
                             </tbody>
@@ -456,7 +438,7 @@ export default () => {
                                   color="white"
                                 />
                                 {process?.classification?.status
-                                  ? " Rejecter"
+                                  ? " Rejeter"
                                   : " Approuver"}
                               </button>
                             </div>

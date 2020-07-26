@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import ThreatService from "../../services/ThreatService";
+import TypologyService from "../../services/TypologyService";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Swal from "sweetalert2";
@@ -11,37 +11,36 @@ export default () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const [isUnAuthorized, setIsUnAuthorized] = useState(false);
-  const [threatsPage, setThreatsPage] = useState(new Page());
+  const [typologiesPage, setTypologiesPage] = useState(new Page());
   const [isDeleting, setIsDeleting] = useState(false);
-  const [isApproving, setIsApproving] = useState(false);
   const searchInput = useRef(null);
 
   useEffect(() => {
-    document.title = "Gestion Des Menaces";
-    fetchThreats();
+    document.title = "Gestion Des Typoliges Des Actifs";
+    fetchTypologies();
     return () => {
-      setThreatsPage(null);
+      setTypologiesPage(null);
     };
   }, []);
 
-  const fetchThreats = async () => {
-    const search = searchInput?.current?.value || "";
+  const fetchTypologies = async () => {
+    const name = searchInput?.current?.value || "";
     try {
       setIsLoading(true);
       setIsError(false);
       setIsUnAuthorized(false);
-      setThreatsPage(new Page());
-      const response = await ThreatService.getThreatsPage(
-        search,
-        threatsPage?.pageable || new Page()
+      setTypologiesPage(new Page());
+      const response = await TypologyService.getTypologiesPage(
+        name,
+        typologiesPage?.pageable || new Page()
       );
       setIsLoading(false);
-      setThreatsPage(response);
+      setTypologiesPage(response);
       setIsError(false);
     } catch (e) {
       const status = e.response?.status || null;
       setIsLoading(false);
-      setThreatsPage(null);
+      setTypologiesPage(null);
       if (status === 403) {
         setIsUnAuthorized(true);
         setIsError(false);
@@ -60,28 +59,28 @@ export default () => {
         });
       }
     } finally {
-      if (search !== "" && search !== null) {
-        searchInput.current.value = search;
+      if (name !== "" && name !== null) {
+        searchInput.current.value = name;
       }
     }
   };
 
   const getNextPage = () => {
-    setThreatsPage.pageable = CustomPaginationService.getNextPage(threatsPage);
-    fetchThreats();
+    typologiesPage.pageable = CustomPaginationService.getNextPage(setTypologiesPage);
+    fetchTypologies();
   };
 
   const getPreviousPage = () => {
-    threatsPage.pageable = CustomPaginationService.getPreviousPage(threatsPage);
-    fetchThreats();
+    typologiesPage.pageable = CustomPaginationService.getPreviousPage(setTypologiesPage);
+    fetchTypologies();
   };
 
   const getPageInNewSize = (pageSize) => {
-    threatsPage.pageable = CustomPaginationService.getPageInNewSize(
-      threatsPage,
+    typologiesPage.pageable = CustomPaginationService.getPageInNewSize(
+      typologiesPage,
       pageSize
     );
-    fetchThreats();
+    fetchTypologies();
   };
 
   const onSearchSubmit = async (event) => {
@@ -92,11 +91,11 @@ export default () => {
     }
   };
 
-  const deleteThreat = async (id) => {
+  const deleteTypology = async (id) => {
     // Confirm User Deletion
     Swal.fire({
-      title: "Êtes-vous sûr de supprimer la menace",
-      text: "Voulez-vous supprimer la menace?",
+      title: "Êtes-vous sûr de supprimer la typologie des actifs",
+      text: "Voulez-vous supprimer la typologie des actifs?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -108,16 +107,16 @@ export default () => {
         // Perform User delete
         try {
           setIsDeleting(true);
-          await ThreatService.deleteThreat(id);
+          await TypologyService.deleteTypology(id);
           Swal.fire(
             "Operation éffectuée!",
-            "La menace à été supprimée avec succés!",
+            "La typologie à été supprimée avec succés!",
             "success"
           );
           // Clear search
           searchInput.current.value = "";
           // Fetch users
-          fetchThreats();
+          fetchTypologies();
         } catch (err) {
           Swal.fire(
             "Erreur!",
@@ -132,32 +131,6 @@ export default () => {
     });
   };
 
-  const updateProcessStatus = async (threat, status) => {
-    // Perform User delete
-    try {
-      setIsApproving(true);
-      await ThreatService.updateThreatStatus(threat?.id, status);
-      Swal.fire(
-        "Operation éffectuée!",
-        `La menace à été ${
-          status ? "approuvée" : "rejetée"
-        } avec succés!`,
-        "success"
-      );
-      // Set process status
-      threat.status = status;
-    } catch (err) {
-      Swal.fire(
-        "Erreur!",
-        err?.response?.data?.message ||
-          `Une erreur est survenue, veuillez ressayer!`,
-        "error"
-      );
-    } finally {
-      setIsApproving(false);
-    }
-  };
-
   return (
     <div>
       {/* Content Wrapper. Contains page content */}
@@ -167,7 +140,7 @@ export default () => {
           <div className="container-fluid">
             <div className="row mb-2">
               <div className="col-sm-6">
-                <h1>Menaces</h1>
+                <h1>Typologies</h1>
               </div>
               <div className="col-sm-6">
                 <ol className="breadcrumb float-sm-right">
@@ -176,7 +149,7 @@ export default () => {
                       <FontAwesomeIcon icon="home" /> Acceuil
                     </Link>
                   </li>
-                  <li className="breadcrumb-item active">Menaces</li>
+                  <li className="breadcrumb-item active">Typologies des actifs</li>
                 </ol>
               </div>
             </div>
@@ -190,7 +163,7 @@ export default () => {
               {!isUnAuthorized && !isError && !isLoading && (
                 <div className="col-12 text-center">
                   <CustomPagination
-                    page={threatsPage}
+                    page={typologiesPage}
                     loading={isLoading}
                     nextPageEvent={getNextPage}
                     previousPageEvent={getPreviousPage}
@@ -206,7 +179,7 @@ export default () => {
                       <input
                         type="search"
                         id="userSearch"
-                        placeholder="Nom du processus ..."
+                        placeholder="Nom de la typologie ..."
                         name="search"
                         className="form-control"
                         ref={searchInput}
@@ -226,13 +199,13 @@ export default () => {
               </div>
 
               <div className="col-12 mb-3 text-center">
-                <Link to="/processes/create" className="btn btn-primary btn-sm">
-                  <FontAwesomeIcon icon="user-plus" /> Ajouter une menace
+                <Link to="/typologies/create" className="btn btn-primary btn-sm">
+                  <FontAwesomeIcon icon="user-plus" /> Ajouter une typologie
                 </Link>
               </div>
 
               {/** DELTING PROGRESS */}
-              {(isDeleting || isApproving) && (
+              {(isDeleting ) && (
                 <div className="col-12 mt-2 mb-3">
                   <div className="overlay text-center">
                     <i className="fas fa-2x fa-sync-alt fa-spin"></i>
@@ -248,18 +221,15 @@ export default () => {
                   <table className="table table-hover table-bordered ">
                     <thead className="thead-light text-center">
                       <tr>
-                        <th>Nom de la menace</th>
+                        <th>Nom de la typologie</th>
                         <th>Description</th>
-                        <th>Typologie</th>
-                        <th>Statut</th>
-                        <th>Date d'identification</th>
-                        <th colSpan={4}>Actions</th>
+                        <th colSpan={3}>Actions</th>
                       </tr>
                     </thead>
                     <tbody className="text-center">
                       {isLoading && (
                         <tr>
-                          <td colSpan={9} className="text-center bg-light">
+                          <td colSpan={5} className="text-center bg-light">
                             <div
                               className="spinner-border text-primary"
                               role="status"
@@ -270,16 +240,16 @@ export default () => {
                         </tr>
                       )}
                       {!isLoading &&
-                        threatsPage !== null &&
-                        threatsPage?.content?.length === 0 && (
+                        typologiesPage !== null &&
+                        typologiesPage?.content?.length === 0 && (
                           <tr>
                             <td
-                              colSpan={9}
+                              colSpan={5}
                               className="text-center alert alert-dark"
                             >
                               <h2 className="font-weight-bold">
                                 <FontAwesomeIcon icon="exclamation-circle" />{" "}
-                                Aucune menace n'a été trouvée!
+                                Aucune typologie des actifs n'a été trouvée!
                               </h2>
                             </td>
                           </tr>
@@ -287,7 +257,7 @@ export default () => {
                       {(isError || isUnAuthorized) && (
                         <tr>
                           <td
-                            colSpan={9}
+                            colSpan={5}
                             className={`text-center alert ${
                               isError ? "alert-warning" : "alert-danger"
                             }`}
@@ -298,7 +268,7 @@ export default () => {
                                 ? "Une erreur est survenue!"
                                 : "Vous n'êtes pas autorisé!"}
                               <button
-                                onClick={() => fetchThreats()}
+                                onClick={() => fetchTypologies()}
                                 className="btn btn-warning font-weight-bold ml-2"
                               >
                                 <FontAwesomeIcon icon="sync" /> Ressayer
@@ -308,79 +278,26 @@ export default () => {
                         </tr>
                       )}
 
-                      {threatsPage &&
-                        threatsPage?.content?.map((threat, key) => (
+                      {typologiesPage &&
+                        typologiesPage?.content?.map((typology, key) => (
                           <tr key={key}>
                             <td>
-                              <Link to={`/processes/view/${threat?.id}`}>
-                                {threat?.name}
+                              <Link to={`/typologies/view/${typology?.id}`}>
+                                {typology?.name}
                               </Link>
                             </td>
                             <td
                               dangerouslySetInnerHTML={{
-                                __html: `${threat?.description?.slice(
+                                __html: `${typology?.description?.slice(
                                   0,
                                   20
                                 )} ${
-                                  threat?.description?.length > 20 ? "..." : ""
+                                  typology?.description?.length > 20 ? "..." : ""
                                 }`,
                               }}
                             ></td>
-                            <td>
-                              <Link
-                                to={`/organizations/view/${threat?.organization?.id}`}
-                              >
-                                {threat?.organization?.name}
-                              </Link>
-                            </td>
-                            <td>
-                              {threat?.status ? (
-                                <>
-                                  <FontAwesomeIcon
-                                    icon="check-circle"
-                                    color="green"
-                                  />{" "}
-                                  APPROUVÉ
-                                </>
-                              ) : (
-                                <>
-                                  <FontAwesomeIcon
-                                    icon="times-circle"
-                                    color="red"
-                                  />{" "}
-                                  NON APPROUVÉ
-                                </>
-                              )}
-                            </td>
-                            <td>
-                              <Link
-                                to={`/processes/view/${threat?.parentthreat?.id}`}
-                              >
-                                {threat?.parentthreat?.name}
-                              </Link>
-                            </td>
-                            <td>
-                              <button
-                                onClick={(event) =>
-                                  updateProcessStatus(process, !threat?.status)
-                                }
-                                className={`btn btn-${
-                                  threat?.status ? "danger" : "success"
-                                } btn-sm ${isApproving ? "disabled" : ""}`}
-                              >
-                                <FontAwesomeIcon
-                                  icon={
-                                    process.status
-                                      ? "minus-circle"
-                                      : "check-circle"
-                                  }
-                                  color="white"
-                                />
-                                {threat?.status ? " Rejecter" : " Approuver"}
-                              </button>
-                            </td>
-                            <td>
-                              <Link to={`/processes/${threat?.id}/edit`}>
+                             <td>
+                              <Link to={`/typologies/${typology?.id}/edit`}>
                                 <button className="btn btn-primary btn-sm">
                                   <FontAwesomeIcon icon="edit" color="white" />
                                 </button>
@@ -388,7 +305,7 @@ export default () => {
                             </td>
                             <td>
                               <button
-                                onClick={(event) => deleteThreat(threat?.id)}
+                                onClick={(event) => deleteTypology(typology?.id)}
                                 className={`btn btn-danger btn-sm ${
                                   isDeleting ? "disabled" : ""
                                 }`}
@@ -400,7 +317,7 @@ export default () => {
                               </button>
                             </td>
                             <td>
-                              <Link to={`/processes/view/${threat?.id}`}>
+                              <Link to={`/typologies/view/${typology?.id}`}>
                                 <button className="btn btn-secondary btn-sm">
                                   <FontAwesomeIcon
                                     icon="binoculars"

@@ -219,6 +219,17 @@ class UserService {
       });
   }
 
+  async canEditTypology() {
+    return axios
+      .get(`${API_URL}/roles/checking/typologies`, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
   async checkUserAdmin() {
     return axios
       .get(`${API_URL}/roles/checking/admin`, { headers: authHeader() })

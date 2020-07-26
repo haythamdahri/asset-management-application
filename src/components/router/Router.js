@@ -30,6 +30,9 @@ import OrganizationForm from "../organizations/OrganizationForm";
 import Processes from "../processes/Processes";
 import ProcessView from "../processes/ProcessView";
 import ProcessForm from "../processes/ProcessForm";
+import Typologies from "../typologies/Typologies";
+import TypologyView from "../typologies/TypologyView";
+import TypologyForm from "../typologies/TypologyForm";
 
 export default () => {
   return (
@@ -99,6 +102,18 @@ export default () => {
           </UserRoute>
           <UserRoute exact={true} path="/processes/create">
             <ProcessForm />
+          </UserRoute>
+          <UserRoute exact={true} path="/typologies">
+            <Typologies />
+          </UserRoute>
+          <UserRoute exact={true} path="/typologies/view/:id">
+            <TypologyView />
+          </UserRoute>
+          <UserRoute exact={true} path="/typologies/create">
+            <TypologyForm />
+          </UserRoute>
+          <UserRoute exact={true} path="/typologies/:id/edit">
+            <TypologyForm />
           </UserRoute>
           <AuthenticatedGuard exact={true} path="/signin">
             <SignIn />
