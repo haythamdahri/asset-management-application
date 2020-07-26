@@ -149,7 +149,7 @@ export default () => {
       );
       Swal.fire(
         "Operation éffectuée!",
-        `Le statut du processus à été ${
+        `Le statut de la classification du processus à été ${
           status ? "approuvé" : "rejeté"
         } avec succés!`,
         "success"
@@ -428,7 +428,7 @@ export default () => {
                             <h5>Date d'identification</h5>
                             <p>
                               <Moment format="YYYY/MM/DD HH:MM:SS">
-                                {process?.identificationDate}
+                                {process?.classification?.identificationDate}
                               </Moment>
                             </p>
                           </div>

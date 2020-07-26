@@ -67,6 +67,13 @@ export default () => {
       });
   }, [reload]);
 
+  useEffect(() => {
+    if( process !== null && process.hasOwnProperty("id") && process !== "" ) {
+        // Fetch processes by the retrieved one organization
+        fetchOrganizationProcesses(process?.organization?.id);
+    }
+  }, [process]);
+
   const fetchOrganizations = async () => {
     try {
       const organizations = await OrganizationService.getOrganizations();
@@ -82,8 +89,7 @@ export default () => {
       const processes = await OrganizationService.getOrganizationProcesses(
         organizationId
       );
-      console.log(processes)
-      setProcessesData({ loading: false, data: processes?.filter(p => p?.id !== process?.id) || [] });
+      setProcessesData({ loading: false, data: processes?.filter(p => p?.id !== process?.id && p?.parentProcess?.id !== process?.id) || [] });
     } catch (e) {
       setProcessesData({ loading: false, data: [] });
     }
@@ -93,8 +99,6 @@ export default () => {
     try {
       // Get proces
       const process = await ProcessService.getProcess(id);
-      // Fetch processes by the retrieved one organization
-      fetchOrganizationProcesses(process?.organization?.id);
       setProcess(process);
       setIsLoading(false);
       setIsUnauthorized(false);
@@ -570,7 +574,7 @@ export default () => {
                           type="submit"
                           className="btn btn-warning font-weight-bold text-center mx-2"
                         >
-                          <FontAwesomeIcon icon="user" /> Retourner vers l
+                          <FontAwesomeIcon icon="user" /> Retourner vers le
                           processus
                         </Link>
                       )}

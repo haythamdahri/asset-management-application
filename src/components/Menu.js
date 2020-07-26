@@ -88,6 +88,9 @@ export default () => {
                   <p>Utilisateurs</p>
                 </Link>
               </li>
+              <li className="nav-header">
+                  Application
+              </li>
               <li className="nav-item">
                 <Link to="/groups" className="nav-link">
                   <i className="nav-icon fas fa-layer-group" />
@@ -104,6 +107,48 @@ export default () => {
                 <Link to="/processes" className="nav-link">
                   <i className="nav-icon fas fa-microchip" />
                   <p>Processus</p>
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link to="/assets" className="nav-link">
+                <i className="nav-icon fas fa-server" />
+                  <p>Actifs</p>
+                </Link>
+              </li>
+              <li className="nav-header">
+                  Typologies And Risques
+              </li>
+              <li className="nav-item">
+                <Link to="/typologies" className="nav-link">
+                <i className="nav-icon fas fa-i-cursor" />
+                  <p>Typoligies des actifs</p>
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link to="/threats" className="nav-link">
+                <i className="nav-icon fas fa-fingerprint" />
+                  <p>Menaces</p>
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link to="/vulnerabilities" className="nav-link">
+                <i className="nav-icon fas fa-lock-open" />
+                  <p>vulnérabilités</p>
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link to="/riskscenarios" className="nav-link">
+                <i className="nav-icon fas fa-object-ungroup" />
+                  <p>Scénarios des risques</p>
+                </Link>
+              </li>
+              <li className="nav-header">
+                  Paramétrage
+              </li>
+              <li className="nav-item">
+                <Link to="/settings" className="nav-link">
+                <i className="nav-icon fas fa-cogs" />
+                  <p>paramétres d'application</p>
                 </Link>
               </li>
             </ul>
