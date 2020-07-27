@@ -17,6 +17,8 @@ class CustomPaginationService {
   }
 
   getPageInNewSize(page, pageSize) {
+    console.log(page);
+    console.log(pageSize);
     page.pageable.pageSize = pageSize;
     page.pageable.pageNumber = Pageable.FIRST_PAGE_NUMBER;
 
