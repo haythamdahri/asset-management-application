@@ -94,7 +94,7 @@ export default () => {
     }
   };
 
-  const deleteThreat = async (id) => {
+  const deleteThreat = async (typologyId, threatId) => {
     // Confirm User Deletion
     Swal.fire({
       title: "Êtes-vous sûr de supprimer la menace",
@@ -110,7 +110,7 @@ export default () => {
         // Perform User delete
         try {
           setIsDeleting(true);
-          await ThreatService.deleteThreat(id);
+          await TypologyService.deleteThreat(typologyId, threatId);
           Swal.fire(
             "Operation éffectuée!",
             "La menace à été supprimée avec succés!",
@@ -234,7 +234,7 @@ export default () => {
               </div>
 
               <div className="col-12 mb-3 text-center">
-                <Link to="/processes/create" className="btn btn-primary btn-sm">
+                <Link to="/threats/create" className="btn btn-primary btn-sm">
                   <FontAwesomeIcon icon="user-plus" /> Ajouter une menace
                 </Link>
               </div>
@@ -320,7 +320,7 @@ export default () => {
                         threatsPage?.content?.map((threatResponse, key) => (
                           <tr key={key}>
                             <td>
-                              <Link to={`/threats/view/${threatResponse?.threat?.id}`}>
+                              <Link to={`/threats/view/${threatResponse?.typologyId}/${threatResponse?.threat?.id}`}>
                                 {threatResponse?.threat?.name}
                               </Link>
                             </td>
@@ -386,7 +386,7 @@ export default () => {
                               </button>
                             </td>
                             <td>
-                              <Link to={`/processes/${threatResponse?.threat?.id}/edit`}>
+                              <Link to={`/threats/${threatResponse?.typologyId}/${threatResponse?.threat?.id}/edit`}>
                                 <button className="btn btn-primary btn-sm">
                                   <FontAwesomeIcon icon="edit" color="white" />
                                 </button>
@@ -394,7 +394,7 @@ export default () => {
                             </td>
                             <td>
                               <button
-                                onClick={(event) => deleteThreat(threatResponse?.threat?.typologyId, threatResponse?.threat?.id)}
+                                onClick={(event) => deleteThreat(threatResponse?.typologyId, threatResponse?.threat?.id)}
                                 className={`btn btn-danger btn-sm ${
                                   isDeleting ? "disabled" : ""
                                 }`}
@@ -406,7 +406,7 @@ export default () => {
                               </button>
                             </td>
                             <td>
-                              <Link to={`/threats/view/${threatResponse?.threat?.id}`}>
+                              <Link to={`/threats/view/${threatResponse?.typologyId}/${threatResponse?.threat?.id}`}>
                                 <button className="btn btn-secondary btn-sm">
                                   <FontAwesomeIcon
                                     icon="binoculars"

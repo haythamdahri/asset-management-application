@@ -3,6 +3,7 @@ import { Pageable } from "../Pageable";
 class CustomPaginationService {
 
   getNextPage(page) {
+    console.log(page);
     if (!page.last) {
       page.pageable.pageNumber = page.pageable.pageNumber + 1;
     }

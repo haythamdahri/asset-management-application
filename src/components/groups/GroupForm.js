@@ -120,7 +120,7 @@ export default () => {
           Swal.fire(
             "Erreur!",
             `${
-              err.response?.data.message ||
+              err.response?.message ||
               "Les données d'entrées ne sont pas valides, veuillez ressayer!"
             }`,
             "error"

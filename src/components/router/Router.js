@@ -34,6 +34,8 @@ import Typologies from "../typologies/Typologies";
 import TypologyView from "../typologies/TypologyView";
 import TypologyForm from "../typologies/TypologyForm";
 import Threats from "../threats/Threats";
+import ThreatView from "../threats/ThreatView";
+import ThreatForm from "../threats/ThreatForm";
 
 export default () => {
   return (
@@ -118,6 +120,15 @@ export default () => {
           </UserRoute>
           <UserRoute exact={true} path="/threats">
             <Threats />
+          </UserRoute>
+          <UserRoute exact={true} path="/threats/view/:typologyId/:threatId">
+            <ThreatView />
+          </UserRoute>
+          <UserRoute exact={true} path="/threats/:typologyId/:threatId/edit">
+            <ThreatForm />
+          </UserRoute>
+          <UserRoute exact={true} path="/threats/create">
+            <ThreatForm />
           </UserRoute>
           <AuthenticatedGuard exact={true} path="/signin">
             <SignIn />

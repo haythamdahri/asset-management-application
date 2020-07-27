@@ -53,6 +53,28 @@ class TypologyService {
       });
   }
 
+  deleteThreat(typologyId, threatId) {
+    return axios
+      .delete(`${API_URL}/${typologyId}/threats/${threatId}`, { headers: authHeader() })
+      .then(() => {
+        return true;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
+  getCustomTypologies() {
+    return axios
+      .get(`${API_URL}/custom`, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
   updateRiskScenarioStatus(typologyId, riskScenarioId, status) {
     return axios
       .put(`${API_URL}/${typologyId}/riskscenarios/${riskScenarioId}/status`, {}, { params: {status}, headers: authHeader() })
@@ -85,6 +107,18 @@ class TypologyService {
         throw err;
       });
   }
+
+  getThreat(typologyId, threatId) {
+    return axios
+      .get(`${API_URL}/${typologyId}/threats/${threatId}`, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
 }
 
 export default new TypologyService();

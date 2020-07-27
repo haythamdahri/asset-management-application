@@ -21,6 +21,17 @@ class ThreatService {
           });
     }
 
+    saveThreat(threatRequest) {
+        return axios
+          .post(`${API_URL}/`, threatRequest, { headers: authHeader() })
+          .then((response) => {
+            return response.data;
+          })
+          .catch((err) => {
+            throw err;
+          });
+    }
+
 }
 
 export default new ThreatService();

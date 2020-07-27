@@ -175,7 +175,7 @@ export default () => {
                     <table className="table table-striped">
                       <thead align="center">
                         <tr>
-                          <th scope="col">Name</th>
+                          <th scope="col">Nom</th>
                           <td>{group?.name}</td>
                         </tr>
                       </thead>
