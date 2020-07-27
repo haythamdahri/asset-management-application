@@ -33,6 +33,7 @@ import ProcessForm from "../processes/ProcessForm";
 import Typologies from "../typologies/Typologies";
 import TypologyView from "../typologies/TypologyView";
 import TypologyForm from "../typologies/TypologyForm";
+import Threats from "../threats/Threats";
 
 export default () => {
   return (
@@ -114,6 +115,9 @@ export default () => {
           </UserRoute>
           <UserRoute exact={true} path="/typologies/:id/edit">
             <TypologyForm />
+          </UserRoute>
+          <UserRoute exact={true} path="/threats">
+            <Threats />
           </UserRoute>
           <AuthenticatedGuard exact={true} path="/signin">
             <SignIn />

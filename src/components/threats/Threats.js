@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import ThreatService from "../../services/ThreatService";
+import TypologyService from "../../services/TypologyService";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Swal from "sweetalert2";
 import CustomPagination from "../../pagination/components/custom-pagination/CustomPagination";
 import CustomPaginationService from "../../pagination/services/CustomPaginationService";
 import { Page } from "../../pagination/Page";
+import Moment from "react-moment";
 
 export default () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -132,31 +134,37 @@ export default () => {
     });
   };
 
-  const updateProcessStatus = async (threat, status) => {
-    // Perform User delete
-    try {
-      setIsApproving(true);
-      await ThreatService.updateThreatStatus(threat?.id, status);
-      Swal.fire(
-        "Operation éffectuée!",
-        `La menace à été ${
-          status ? "approuvée" : "rejetée"
-        } avec succés!`,
-        "success"
-      );
-      // Set process status
-      threat.status = status;
-    } catch (err) {
-      Swal.fire(
-        "Erreur!",
-        err?.response?.data?.message ||
-          `Une erreur est survenue, veuillez ressayer!`,
-        "error"
-      );
-    } finally {
-      setIsApproving(false);
-    }
-  };
+  const updateThreatStatus = async (typologyId, threat, status) => {
+    console.log(threat);
+    console.log(status);
+  // Perform User delete
+  try {
+    setIsApproving(true);
+    await TypologyService.updateThreatStatus(
+      typologyId,
+      threat?.id,
+      status
+    );
+    Swal.fire(
+      "Operation éffectuée!",
+      `Le statut de la menace à été ${
+        status ? "approuvé" : "rejeté"
+      } avec succés!`,
+      "success"
+    );
+    // Set threat status
+    threat.status = status;
+  } catch (err) {
+    Swal.fire(
+      "Erreur!",
+      err?.response?.data?.message ||
+        `Une erreur est survenue, veuillez ressayer!`,
+      "error"
+    );
+  } finally {
+    setIsApproving(false);
+  }
+};
 
   return (
     <div>
@@ -206,7 +214,7 @@ export default () => {
                       <input
                         type="search"
                         id="userSearch"
-                        placeholder="Nom du processus ..."
+                        placeholder="Nom de la menace ..."
                         name="search"
                         className="form-control"
                         ref={searchInput}
@@ -309,32 +317,32 @@ export default () => {
                       )}
 
                       {threatsPage &&
-                        threatsPage?.content?.map((threat, key) => (
+                        threatsPage?.content?.map((threatResponse, key) => (
                           <tr key={key}>
                             <td>
-                              <Link to={`/processes/view/${threat?.id}`}>
-                                {threat?.name}
+                              <Link to={`/threats/view/${threatResponse?.threat?.id}`}>
+                                {threatResponse?.threat?.name}
                               </Link>
                             </td>
                             <td
                               dangerouslySetInnerHTML={{
-                                __html: `${threat?.description?.slice(
+                                __html: `${threatResponse?.threat?.description?.slice(
                                   0,
                                   20
                                 )} ${
-                                  threat?.description?.length > 20 ? "..." : ""
+                                  threatResponse?.threat?.description?.length > 20 ? "..." : ""
                                 }`,
                               }}
                             ></td>
                             <td>
                               <Link
-                                to={`/organizations/view/${threat?.organization?.id}`}
+                                to={`/typologies/view/${threatResponse?.typologyId}`}
                               >
-                                {threat?.organization?.name}
+                                {threatResponse?.typologyName}
                               </Link>
                             </td>
                             <td>
-                              {threat?.status ? (
+                              {threatResponse?.threat?.status ? (
                                 <>
                                   <FontAwesomeIcon
                                     icon="check-circle"
@@ -353,19 +361,17 @@ export default () => {
                               )}
                             </td>
                             <td>
-                              <Link
-                                to={`/processes/view/${threat?.parentthreat?.id}`}
-                              >
-                                {threat?.parentthreat?.name}
-                              </Link>
+                              <Moment format="YYYY/MM/DD HH:MM:SS">
+                                  {threatResponse?.threat?.indetificationDate}
+                              </Moment>
                             </td>
                             <td>
                               <button
                                 onClick={(event) =>
-                                  updateProcessStatus(process, !threat?.status)
+                                  updateThreatStatus(threatResponse?.typologyId, threatResponse?.threat, !threatResponse?.threat?.status)
                                 }
                                 className={`btn btn-${
-                                  threat?.status ? "danger" : "success"
+                                  threatResponse?.threat?.status ? "danger" : "success"
                                 } btn-sm ${isApproving ? "disabled" : ""}`}
                               >
                                 <FontAwesomeIcon
@@ -376,11 +382,11 @@ export default () => {
                                   }
                                   color="white"
                                 />
-                                {threat?.status ? " Rejecter" : " Approuver"}
+                                {threatResponse?.threat?.status ? " Rejecter" : " Approuver"}
                               </button>
                             </td>
                             <td>
-                              <Link to={`/processes/${threat?.id}/edit`}>
+                              <Link to={`/processes/${threatResponse?.threat?.id}/edit`}>
                                 <button className="btn btn-primary btn-sm">
                                   <FontAwesomeIcon icon="edit" color="white" />
                                 </button>
@@ -388,7 +394,7 @@ export default () => {
                             </td>
                             <td>
                               <button
-                                onClick={(event) => deleteThreat(threat?.id)}
+                                onClick={(event) => deleteThreat(threatResponse?.threat?.typologyId, threatResponse?.threat?.id)}
                                 className={`btn btn-danger btn-sm ${
                                   isDeleting ? "disabled" : ""
                                 }`}
@@ -400,7 +406,7 @@ export default () => {
                               </button>
                             </td>
                             <td>
-                              <Link to={`/processes/view/${threat?.id}`}>
+                              <Link to={`/threats/view/${threatResponse?.threat?.id}`}>
                                 <button className="btn btn-secondary btn-sm">
                                   <FontAwesomeIcon
                                     icon="binoculars"

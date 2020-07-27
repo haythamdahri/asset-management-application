@@ -121,7 +121,7 @@ export default () => {
               <li className="nav-item">
                 <Link to="/typologies" className="nav-link">
                 <i className="nav-icon fas fa-i-cursor" />
-                  <p>Typoligies des actifs</p>
+                  <p>Typologies des actifs</p>
                 </Link>
               </li>
               <li className="nav-item">
