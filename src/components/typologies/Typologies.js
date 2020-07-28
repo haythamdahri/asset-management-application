@@ -200,7 +200,7 @@ export default () => {
 
               <div className="col-12 mb-3 text-center">
                 <Link to="/typologies/create" className="btn btn-primary btn-sm">
-                  <FontAwesomeIcon icon="user-plus" /> Ajouter une typologie
+                  <FontAwesomeIcon icon="plus-circle" /> Ajouter une typologie
                 </Link>
               </div>
 

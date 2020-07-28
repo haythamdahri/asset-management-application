@@ -75,7 +75,7 @@ class TypologyService {
       });
   }
 
-  deletevulnerability(typologyId, vulnerabilityId) {
+  deleteVulnerability(typologyId, vulnerabilityId) {
     return axios
       .delete(`${API_URL}/${typologyId}/vulnerabilities/${vulnerabilityId}`, { headers: authHeader() })
       .then(() => {
@@ -143,7 +143,7 @@ class TypologyService {
 
   getVulnerability(typologyId, vulnerabilityId) {
     return axios
-      .get(`${API_URL}/${typologyId}/threats/${vulnerabilityId}`, { headers: authHeader() })
+      .get(`${API_URL}/${typologyId}/vulnerabilities/${vulnerabilityId}`, { headers: authHeader() })
       .then((response) => {
         return response.data;
       })

@@ -133,7 +133,7 @@ export default () => {
               <li className="nav-item">
                 <Link to="/vulnerabilities" className="nav-link">
                 <i className="nav-icon fas fa-lock-open" />
-                  <p>vulnérabilités</p>
+                  <p>Vulnérabilités</p>
                 </Link>
               </li>
               <li className="nav-item">

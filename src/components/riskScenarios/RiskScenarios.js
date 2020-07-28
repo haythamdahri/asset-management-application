@@ -117,7 +117,7 @@ export default () => {
           await TypologyService.deleteRiskScenario(typologyId, riskScenarioId);
           Swal.fire(
             "Operation éffectuée!",
-            "La scénario de risque à été supprimée avec succés!",
+            "Le scénario de risque à été supprimée avec succés!",
             "success"
           );
           // Clear search
@@ -177,7 +177,7 @@ export default () => {
           <div className="container-fluid">
             <div className="row mb-2">
               <div className="col-sm-6">
-                <h1>Menaces</h1>
+                <h1>Scénarios des risques</h1>
               </div>
               <div className="col-sm-6">
                 <ol className="breadcrumb float-sm-right">
@@ -218,7 +218,7 @@ export default () => {
                       <input
                         type="search"
                         id="userSearch"
-                        placeholder="Nom de scénario de risque ..."
+                        placeholder="Nom du scénario de risque ..."
                         name="search"
                         className="form-control"
                         ref={searchInput}
@@ -239,7 +239,7 @@ export default () => {
 
               <div className="col-12 mb-3 text-center">
                 <Link to="/riskscenarios/create" className="btn btn-primary btn-sm">
-                  <FontAwesomeIcon icon="user-plus" /> Ajouter un scénario de
+                  <FontAwesomeIcon icon="plus-circle" /> Ajouter un scénario de
                   risque
                 </Link>
               </div>
@@ -397,7 +397,7 @@ export default () => {
                                 >
                                   <FontAwesomeIcon
                                     icon={
-                                      process.status
+                                      riskScenarioResponse?.riskScenario?.status
                                         ? "minus-circle"
                                         : "check-circle"
                                     }

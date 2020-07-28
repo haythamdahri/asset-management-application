@@ -252,6 +252,17 @@ class UserService {
       });
   }
 
+  async canEditVulnerability() {
+    return axios
+      .get(`${API_URL}/roles/checking/vulnerabilities`, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
   async checkUserAdmin() {
     return axios
       .get(`${API_URL}/roles/checking/admin`, { headers: authHeader() })

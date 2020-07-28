@@ -235,7 +235,7 @@ export default () => {
 
               <div className="col-12 mb-3 text-center">
                 <Link to="/threats/create" className="btn btn-primary btn-sm">
-                  <FontAwesomeIcon icon="user-plus" /> Ajouter une menace
+                  <FontAwesomeIcon icon="plus-circle" /> Ajouter une menace
                 </Link>
               </div>
 
@@ -376,7 +376,7 @@ export default () => {
                               >
                                 <FontAwesomeIcon
                                   icon={
-                                    process.status
+                                    threatResponse?.threat?.status
                                       ? "minus-circle"
                                       : "check-circle"
                                   }

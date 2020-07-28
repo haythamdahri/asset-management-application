@@ -64,7 +64,7 @@ export default ({ typology }) => {
                   className={key % 2 === 0 ? "odd" : "even"}
                 >
                   <td>
-                    <Link to={`/vulnerabilities/${vulnerability?.id}`}>{vulnerability?.name || ""}</Link>
+                    <Link to={`/vulnerabilities/view/${typology?.id}/${vulnerability?.id}`}>{vulnerability?.name || ""}</Link>
                   </td>
                   <td dangerouslySetInnerHTML={{
                                 __html: `${vulnerability?.description?.slice(

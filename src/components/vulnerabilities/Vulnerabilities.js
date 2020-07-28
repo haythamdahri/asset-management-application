@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import ThreatService from "../../services/ThreatService";
+import VulnerabilityService from "../../services/VulnerabilityService";
 import TypologyService from "../../services/TypologyService";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -13,37 +13,37 @@ export default () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const [isUnAuthorized, setIsUnAuthorized] = useState(false);
-  const [threatsPage, setThreatsPage] = useState(new Page());
+  const [vulnerabilitiesPage, setVulnerabilitiesPage] = useState(new Page());
   const [isDeleting, setIsDeleting] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
   const searchInput = useRef(null);
 
   useEffect(() => {
-    document.title = "Gestion Des Menaces";
-    fetchThreats();
+    document.title = "Gestion Des Vulnérabilités";
+    fetchVulnerabilitiesPage();
     return () => {
-      setThreatsPage(null);
+      setVulnerabilitiesPage(null);
     };
   }, []);
 
-  const fetchThreats = async () => {
+  const fetchVulnerabilitiesPage = async () => {
     const search = searchInput?.current?.value || "";
     try {
       setIsLoading(true);
       setIsError(false);
       setIsUnAuthorized(false);
-      setThreatsPage(new Page());
-      const response = await ThreatService.getThreatsPage(
+      setVulnerabilitiesPage(new Page());
+      const response = await VulnerabilityService.getVulnerabilitiesPage(
         search,
-        threatsPage?.pageable || new Page()
+        vulnerabilitiesPage?.pageable || new Page()
       );
       setIsLoading(false);
-      setThreatsPage(response);
+      setVulnerabilitiesPage(response);
       setIsError(false);
     } catch (e) {
       const status = e.response?.status || null;
       setIsLoading(false);
-      setThreatsPage(null);
+      setVulnerabilitiesPage(null);
       if (status === 403) {
         setIsUnAuthorized(true);
         setIsError(false);
@@ -69,21 +69,25 @@ export default () => {
   };
 
   const getNextPage = () => {
-    setThreatsPage.pageable = CustomPaginationService.getNextPage(threatsPage);
-    fetchThreats();
+    vulnerabilitiesPage.pageable = CustomPaginationService.getNextPage(
+      vulnerabilitiesPage
+    );
+    fetchVulnerabilitiesPage();
   };
 
   const getPreviousPage = () => {
-    threatsPage.pageable = CustomPaginationService.getPreviousPage(threatsPage);
-    fetchThreats();
+    vulnerabilitiesPage.pageable = CustomPaginationService.getPreviousPage(
+      vulnerabilitiesPage
+    );
+    fetchVulnerabilitiesPage();
   };
 
   const getPageInNewSize = (pageSize) => {
-    threatsPage.pageable = CustomPaginationService.getPageInNewSize(
-      threatsPage,
+    vulnerabilitiesPage.pageable = CustomPaginationService.getPageInNewSize(
+      vulnerabilitiesPage,
       pageSize
     );
-    fetchThreats();
+    fetchVulnerabilitiesPage();
   };
 
   const onSearchSubmit = async (event) => {
@@ -94,11 +98,11 @@ export default () => {
     }
   };
 
-  const deleteThreat = async (typologyId, threatId) => {
+  const deleteVulnerability = async (typologyId, vulnerabilityId) => {
     // Confirm User Deletion
     Swal.fire({
-      title: "Êtes-vous sûr de supprimer la menace",
-      text: "Voulez-vous supprimer la menace?",
+      title: "Êtes-vous sûr de supprimer la vulnérabilité",
+      text: "Voulez-vous supprimer la vulnérabilité?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -110,16 +114,16 @@ export default () => {
         // Perform User delete
         try {
           setIsDeleting(true);
-          await TypologyService.deleteThreat(typologyId, threatId);
+          await TypologyService.deleteVulnerability(typologyId, vulnerabilityId);
           Swal.fire(
             "Operation éffectuée!",
-            "La menace à été supprimée avec succés!",
+            "La vulnérabilité à été supprimée avec succés!",
             "success"
           );
           // Clear search
           searchInput.current.value = "";
           // Fetch users
-          fetchThreats();
+          fetchVulnerabilitiesPage();
         } catch (err) {
           Swal.fire(
             "Erreur!",
@@ -134,37 +138,35 @@ export default () => {
     });
   };
 
-  const updateThreatStatus = async (typologyId, threat, status) => {
-    console.log(threat);
-    console.log(status);
-  // Perform User delete
-  try {
-    setIsApproving(true);
-    await TypologyService.updateThreatStatus(
-      typologyId,
-      threat?.id,
-      status
-    );
-    Swal.fire(
-      "Operation éffectuée!",
-      `Le statut de la menace à été ${
-        status ? "approuvé" : "rejeté"
-      } avec succés!`,
-      "success"
-    );
-    // Set threat status
-    threat.status = status;
-  } catch (err) {
-    Swal.fire(
-      "Erreur!",
-      err?.response?.data?.message ||
-        `Une erreur est survenue, veuillez ressayer!`,
-      "error"
-    );
-  } finally {
-    setIsApproving(false);
-  }
-};
+  const updateVulnerabilityStatus = async (typologyId, vulnerability, status) => {
+    // Perform User delete
+    try {
+      setIsApproving(true);
+      await TypologyService.updateVulnerabilityStatus(
+        typologyId,
+        vulnerability?.id,
+        status
+      );
+      Swal.fire(
+        "Operation éffectuée!",
+        `La vulnérabilité à été ${
+          status ? "approuvée" : "rejetée"
+        } avec succés!`,
+        "success"
+      );
+      // Set vulnerability status
+      vulnerability.status = status;
+    } catch (err) {
+      Swal.fire(
+        "Erreur!",
+        err?.response?.data?.message ||
+          `Une erreur est survenue, veuillez ressayer!`,
+        "error"
+      );
+    } finally {
+      setIsApproving(false);
+    }
+  };
 
   return (
     <div>
@@ -175,7 +177,7 @@ export default () => {
           <div className="container-fluid">
             <div className="row mb-2">
               <div className="col-sm-6">
-                <h1>Menaces</h1>
+                <h1>Vulnérabilités</h1>
               </div>
               <div className="col-sm-6">
                 <ol className="breadcrumb float-sm-right">
@@ -184,7 +186,9 @@ export default () => {
                       <FontAwesomeIcon icon="home" /> Acceuil
                     </Link>
                   </li>
-                  <li className="breadcrumb-item active">Menaces</li>
+                  <li className="breadcrumb-item active">
+                    Vulnérabilités
+                  </li>
                 </ol>
               </div>
             </div>
@@ -198,7 +202,7 @@ export default () => {
               {!isUnAuthorized && !isError && !isLoading && (
                 <div className="col-12 text-center">
                   <CustomPagination
-                    page={threatsPage}
+                    page={vulnerabilitiesPage}
                     loading={isLoading}
                     nextPageEvent={getNextPage}
                     previousPageEvent={getPreviousPage}
@@ -214,7 +218,7 @@ export default () => {
                       <input
                         type="search"
                         id="userSearch"
-                        placeholder="Nom de la menace ..."
+                        placeholder="Nom de la vulnérabilité ..."
                         name="search"
                         className="form-control"
                         ref={searchInput}
@@ -234,8 +238,8 @@ export default () => {
               </div>
 
               <div className="col-12 mb-3 text-center">
-                <Link to="/threats/create" className="btn btn-primary btn-sm">
-                  <FontAwesomeIcon icon="user-plus" /> Ajouter une menace
+                <Link to="/vulnerabilities/create" className="btn btn-primary btn-sm">
+                  <FontAwesomeIcon icon="plus-circle" /> Ajouter une vulnérabilité
                 </Link>
               </div>
 
@@ -256,7 +260,7 @@ export default () => {
                   <table className="table table-hover table-bordered ">
                     <thead className="thead-light text-center">
                       <tr>
-                        <th>Nom de la menace</th>
+                        <th>Nom de la vulnérabilité</th>
                         <th>Description</th>
                         <th>Typologie</th>
                         <th>Statut</th>
@@ -278,8 +282,8 @@ export default () => {
                         </tr>
                       )}
                       {!isLoading &&
-                        threatsPage !== null &&
-                        threatsPage?.content?.length === 0 && (
+                        vulnerabilitiesPage !== null &&
+                        vulnerabilitiesPage?.content?.length === 0 && (
                           <tr>
                             <td
                               colSpan={9}
@@ -287,7 +291,7 @@ export default () => {
                             >
                               <h2 className="font-weight-bold">
                                 <FontAwesomeIcon icon="exclamation-circle" />{" "}
-                                Aucune menace n'a été trouvée!
+                                Aucune vulnérabilité n'a été trouvée!
                               </h2>
                             </td>
                           </tr>
@@ -306,7 +310,7 @@ export default () => {
                                 ? "Une erreur est survenue!"
                                 : "Vous n'êtes pas autorisé!"}
                               <button
-                                onClick={() => fetchThreats()}
+                                onClick={() => fetchVulnerabilitiesPage()}
                                 className="btn btn-warning font-weight-bold ml-2"
                               >
                                 <FontAwesomeIcon icon="sync" /> Ressayer
@@ -316,107 +320,138 @@ export default () => {
                         </tr>
                       )}
 
-                      {threatsPage &&
-                        threatsPage?.content?.map((threatResponse, key) => (
-                          <tr key={key}>
-                            <td>
-                              <Link to={`/threats/view/${threatResponse?.typologyId}/${threatResponse?.threat?.id}`}>
-                                {threatResponse?.threat?.name}
-                              </Link>
-                            </td>
-                            <td
-                              dangerouslySetInnerHTML={{
-                                __html: `${threatResponse?.threat?.description?.slice(
-                                  0,
-                                  20
-                                )} ${
-                                  threatResponse?.threat?.description?.length > 20 ? "..." : ""
-                                }`,
-                              }}
-                            ></td>
-                            <td>
-                              <Link
-                                to={`/typologies/view/${threatResponse?.typologyId}`}
-                              >
-                                {threatResponse?.typologyName}
-                              </Link>
-                            </td>
-                            <td>
-                              {threatResponse?.threat?.status ? (
-                                <>
-                                  <FontAwesomeIcon
-                                    icon="check-circle"
-                                    color="green"
-                                  />{" "}
-                                  APPROUVÉ
-                                </>
-                              ) : (
-                                <>
-                                  <FontAwesomeIcon
-                                    icon="times-circle"
-                                    color="red"
-                                  />{" "}
-                                  NON APPROUVÉ
-                                </>
-                              )}
-                            </td>
-                            <td>
-                              <Moment format="YYYY/MM/DD HH:mm:ss">
-                                {threatResponse?.threat?.identificationDate}
-                              </Moment>
-                            </td>
-                            <td>
-                              <button
-                                onClick={(event) =>
-                                  updateThreatStatus(threatResponse?.typologyId, threatResponse?.threat, !threatResponse?.threat?.status)
-                                }
-                                className={`btn btn-${
-                                  threatResponse?.threat?.status ? "danger" : "success"
-                                } btn-sm ${isApproving ? "disabled" : ""}`}
-                              >
-                                <FontAwesomeIcon
-                                  icon={
-                                    process.status
-                                      ? "minus-circle"
-                                      : "check-circle"
+                      {vulnerabilitiesPage &&
+                        vulnerabilitiesPage?.content?.map(
+                          (vulnerabilityResponse, key) => (
+                            <tr key={key}>
+                              <td>
+                                <Link
+                                  to={`/vulnerabilities/view/${vulnerabilityResponse?.typologyId}/${vulnerabilityResponse?.vulnerability?.id}`}
+                                >
+                                  {vulnerabilityResponse?.vulnerability?.name}
+                                </Link>
+                              </td>
+                              <td
+                                dangerouslySetInnerHTML={{
+                                  __html: `${vulnerabilityResponse?.vulnerability?.description?.slice(
+                                    0,
+                                    20
+                                  )} ${
+                                    vulnerabilityResponse?.vulnerability
+                                      ?.description?.length > 20
+                                      ? "..."
+                                      : ""
+                                  }`,
+                                }}
+                              ></td>
+                              <td>
+                                <Link
+                                  to={`/typologies/view/${vulnerabilityResponse?.typologyId}`}
+                                >
+                                  {vulnerabilityResponse?.typologyName}
+                                </Link>
+                              </td>
+                              <td>
+                                {vulnerabilityResponse?.vulnerability?.status ? (
+                                  <>
+                                    <FontAwesomeIcon
+                                      icon="check-circle"
+                                      color="green"
+                                    />{" "}
+                                    APPROUVÉ
+                                  </>
+                                ) : (
+                                  <>
+                                    <FontAwesomeIcon
+                                      icon="times-circle"
+                                      color="red"
+                                    />{" "}
+                                    NON APPROUVÉ
+                                  </>
+                                )}
+                              </td>
+                              <td>
+                                <Moment format="YYYY/MM/DD HH:mm:ss">
+                                  {
+                                    vulnerabilityResponse?.vulnerability
+                                      ?.identificationDate
                                   }
-                                  color="white"
-                                />
-                                {threatResponse?.threat?.status ? " Rejecter" : " Approuver"}
-                              </button>
-                            </td>
-                            <td>
-                              <Link to={`/threats/${threatResponse?.typologyId}/${threatResponse?.threat?.id}/edit`}>
-                                <button className="btn btn-primary btn-sm">
-                                  <FontAwesomeIcon icon="edit" color="white" />
-                                </button>
-                              </Link>
-                            </td>
-                            <td>
-                              <button
-                                onClick={(event) => deleteThreat(threatResponse?.typologyId, threatResponse?.threat?.id)}
-                                className={`btn btn-danger btn-sm ${
-                                  isDeleting ? "disabled" : ""
-                                }`}
-                              >
-                                <FontAwesomeIcon
-                                  icon="trash-alt"
-                                  color="white"
-                                />
-                              </button>
-                            </td>
-                            <td>
-                              <Link to={`/threats/view/${threatResponse?.typologyId}/${threatResponse?.threat?.id}`}>
-                                <button className="btn btn-secondary btn-sm">
+                                </Moment>
+                              </td>
+                              <td>
+                                <button
+                                  onClick={(event) =>
+                                    updateVulnerabilityStatus(
+                                      vulnerabilityResponse?.typologyId,
+                                      vulnerabilityResponse?.vulnerability,
+                                      !vulnerabilityResponse?.vulnerability
+                                        ?.status
+                                    )
+                                  }
+                                  className={`btn btn-${
+                                    vulnerabilityResponse?.vulnerability?.status
+                                      ? "danger"
+                                      : "success"
+                                  } btn-sm ${isApproving ? "disabled" : ""}`}
+                                >
                                   <FontAwesomeIcon
-                                    icon="binoculars"
+                                    icon={
+                                      process.status
+                                        ? "minus-circle"
+                                        : "check-circle"
+                                    }
+                                    color="white"
+                                  />
+                                  {vulnerabilityResponse?.vulnerability?.status
+                                    ? " Rejecter"
+                                    : " Approuver"}
+                                </button>
+                              </td>
+                              <td>
+                                <Link
+                                  to={`/vulnerabilities/${vulnerabilityResponse?.typologyId}/${vulnerabilityResponse?.vulnerability?.id}/edit`}
+                                >
+                                  <button className="btn btn-primary btn-sm">
+                                    <FontAwesomeIcon
+                                      icon="edit"
+                                      color="white"
+                                    />
+                                  </button>
+                                </Link>
+                              </td>
+                              <td>
+                                <button
+                                  onClick={(event) =>
+                                    deleteVulnerability(
+                                      vulnerabilityResponse?.typologyId,
+                                      vulnerabilityResponse?.vulnerability?.id
+                                    )
+                                  }
+                                  className={`btn btn-danger btn-sm ${
+                                    isDeleting ? "disabled" : ""
+                                  }`}
+                                >
+                                  <FontAwesomeIcon
+                                    icon="trash-alt"
                                     color="white"
                                   />
                                 </button>
-                              </Link>
-                            </td>
-                          </tr>
-                        ))}
+                              </td>
+                              <td>
+                                <Link
+                                  to={`/vulnerabilities/view/${vulnerabilityResponse?.typologyId}/${vulnerabilityResponse?.vulnerability?.id}`}
+                                >
+                                  <button className="btn btn-secondary btn-sm">
+                                    <FontAwesomeIcon
+                                      icon="binoculars"
+                                      color="white"
+                                    />
+                                  </button>
+                                </Link>
+                              </td>
+                            </tr>
+                          )
+                        )}
                     </tbody>
                   </table>
                 </div>
