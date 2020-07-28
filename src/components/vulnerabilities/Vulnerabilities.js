@@ -69,7 +69,7 @@ export default () => {
   };
 
   const getNextPage = () => {
-    threatsPage.pageable = CustomPaginationService.getNextPage(threatsPage);
+    setThreatsPage.pageable = CustomPaginationService.getNextPage(threatsPage);
     fetchThreats();
   };
 

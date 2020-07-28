@@ -8,7 +8,7 @@ import TypologyService from "../../services/TypologyService";
 import Moment from "react-moment";
 
 export default () => {
-  const [threatResponse, setThreatResponse] = useState({});
+  const [riskScenarioResponse, setRiskScenarioResponse] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
   const [isUnAuthorized, setIsUnAuthorized] = useState(false);
@@ -17,33 +17,34 @@ export default () => {
   let history = useHistory();
 
   // User Id Extraction from URL
-  let { typologyId, threatId } = useParams();
+  let { typologyId, riskScenarioId } = useParams();
   const ref = useRef(true);
 
   useEffect(() => {
-    console.log(typologyId);
-    console.log(threatId);
-    document.title = "Gestion Groupes";
-    fetchThreat();
+    document.title = "Gestion Des Scénarios Des Risques";
+    fetchRiskScenario();
     return () => {
       ref.current = false;
     };
   }, []);
 
-  const fetchThreat = async () => {
+  const fetchRiskScenario = async () => {
     setIsUnAuthorized(false);
     setIsLoading(true);
     setError(false);
-    setThreatResponse({});
+    setRiskScenarioResponse({});
     try {
-      const threat = await TypologyService.getThreat(typologyId, threatId);
-      if (!threat.hasOwnProperty("threat")) {
-        setThreatResponse(null);
+      const riskScenario = await TypologyService.getRiskScenario(
+        typologyId,
+        riskScenarioId
+      );
+      if (!riskScenario.hasOwnProperty("riskScenario")) {
+        setRiskScenarioResponse(null);
         setIsLoading(false);
         setError(false);
         setIsUnAuthorized(false);
       } else {
-        setThreatResponse(threat);
+        setRiskScenarioResponse(riskScenario);
         setIsLoading(false);
         setError(false);
         setIsUnAuthorized(false);
@@ -51,7 +52,7 @@ export default () => {
     } catch (e) {
       const status = e?.response?.status || null;
       setIsLoading(false);
-      setThreatResponse({});
+      setRiskScenarioResponse({});
       switch (status) {
         case 403:
           setIsUnAuthorized(true);
@@ -60,7 +61,7 @@ export default () => {
         case 404:
           setIsUnAuthorized(false);
           setError(false);
-          setThreatResponse(null);
+          setRiskScenarioResponse(null);
           break;
         default:
           setError(true);
@@ -69,11 +70,11 @@ export default () => {
     }
   };
 
-  const deleteThreat = async () => {
+  const deleteRiskScenario = async () => {
     // Confirm User Deletion
     Swal.fire({
-      title: "Êtes-vous sûr de supprimer la menaces?",
-      text: "Voulez-vous supprimer la menace?",
+      title: "Êtes-vous sûr de supprimer le scénario de risque?",
+      text: "Voulez-vous supprimer le scénario de risque?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -85,13 +86,13 @@ export default () => {
         // Perform User delete
         try {
           setIsDeleting(true);
-          await TypologyService.deleteThreat(typologyId, threatId);
+          await TypologyService.deleteRiskScenario(typologyId, riskScenarioId);
           Swal.fire(
             "Operation éffectuée!",
-            "La menace à été supprimée avec succés!",
+            "Le scénario de risque à été supprimé avec succés!",
             "success"
           );
-          history.push("/threats");
+          history.push("/riskscenarios");
         } catch (err) {
           Swal.fire(
             "Erreur!",
@@ -105,24 +106,29 @@ export default () => {
     });
   };
 
-  const updateThreatStatus = async (typologyId, threat, status) => {
+  const updateRiskScenarioStatus = async (typologyId, riskScenario, status) => {
     // Perform User delete
     try {
       setIsApproving(true);
-      await TypologyService.updateThreatStatus(typologyId, threat?.id, status);
+      await TypologyService.updateRiskScenarioStatus(
+        typologyId,
+        riskScenario?.id,
+        status
+      );
       Swal.fire(
         "Operation éffectuée!",
-        `Le statut de la menace à été ${
+        `Le statut du scénario de risque à été ${
           status ? "approuvé" : "rejeté"
         } avec succés!`,
         "success"
       );
-      // Set threat status
-      threat.status = status;
+      // Set risk scenario status
+      riskScenario.status = status;
     } catch (err) {
       Swal.fire(
         "Erreur!",
-        err?.response?.message || `Une erreur est survenue, veuillez ressayer!`,
+        err?.response?.data?.message ||
+          `Une erreur est survenue, veuillez ressayer!`,
         "error"
       );
     } finally {
@@ -137,11 +143,13 @@ export default () => {
           <div className="row">
             <div className="col-12">
               <div className="ribbon-wrapper ribbon-lg">
-                <div className="ribbon bg-success text-lg">Groupe</div>
+                <div className="ribbon bg-success text-lg">
+                  Scénario de risque
+                </div>
               </div>
             </div>
 
-            {(error || isUnAuthorized || threatResponse === null) &&
+            {(error || isUnAuthorized || riskScenarioResponse === null) &&
               !isLoading && (
                 <div className="col-10 mx-auto pt-5">
                   <div className="alert alert-warning text-center font-weight">
@@ -149,10 +157,10 @@ export default () => {
                       <FontAwesomeIcon icon="exclamation-circle" />{" "}
                       {error && "Une erreur est survenue!"}
                       {isUnAuthorized && "Vous n'êtes pas autorisé!"}
-                      {threatResponse === null &&
-                        "Aucune menace n'a été trouvée"}
+                      {riskScenarioResponse === null &&
+                        "Aucun scénario de risque n'a été trouvé"}
                       <button
-                        onClick={() => fetchThreat()}
+                        onClick={() => fetchRiskScenario()}
                         className="btn btn-warning font-weight-bold ml-2"
                       >
                         <FontAwesomeIcon icon="sync" /> Ressayer
@@ -162,7 +170,7 @@ export default () => {
                 </div>
               )}
 
-            {isLoading && !error && threatResponse !== null && (
+            {isLoading && !error && riskScenarioResponse !== null && (
               <div className="col-12 text-center pt-5 pb-5">
                 <div className="overlay dark">
                   <i className="fas fa-2x fa-sync-alt fa-spin"></i>
@@ -182,20 +190,20 @@ export default () => {
             {!isLoading &&
               !error &&
               !isUnAuthorized &&
-              threatResponse !== null && (
+              riskScenarioResponse !== null && (
                 <>
-                  {/** THREAT DATA */}
+                  {/** RISK SCENARIO DATA */}
 
                   <div className="col-md-12 mx-auto mt-3 mb-3 text-center">
                     <Link
-                      to={`/threats/${threatResponse?.typologyId}/${threatResponse?.threat?.id}/edit`}
+                      to={`/riskscenarios/${riskScenarioResponse?.typologyId}/${riskScenarioResponse?.riskScenario?.id}/edit`}
                     >
                       <button className="btn btn-secondary btn-sm">
                         <FontAwesomeIcon icon="edit" color="white" />
                       </button>
                     </Link>{" "}
                     <button
-                      onClick={() => deleteThreat()}
+                      onClick={() => deleteRiskScenario()}
                       className="btn btn-danger btn-sm"
                       disabled={isDeleting ? "disabled" : ""}
                     >
@@ -213,39 +221,43 @@ export default () => {
                             <td colSpan={2}>
                               <div
                                 className={`shadow shadow-sm alert ${
-                                  threatResponse?.threat?.status
+                                  riskScenarioResponse?.riskScenario?.status
                                     ? "alert-success"
                                     : "alert-danger"
                                 }`}
                               >
                                 <h5>
-                                  <i className="icon fas fa-ban" /> Statut de la
-                                  menace!
+                                  <i className="icon fas fa-ban" /> Statut du
+                                  scénario de risque!
                                 </h5>
-                                La menace est{" "}
+                                Le scénario de risque est{" "}
                                 {`${
-                                  threatResponse?.threat?.status
-                                    ? "approuvée"
-                                    : "rejetée"
+                                  riskScenarioResponse?.riskScenario?.status
+                                    ? "approuvé"
+                                    : "rejeté"
                                 }`}
                               </div>
                             </td>
                           </tr>
                           <tr>
                             <th scope="col">Nom</th>
-                            <td>{threatResponse?.threat?.name}</td>
+                            <td>{riskScenarioResponse?.riskScenario?.name}</td>
                           </tr>
                         </thead>
                         <tbody align="center">
                           <tr>
                             <th scope="col">Description</th>
                             <td>
-                              {threatResponse?.threat?.description &&
-                                threatResponse?.threat?.description?.length >
-                                  0 && (
+                              {riskScenarioResponse?.riskScenario
+                                ?.description &&
+                                riskScenarioResponse?.riskScenario?.description
+                                  ?.length > 0 && (
                                   <CKEditor
                                     editor={ClassicEditor}
-                                    data={threatResponse?.threat?.description}
+                                    data={
+                                      riskScenarioResponse?.riskScenario
+                                        ?.description
+                                    }
                                     config={{
                                       toolbar: [],
                                       removePlugins: ["Heading", "Link"],
@@ -260,39 +272,44 @@ export default () => {
                             <th scope="col">Date d'identification</th>
                             <td>
                               <Moment format="YYYY/MM/DD HH:mm:ss">
-                                {threatResponse?.threat?.identificationDate}
+                                {
+                                  riskScenarioResponse?.riskScenario
+                                    ?.identificationDate
+                                }
                               </Moment>
                             </td>
                           </tr>
                           <tr>
                             <th scope="col">Statut</th>
                             <td>
-                              {threatResponse?.threat?.classification !==
-                                null && (
+                              {riskScenarioResponse?.riskScenario
+                                ?.classification !== null && (
                                 <div className="text-center">
                                   <button
                                     onClick={(event) =>
-                                      updateThreatStatus(
-                                        threatResponse?.typologyId,
-                                        threatResponse?.threat,
-                                        !threatResponse?.threat?.status
+                                      updateRiskScenarioStatus(
+                                        riskScenarioResponse?.typologyId,
+                                        riskScenarioResponse?.riskScenario,
+                                        !riskScenarioResponse?.riskScenario
+                                          ?.status
                                       )
                                     }
                                     className={`w-50 btn btn-${
-                                      threatResponse?.threat?.status
+                                      riskScenarioResponse?.riskScenario?.status
                                         ? "danger"
                                         : "success"
                                     } btn-sm ${isApproving ? "disabled" : ""}`}
                                   >
                                     <FontAwesomeIcon
                                       icon={
-                                        threatResponse?.threat?.status
+                                        riskScenarioResponse?.riskScenario
+                                          ?.status
                                           ? "minus-circle"
                                           : "check-circle"
                                       }
                                       color="white"
                                     />
-                                    {threatResponse?.threat?.status
+                                    {riskScenarioResponse?.riskScenario?.status
                                       ? " Rejeter"
                                       : " Approuver"}
                                   </button>
@@ -304,9 +321,9 @@ export default () => {
                             <th scope="col">Typologie</th>
                             <td>
                               <Link
-                                to={`/typologies/view/${threatResponse?.typologyId}`}
+                                to={`/typologies/view/${riskScenarioResponse?.typologyId}`}
                               >
-                                {threatResponse?.typologyName}
+                                {riskScenarioResponse?.typologyName}
                               </Link>
                             </td>
                           </tr>

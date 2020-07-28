@@ -64,6 +64,28 @@ class TypologyService {
       });
   }
 
+  deleteRiskScenario(typologyId, riskScenarioId) {
+    return axios
+      .delete(`${API_URL}/${typologyId}/riskscenarios/${riskScenarioId}`, { headers: authHeader() })
+      .then(() => {
+        return true;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
+  deletevulnerability(typologyId, vulnerabilityId) {
+    return axios
+      .delete(`${API_URL}/${typologyId}/vulnerabilities/${vulnerabilityId}`, { headers: authHeader() })
+      .then(() => {
+        return true;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
   getCustomTypologies() {
     return axios
       .get(`${API_URL}/custom`, { headers: authHeader() })
@@ -111,6 +133,28 @@ class TypologyService {
   getThreat(typologyId, threatId) {
     return axios
       .get(`${API_URL}/${typologyId}/threats/${threatId}`, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
+  getVulnerability(typologyId, vulnerabilityId) {
+    return axios
+      .get(`${API_URL}/${typologyId}/threats/${vulnerabilityId}`, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
+  getRiskScenario(typologyId, riskScenarioId) {
+    return axios
+      .get(`${API_URL}/${typologyId}/riskscenarios/${riskScenarioId}`, { headers: authHeader() })
       .then((response) => {
         return response.data;
       })

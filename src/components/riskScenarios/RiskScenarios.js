@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import ThreatService from "../../services/ThreatService";
+import RiskScenarioService from "../../services/RiskScenarioService";
 import TypologyService from "../../services/TypologyService";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -13,37 +13,37 @@ export default () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const [isUnAuthorized, setIsUnAuthorized] = useState(false);
-  const [threatsPage, setThreatsPage] = useState(new Page());
+  const [riskScenariosPage, setRiskScenariosPage] = useState(new Page());
   const [isDeleting, setIsDeleting] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
   const searchInput = useRef(null);
 
   useEffect(() => {
-    document.title = "Gestion Des Menaces";
-    fetchThreats();
+    document.title = "Gestion Des Scénarios Des Risques";
+    fetchRiskScenarios();
     return () => {
-      setThreatsPage(null);
+      setRiskScenariosPage(null);
     };
   }, []);
 
-  const fetchThreats = async () => {
+  const fetchRiskScenarios = async () => {
     const search = searchInput?.current?.value || "";
     try {
       setIsLoading(true);
       setIsError(false);
       setIsUnAuthorized(false);
-      setThreatsPage(new Page());
-      const response = await ThreatService.getThreatsPage(
+      setRiskScenariosPage(new Page());
+      const response = await RiskScenarioService.getRiskScenariosPage(
         search,
-        threatsPage?.pageable || new Page()
+        riskScenariosPage?.pageable || new Page()
       );
       setIsLoading(false);
-      setThreatsPage(response);
+      setRiskScenariosPage(response);
       setIsError(false);
     } catch (e) {
       const status = e.response?.status || null;
       setIsLoading(false);
-      setThreatsPage(null);
+      setRiskScenariosPage(null);
       if (status === 403) {
         setIsUnAuthorized(true);
         setIsError(false);
@@ -69,21 +69,25 @@ export default () => {
   };
 
   const getNextPage = () => {
-    threatsPage.pageable = CustomPaginationService.getNextPage(threatsPage);
-    fetchThreats();
+    riskScenariosPage.pageable = CustomPaginationService.getNextPage(
+      riskScenariosPage
+    );
+    fetchRiskScenarios();
   };
 
   const getPreviousPage = () => {
-    threatsPage.pageable = CustomPaginationService.getPreviousPage(threatsPage);
-    fetchThreats();
+    riskScenariosPage.pageable = CustomPaginationService.getPreviousPage(
+      riskScenariosPage
+    );
+    fetchRiskScenarios();
   };
 
   const getPageInNewSize = (pageSize) => {
-    threatsPage.pageable = CustomPaginationService.getPageInNewSize(
-      threatsPage,
+    riskScenariosPage.pageable = CustomPaginationService.getPageInNewSize(
+      riskScenariosPage,
       pageSize
     );
-    fetchThreats();
+    fetchRiskScenarios();
   };
 
   const onSearchSubmit = async (event) => {
@@ -94,7 +98,7 @@ export default () => {
     }
   };
 
-  const deleteThreat = async (typologyId, threatId) => {
+  const deleteRiskScenario = async (typologyId, riskScenarioId) => {
     // Confirm User Deletion
     Swal.fire({
       title: "Êtes-vous sûr de supprimer la menace",
@@ -110,16 +114,16 @@ export default () => {
         // Perform User delete
         try {
           setIsDeleting(true);
-          await TypologyService.deleteThreat(typologyId, threatId);
+          await TypologyService.deleteRiskScenario(typologyId, riskScenarioId);
           Swal.fire(
             "Operation éffectuée!",
-            "La menace à été supprimée avec succés!",
+            "La scénario de risque à été supprimée avec succés!",
             "success"
           );
           // Clear search
           searchInput.current.value = "";
           // Fetch users
-          fetchThreats();
+          fetchRiskScenarios();
         } catch (err) {
           Swal.fire(
             "Erreur!",
@@ -134,37 +138,35 @@ export default () => {
     });
   };
 
-  const updateThreatStatus = async (typologyId, threat, status) => {
-    console.log(threat);
-    console.log(status);
-  // Perform User delete
-  try {
-    setIsApproving(true);
-    await TypologyService.updateThreatStatus(
-      typologyId,
-      threat?.id,
-      status
-    );
-    Swal.fire(
-      "Operation éffectuée!",
-      `Le statut de la menace à été ${
-        status ? "approuvé" : "rejeté"
-      } avec succés!`,
-      "success"
-    );
-    // Set threat status
-    threat.status = status;
-  } catch (err) {
-    Swal.fire(
-      "Erreur!",
-      err?.response?.data?.message ||
-        `Une erreur est survenue, veuillez ressayer!`,
-      "error"
-    );
-  } finally {
-    setIsApproving(false);
-  }
-};
+  const updateRiskScenarioStatus = async (typologyId, riskScenario, status) => {
+    // Perform User delete
+    try {
+      setIsApproving(true);
+      await TypologyService.updateRiskScenarioStatus(
+        typologyId,
+        riskScenario?.id,
+        status
+      );
+      Swal.fire(
+        "Operation éffectuée!",
+        `Le statut de la menace à été ${
+          status ? "approuvé" : "rejeté"
+        } avec succés!`,
+        "success"
+      );
+      // Set riskScenario status
+      riskScenario.status = status;
+    } catch (err) {
+      Swal.fire(
+        "Erreur!",
+        err?.response?.data?.message ||
+          `Une erreur est survenue, veuillez ressayer!`,
+        "error"
+      );
+    } finally {
+      setIsApproving(false);
+    }
+  };
 
   return (
     <div>
@@ -184,7 +186,9 @@ export default () => {
                       <FontAwesomeIcon icon="home" /> Acceuil
                     </Link>
                   </li>
-                  <li className="breadcrumb-item active">Menaces</li>
+                  <li className="breadcrumb-item active">
+                    Scénario des risques
+                  </li>
                 </ol>
               </div>
             </div>
@@ -198,7 +202,7 @@ export default () => {
               {!isUnAuthorized && !isError && !isLoading && (
                 <div className="col-12 text-center">
                   <CustomPagination
-                    page={threatsPage}
+                    page={riskScenariosPage}
                     loading={isLoading}
                     nextPageEvent={getNextPage}
                     previousPageEvent={getPreviousPage}
@@ -214,7 +218,7 @@ export default () => {
                       <input
                         type="search"
                         id="userSearch"
-                        placeholder="Nom de la menace ..."
+                        placeholder="Nom de scénario de risque ..."
                         name="search"
                         className="form-control"
                         ref={searchInput}
@@ -234,8 +238,9 @@ export default () => {
               </div>
 
               <div className="col-12 mb-3 text-center">
-                <Link to="/threats/create" className="btn btn-primary btn-sm">
-                  <FontAwesomeIcon icon="user-plus" /> Ajouter une menace
+                <Link to="/riskscenarios/create" className="btn btn-primary btn-sm">
+                  <FontAwesomeIcon icon="user-plus" /> Ajouter un scénario de
+                  risque
                 </Link>
               </div>
 
@@ -256,7 +261,7 @@ export default () => {
                   <table className="table table-hover table-bordered ">
                     <thead className="thead-light text-center">
                       <tr>
-                        <th>Nom de la menace</th>
+                        <th>Nom du scénario de risque</th>
                         <th>Description</th>
                         <th>Typologie</th>
                         <th>Statut</th>
@@ -278,8 +283,8 @@ export default () => {
                         </tr>
                       )}
                       {!isLoading &&
-                        threatsPage !== null &&
-                        threatsPage?.content?.length === 0 && (
+                        riskScenariosPage !== null &&
+                        riskScenariosPage?.content?.length === 0 && (
                           <tr>
                             <td
                               colSpan={9}
@@ -287,7 +292,7 @@ export default () => {
                             >
                               <h2 className="font-weight-bold">
                                 <FontAwesomeIcon icon="exclamation-circle" />{" "}
-                                Aucune menace n'a été trouvée!
+                                Aucun scénario de risque n'a été trouvé!
                               </h2>
                             </td>
                           </tr>
@@ -306,7 +311,7 @@ export default () => {
                                 ? "Une erreur est survenue!"
                                 : "Vous n'êtes pas autorisé!"}
                               <button
-                                onClick={() => fetchThreats()}
+                                onClick={() => fetchRiskScenarios()}
                                 className="btn btn-warning font-weight-bold ml-2"
                               >
                                 <FontAwesomeIcon icon="sync" /> Ressayer
@@ -316,107 +321,138 @@ export default () => {
                         </tr>
                       )}
 
-                      {threatsPage &&
-                        threatsPage?.content?.map((threatResponse, key) => (
-                          <tr key={key}>
-                            <td>
-                              <Link to={`/threats/view/${threatResponse?.typologyId}/${threatResponse?.threat?.id}`}>
-                                {threatResponse?.threat?.name}
-                              </Link>
-                            </td>
-                            <td
-                              dangerouslySetInnerHTML={{
-                                __html: `${threatResponse?.threat?.description?.slice(
-                                  0,
-                                  20
-                                )} ${
-                                  threatResponse?.threat?.description?.length > 20 ? "..." : ""
-                                }`,
-                              }}
-                            ></td>
-                            <td>
-                              <Link
-                                to={`/typologies/view/${threatResponse?.typologyId}`}
-                              >
-                                {threatResponse?.typologyName}
-                              </Link>
-                            </td>
-                            <td>
-                              {threatResponse?.threat?.status ? (
-                                <>
-                                  <FontAwesomeIcon
-                                    icon="check-circle"
-                                    color="green"
-                                  />{" "}
-                                  APPROUVÉ
-                                </>
-                              ) : (
-                                <>
-                                  <FontAwesomeIcon
-                                    icon="times-circle"
-                                    color="red"
-                                  />{" "}
-                                  NON APPROUVÉ
-                                </>
-                              )}
-                            </td>
-                            <td>
-                              <Moment format="YYYY/MM/DD HH:mm:ss">
-                                {threatResponse?.threat?.identificationDate}
-                              </Moment>
-                            </td>
-                            <td>
-                              <button
-                                onClick={(event) =>
-                                  updateThreatStatus(threatResponse?.typologyId, threatResponse?.threat, !threatResponse?.threat?.status)
-                                }
-                                className={`btn btn-${
-                                  threatResponse?.threat?.status ? "danger" : "success"
-                                } btn-sm ${isApproving ? "disabled" : ""}`}
-                              >
-                                <FontAwesomeIcon
-                                  icon={
-                                    process.status
-                                      ? "minus-circle"
-                                      : "check-circle"
+                      {riskScenariosPage &&
+                        riskScenariosPage?.content?.map(
+                          (riskScenarioResponse, key) => (
+                            <tr key={key}>
+                              <td>
+                                <Link
+                                  to={`/riskscenarios/view/${riskScenarioResponse?.typologyId}/${riskScenarioResponse?.riskScenario?.id}`}
+                                >
+                                  {riskScenarioResponse?.riskScenario?.name}
+                                </Link>
+                              </td>
+                              <td
+                                dangerouslySetInnerHTML={{
+                                  __html: `${riskScenarioResponse?.riskScenario?.description?.slice(
+                                    0,
+                                    20
+                                  )} ${
+                                    riskScenarioResponse?.riskScenario
+                                      ?.description?.length > 20
+                                      ? "..."
+                                      : ""
+                                  }`,
+                                }}
+                              ></td>
+                              <td>
+                                <Link
+                                  to={`/typologies/view/${riskScenarioResponse?.typologyId}`}
+                                >
+                                  {riskScenarioResponse?.typologyName}
+                                </Link>
+                              </td>
+                              <td>
+                                {riskScenarioResponse?.riskScenario?.status ? (
+                                  <>
+                                    <FontAwesomeIcon
+                                      icon="check-circle"
+                                      color="green"
+                                    />{" "}
+                                    APPROUVÉ
+                                  </>
+                                ) : (
+                                  <>
+                                    <FontAwesomeIcon
+                                      icon="times-circle"
+                                      color="red"
+                                    />{" "}
+                                    NON APPROUVÉ
+                                  </>
+                                )}
+                              </td>
+                              <td>
+                                <Moment format="YYYY/MM/DD HH:mm:ss">
+                                  {
+                                    riskScenarioResponse?.riskScenario
+                                      ?.identificationDate
                                   }
-                                  color="white"
-                                />
-                                {threatResponse?.threat?.status ? " Rejecter" : " Approuver"}
-                              </button>
-                            </td>
-                            <td>
-                              <Link to={`/threats/${threatResponse?.typologyId}/${threatResponse?.threat?.id}/edit`}>
-                                <button className="btn btn-primary btn-sm">
-                                  <FontAwesomeIcon icon="edit" color="white" />
-                                </button>
-                              </Link>
-                            </td>
-                            <td>
-                              <button
-                                onClick={(event) => deleteThreat(threatResponse?.typologyId, threatResponse?.threat?.id)}
-                                className={`btn btn-danger btn-sm ${
-                                  isDeleting ? "disabled" : ""
-                                }`}
-                              >
-                                <FontAwesomeIcon
-                                  icon="trash-alt"
-                                  color="white"
-                                />
-                              </button>
-                            </td>
-                            <td>
-                              <Link to={`/threats/view/${threatResponse?.typologyId}/${threatResponse?.threat?.id}`}>
-                                <button className="btn btn-secondary btn-sm">
+                                </Moment>
+                              </td>
+                              <td>
+                                <button
+                                  onClick={(event) =>
+                                    updateRiskScenarioStatus(
+                                      riskScenarioResponse?.typologyId,
+                                      riskScenarioResponse?.riskScenario,
+                                      !riskScenarioResponse?.riskScenario
+                                        ?.status
+                                    )
+                                  }
+                                  className={`btn btn-${
+                                    riskScenarioResponse?.riskScenario?.status
+                                      ? "danger"
+                                      : "success"
+                                  } btn-sm ${isApproving ? "disabled" : ""}`}
+                                >
                                   <FontAwesomeIcon
-                                    icon="binoculars"
+                                    icon={
+                                      process.status
+                                        ? "minus-circle"
+                                        : "check-circle"
+                                    }
+                                    color="white"
+                                  />
+                                  {riskScenarioResponse?.riskScenario?.status
+                                    ? " Rejecter"
+                                    : " Approuver"}
+                                </button>
+                              </td>
+                              <td>
+                                <Link
+                                  to={`/riskscenarios/${riskScenarioResponse?.typologyId}/${riskScenarioResponse?.riskScenario?.id}/edit`}
+                                >
+                                  <button className="btn btn-primary btn-sm">
+                                    <FontAwesomeIcon
+                                      icon="edit"
+                                      color="white"
+                                    />
+                                  </button>
+                                </Link>
+                              </td>
+                              <td>
+                                <button
+                                  onClick={(event) =>
+                                    deleteRiskScenario(
+                                      riskScenarioResponse?.typologyId,
+                                      riskScenarioResponse?.riskScenario?.id
+                                    )
+                                  }
+                                  className={`btn btn-danger btn-sm ${
+                                    isDeleting ? "disabled" : ""
+                                  }`}
+                                >
+                                  <FontAwesomeIcon
+                                    icon="trash-alt"
                                     color="white"
                                   />
                                 </button>
-                              </Link>
-                            </td>
-                          </tr>
-                        ))}
+                              </td>
+                              <td>
+                                <Link
+                                  to={`/riskscenarios/view/${riskScenarioResponse?.typologyId}/${riskScenarioResponse?.riskScenario?.id}`}
+                                >
+                                  <button className="btn btn-secondary btn-sm">
+                                    <FontAwesomeIcon
+                                      icon="binoculars"
+                                      color="white"
+                                    />
+                                  </button>
+                                </Link>
+                              </td>
+                            </tr>
+                          )
+                        )}
                     </tbody>
                   </table>
                 </div>

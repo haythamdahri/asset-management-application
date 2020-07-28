@@ -36,6 +36,12 @@ import TypologyForm from "../typologies/TypologyForm";
 import Threats from "../threats/Threats";
 import ThreatView from "../threats/ThreatView";
 import ThreatForm from "../threats/ThreatForm";
+import RiskScenarioView from "../riskScenarios/RiskScenarioView";
+import RiskScenarioForm from "../riskScenarios/RiskScenarioForm";
+import VulnerabilityForm from "../vulnerabilities/VulnerabilityForm";
+import VulnerabilityView from "../vulnerabilities/VulnerabilityView";
+import Vulnerabilities from "../vulnerabilities/Vulnerabilities";
+import RiskScenarios from "../riskScenarios/RiskScenarios";
 
 export default () => {
   return (
@@ -129,6 +135,30 @@ export default () => {
           </UserRoute>
           <UserRoute exact={true} path="/threats/create">
             <ThreatForm />
+          </UserRoute>
+          <UserRoute exact={true} path="/riskscenarios">
+            <RiskScenarios />
+          </UserRoute>
+          <UserRoute exact={true} path="/riskscenarios/view/:typologyId/:riskScenarioId">
+            <RiskScenarioView />
+          </UserRoute>
+          <UserRoute exact={true} path="/riskscenarios/:typologyId/:riskScenarioId/edit">
+            <RiskScenarioForm />
+          </UserRoute>
+          <UserRoute exact={true} path="/riskscenarios/create">
+            <RiskScenarioForm />
+          </UserRoute>
+          <UserRoute exact={true} path="/vulnerabilities">
+            <Vulnerabilities />
+          </UserRoute>
+          <UserRoute exact={true} path="/vulnerabilities/view/:typologyId/:vulnerabilityId">
+            <VulnerabilityView />
+          </UserRoute>
+          <UserRoute exact={true} path="/vulnerabilities/:typologyId/:vulnerabilityId/edit">
+            <VulnerabilityForm />
+          </UserRoute>
+          <UserRoute exact={true} path="/vulnerabilities/create">
+            <VulnerabilityForm />
           </UserRoute>
           <AuthenticatedGuard exact={true} path="/signin">
             <SignIn />
