@@ -316,13 +316,12 @@ export default () => {
                           <tr key={key}>
                             <td>
                               <img
-                                src={`${process.REACT_APP_API_URL}/api/v1/assets/${asset?.id}/image/file`}
+                                src={`${process.env.REACT_APP_API_URL}/api/v1/assets/${asset?.id}/image/file`}
                                 alt={asset?.name}
-                                className="profile-user-img img-fluid img-circle"
+                                className="img-fluid img-circle"
                                 style={{
-                                  maxHeight: "150px",
-                                  height: "100%",
-                                  width: "150px",
+                                  height: "40px",
+                                  width: "50px",
                                   cursor: "pointer",
                                 }}
                               />
@@ -341,7 +340,7 @@ export default () => {
                             ></td>
                             <td>
                               <Link to={`/users/view/${asset?.owner?.id}`}>
-                                {asset?.owner?.name}
+                                {asset?.owner?.firstName} {asset?.owner?.lastName}
                               </Link>
                             </td>
                             <td>

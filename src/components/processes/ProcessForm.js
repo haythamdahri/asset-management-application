@@ -74,9 +74,9 @@ export default () => {
       process !== ""
     ) {
       // Fetch processes by the retrieved one organization
-      fetchOrganizationProcesses(applicationProcess?.organization?.id);
+      fetchOrganizationProcesses(applicationProcess?.organization?.id, applicationProcess);
     }
-  }, [process]);
+  }, [applicationProcess]);
 
   const fetchOrganizations = async () => {
     try {
@@ -108,10 +108,6 @@ export default () => {
       // Get proces
       const applicationProcess = await ProcessService.getProcess(id);
       setApplicationProcess(applicationProcess);
-      fetchOrganizationProcesses(
-        applicationProcess?.organization?.id,
-        applicationProcess
-      );
       setIsLoading(false);
       setIsUnauthorized(false);
       setIsProcessError(false);

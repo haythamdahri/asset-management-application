@@ -102,7 +102,7 @@ export default () => {
         } catch (err) {
           Swal.fire(
             "Erreur!",
-            err?.response?.data?.message ||
+            err?.response?.message ||
               `Une erreur est survenue, veuillez ressayer!`,
             "error"
           );

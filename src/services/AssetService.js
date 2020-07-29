@@ -53,9 +53,9 @@ class AssetService {
       });
   }
 
-  deleteAsset() {
+  deleteAsset(id) {
     return axios
-      .delete(`${API_URL}/`, { headers: authHeader() })
+      .delete(`${API_URL}/${id}`, { headers: authHeader() })
       .then((response) => {
         return response.data;
       })
@@ -66,7 +66,18 @@ class AssetService {
 
   updateAssetStatus(assetId, status) {
     return axios
-      .put(`${API_URL}/${assetId}/status`, { params: {status}, headers: authHeader() })
+      .put(`${API_URL}/${assetId}/status`,{}, { params: {status}, headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
+  updateAssetClassificationStatus(assetId, status) {
+    return axios
+      .put(`${API_URL}/${assetId}/classification/status`,{}, { params: {status}, headers: authHeader() })
       .then((response) => {
         return response.data;
       })
@@ -77,7 +88,7 @@ class AssetService {
 
   updateAssetRiskAnalysisStatus(assetId, RiskAnalysisId, status) {
     return axios
-      .put(`${API_URL}/${assetId}/riskanalyzes/${RiskAnalysisId}/status`, { params: {status}, headers: authHeader() })
+      .put(`${API_URL}/${assetId}/riskanalyzes/${RiskAnalysisId}/status`, {}, { params: {status}, headers: authHeader() })
       .then((response) => {
         return response.data;
       })
@@ -89,6 +100,17 @@ class AssetService {
   getRiskAnalysis(assetId, RiskAnalysisId) {
     return axios
       .get(`${API_URL}/${assetId}/riskanalyzes/${RiskAnalysisId}`, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
+  saveAsset(formData) {
+    return axios
+      .post(`${API_URL}/`, formData, { headers: authHeader() })
       .then((response) => {
         return response.data;
       })

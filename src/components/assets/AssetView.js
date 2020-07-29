@@ -37,6 +37,7 @@ export default () => {
     setAsset({});
     try {
       const asset = await AssetService.getAsset(id);
+      console.log(asset);
       if (!asset.hasOwnProperty("id")) {
         setAsset(null);
         setIsLoading(false);
@@ -110,6 +111,8 @@ export default () => {
   };
 
   const updateAssetStatus = async (asset, status) => {
+    console.log(status);
+    console.log(asset);
     // Perform User delete
     try {
       setIsApproving(true);
@@ -140,7 +143,7 @@ export default () => {
     // Perform User delete
     try {
       setIsApproving(true);
-      await AssetService.updateProcessClassificationStatus(
+      await AssetService.updateAssetClassificationStatus(
         asset?.id,
         status
       );
@@ -151,12 +154,13 @@ export default () => {
         } avec succés!`,
         "success"
       );
-      // Set process status
-      process.classification.status = status;
+      // Set asset status
+      asset.classification.status = status;
     } catch (err) {
+      console.log(err);
       Swal.fire(
         "Erreur!",
-        err?.response?.data?.message ||
+        err?.response?.message ||
           `Une erreur est survenue, veuillez ressayer!`,
         "error"
       );
@@ -174,18 +178,18 @@ export default () => {
           <div className="row">
             <div className="col-12">
               <div className="ribbon-wrapper ribbon-lg">
-                <div className="ribbon bg-success text-lg">Processus</div>
+                <div className="ribbon bg-success text-lg">Actif</div>
               </div>
             </div>
 
-            {(isError || isUnAuthorized || process === null) && !isLoading && (
+            {(isError || isUnAuthorized || asset === null) && !isLoading && (
               <div className="col-10 mx-auto pt-5">
                 <div className="alert alert-warning text-center font-weight">
                   <h2 className="font-weight-bold">
                     <FontAwesomeIcon icon="exclamation-circle" />{" "}
                     {isError && "Une erreur est survenue!"}
                     {isUnAuthorized && "Vous n'êtes pas autorisé!"}
-                    {process === null && "Aucun processus n'a été trouvé"}
+                    {asset === null && "Aucun actif n'a été trouvé"}
                     <button
                       onClick={() => fetchAsset()}
                       className="btn btn-warning font-weight-bold ml-2"
@@ -197,7 +201,7 @@ export default () => {
               </div>
             )}
 
-            {isLoading && !isError && process !== null && (
+            {isLoading && !isError && asset !== null && (
               <div className="col-12 text-center pt-5 pb-5">
                 <div className="overlay dark">
                   <i className="fas fa-2x fa-sync-alt fa-spin"></i>
@@ -214,10 +218,10 @@ export default () => {
               </div>
             )}
 
-            {!isLoading && !isError && !isUnAuthorized && process !== null && (
+            {!isLoading && !isError && !isUnAuthorized && asset !== null && (
               <>
                 <div className="col-12 text-center mt-2">
-                  <Link to={`/processes/${process.id}/edit`}>
+                  <Link to={`/assets/${asset.id}/edit`}>
                     <button className="btn btn-secondary btn-sm">
                       <FontAwesomeIcon icon="edit" color="white" />
                     </button>
@@ -231,7 +235,7 @@ export default () => {
                   </button>
                 </div>
 
-                {/** PROCESS DATA */}
+                {/** ASSET DATA */}
                 <div
                   className="col-md-12 bg-white mx-auto mt-3 mb-3"
                   style={{ borderTop: "blue solid 2px" }}
@@ -244,7 +248,7 @@ export default () => {
                           href="#asset"
                           data-toggle="tab"
                         >
-                          Actif
+                          <FontAwesomeIcon icon="server" /> Actif
                         </a>
                       </li>
                       <li className="nav-item flex-sm-fill">
@@ -253,7 +257,7 @@ export default () => {
                           href="#classification"
                           data-toggle="tab"
                         >
-                          Classification d'actif
+                          <FontAwesomeIcon icon="i-cursor" /> Classification d'actif
                         </a>
                       </li>
                       <li className="nav-item flex-sm-fill">
@@ -262,7 +266,7 @@ export default () => {
                           href="#riskanalysis"
                           data-toggle="tab"
                         >
-                          Analyses Des Risques
+                          <FontAwesomeIcon icon="diagnoses" />  Analyses Des Risques
                         </a>
                       </li>
                     </ul>
@@ -302,19 +306,19 @@ export default () => {
                                     {asset?.location?.name}</Link></td>
                               </tr>
                               <tr>
-                                <th scope="col">Organisme</th>
+                                <th scope="col">Typologie</th>
                                 <td>
                                   <Link
-                                    to={`/organizations/view/${process?.organization?.id}`}
+                                    to={`/typologies/view/${asset?.typology?.id}`}
                                   >
-                                    {process?.organization?.name}
+                                    {asset?.typology?.name}
                                   </Link>
                                 </td>
                               </tr>
                               <tr>
                                 <th scope="col">Statut</th>
                                 <td>
-                                  {process?.status ? (
+                                  {asset?.status ? (
                                     <>
                                       <FontAwesomeIcon
                                         icon="check-circle"
@@ -339,18 +343,18 @@ export default () => {
                                       )
                                     }
                                     className={`ml-2 btn btn-${
-                                      process?.status ? "danger" : "success"
+                                      asset?.status ? "danger" : "success"
                                     } btn-sm ${isApproving ? "disabled" : ""}`}
                                   >
                                     <FontAwesomeIcon
                                       icon={
-                                        process.status
+                                        asset.status
                                           ? "minus-circle"
                                           : "check-circle"
                                       }
                                       color="white"
                                     />
-                                    {process?.status
+                                    {asset?.status
                                       ? " Rejeter"
                                       : " Approuver"}
                                   </button>
@@ -415,7 +419,7 @@ export default () => {
                               </Moment>
                             </p>
                           </div>
-                          {process?.classification !== null && (
+                          {asset?.classification !== null && (
                             <div className="text-center">
                               <button
                                 onClick={(event) =>
