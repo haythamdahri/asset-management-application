@@ -93,7 +93,7 @@ export default ({ typology }) => {
                           }
                           color="white"
                         />
-                        {threat?.status ? " Rejecter" : " Approuver"}
+                        {threat?.status ? " Rejeter" : " Approuver"}
                       </button>
                     </div>
                   </td>

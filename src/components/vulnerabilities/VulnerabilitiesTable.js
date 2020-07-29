@@ -91,7 +91,7 @@ export default ({ typology }) => {
                           }
                           color="white"
                         />
-                        {vulnerability?.status ? " Rejecter" : " Approuver"}
+                        {vulnerability?.status ? " Rejeter" : " Approuver"}
                       </button>
                     </div>
                   </td>

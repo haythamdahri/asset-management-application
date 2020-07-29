@@ -55,13 +55,13 @@ export default ({ asset }) => {
           >
             <thead align="center">
               <tr role="row">
-                <th>Actif</th>
                 <th>Probabilité</th>
                 <th>Impact financier</th>
-                <th>Impact financier</th>
+                <th>Impact Operationnel</th>
                 <th>Impact réputationnel</th>
                 <th>Statut</th>
                 <th>Date d'identification</th>
+                <th>Détail</th>
               </tr>
             </thead>
             <tbody align="center">
@@ -71,9 +71,6 @@ export default ({ asset }) => {
                   key={key}
                   className={key % 2 === 0 ? "odd" : "even"}
                 >
-                  <td>
-                    <Link to={`/assets/view/${asset?.id}`}>{asset?.name} ASSSET</Link>
-                  </td>
                   <td>{riskAnalysis?.probability}</td>
                   <td>{riskAnalysis?.financialImpact}</td>
                   <td>{riskAnalysis?.operationalImpact}</td>
@@ -100,7 +97,7 @@ export default ({ asset }) => {
                           }
                           color="white"
                         />
-                        {riskAnalysis?.status ? " Rejecter" : " Approuver"}
+                        {riskAnalysis?.status ? " Rejeter" : " Approuver"}
                       </button>
                     </div>
                   </td>
@@ -108,6 +105,11 @@ export default ({ asset }) => {
                     <Moment format="YYYY/MM/DD HH:mm:ss">
                       {riskAnalysis?.identificationDate}
                     </Moment>
+                  </td>
+                  <td>
+                    <Link to={`/riskanalyzes/view/${asset?.id}/${riskAnalysis?.id}`} className="btn btn-sm btn-primary">
+                      <FontAwesomeIcon icon="eye" /> Voir le détail
+                    </Link>
                   </td>
                 </tr>
               ))}

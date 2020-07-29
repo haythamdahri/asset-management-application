@@ -91,7 +91,7 @@ export default ({ typology }) => {
                           }
                           color="white"
                         />
-                        {riskScenario?.status ? " Rejecter" : " Approuver"}
+                        {riskScenario?.status ? " Rejeter" : " Approuver"}
                       </button>
                     </div>
                   </td>
