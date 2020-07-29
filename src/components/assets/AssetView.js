@@ -30,6 +30,17 @@ export default () => {
     };
   }, [id]);
 
+
+  useEffect(() => {
+    if (asset !== null && asset.hasOwnProperty("id") && asset !== "") {
+      // Associate js files
+      const script = document.createElement("script");
+      script.src = "/js/content.js";
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  }, [asset]);
+
   const fetchAsset = async () => {
     setIsUnAuthorized(false);
     setIsLoading(true);
@@ -418,8 +429,8 @@ export default () => {
                             La classification d'actif est{" "}
                             {`${
                               asset?.classification?.status
-                                ? "approuvé"
-                                : "rejeté"
+                                ? "approuvée"
+                                : "rejetée"
                             }`}
                           </div>
                         </div>

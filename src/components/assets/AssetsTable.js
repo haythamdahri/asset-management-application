@@ -8,6 +8,7 @@ import Moment from "react-moment";
 export default ({ asset }) => {
   const [isApproving, setIsApproving] = useState(false);
 
+  
   const updateRiskAnalysisStatus = async (riskAnalysis, status) => {
     // Perform User delete
     try {
@@ -70,11 +71,7 @@ export default ({ asset }) => {
                   className={key % 2 === 0 ? "odd" : "even"}
                 >
                   <td>
-                    <Link
-                      to={`/riskanalyzes/view/${asset?.id}/${riskAnalysis?.id}`}
-                    >
-                      {riskAnalysis?.name || ""}
-                    </Link>
+                    <Link to={`/assets/view/${asset?.id}`}>{asset?.name} ASSSET</Link>
                   </td>
                   <td>{riskAnalysis?.probability}</td>
                   <td>{riskAnalysis?.financialImpact}</td>
