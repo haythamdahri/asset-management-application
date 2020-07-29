@@ -255,6 +255,7 @@ export default () => {
                         <th>Propriétaire</th>
                         <th>Statut</th>
                         <th>Localisation</th>
+                        <th>Processus</th>
                         <th>Date d'identification</th>
                         <th colSpan={4}>Actions</th>
                       </tr>
@@ -262,7 +263,7 @@ export default () => {
                     <tbody className="text-center">
                       {isLoading && (
                         <tr>
-                          <td colSpan={11} className="text-center bg-light">
+                          <td colSpan={12} className="text-center bg-light">
                             <div
                               className="spinner-border text-primary"
                               role="status"
@@ -277,7 +278,7 @@ export default () => {
                         assetsPage?.content?.length === 0 && (
                           <tr>
                             <td
-                              colSpan={11}
+                              colSpan={12}
                               className="text-center alert alert-dark"
                             >
                               <h2 className="font-weight-bold">
@@ -290,7 +291,7 @@ export default () => {
                       {(isError || isUnAuthorized) && (
                         <tr>
                           <td
-                            colSpan={11}
+                            colSpan={12}
                             className={`text-center alert ${
                               isError ? "alert-warning" : "alert-danger"
                             }`}
@@ -367,6 +368,13 @@ export default () => {
                                 to={`/locations/view/${asset?.location?.id}`}
                               >
                                 {asset?.location?.name}
+                              </Link>
+                            </td>
+                            <td>
+                              <Link
+                                to={`/processes/view/${asset?.process?.id}`}
+                              >
+                                {asset?.process?.name}
                               </Link>
                             </td>
                             <td>

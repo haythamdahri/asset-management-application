@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useParams, Link } from "react-router-dom";
 import UserService from "../../services/UserService";
+import OrganizationService from "../../services/OrganizationService";
 import TypologyService from "../../services/TypologyService";
 import AssetService from "../../services/AssetService";
 import LocationService from "../../services/LocationService";
+import ProcessService from "../../services/ProcessService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import CKEditor from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
@@ -32,6 +34,10 @@ export default () => {
     isLoading: true,
     data: [],
   });
+  const [processesData, setProcessesData] = useState({
+    isLoading: true,
+    data: [],
+  });
   const classificationOptions = [1, 2, 3, 4];
   const [file, setFile] = useState(new File([], ""));
 
@@ -46,9 +52,9 @@ export default () => {
     // Check user roles
     UserService.canEditAsset()
       .then((response) => {
-        fetchUsers();
         fetchTypologies();
         fetchLocations();
+        fetchProcesses();
         if (response.hasRole) {
           // Get process if id is not new
           if (id !== undefined) {
@@ -76,30 +82,51 @@ export default () => {
       });
   }, [reload]);
 
-  const fetchUsers = async () => {
+  const fetchRelatedUsers = async (organizationId) => {
     try {
-      const users = await UserService.getCustomUsers();
-      setUsersData({ loading: false, data: users });
+      setUsersData({ isLoading: true, data: [] });
+      const users = await OrganizationService.getOrganizationUsers(
+        organizationId
+      );
+      setUsersData({ isLoading: false, data: users });
     } catch (e) {
-        setUsersData({ loading: false, data: [] });
+      setUsersData({ isLoading: false, data: [] });
     }
   };
 
   const fetchTypologies = async () => {
     try {
       const typologies = await TypologyService.getCustomTypologies();
-      setTypologiesData({ loading: false, data: typologies });
+      setTypologiesData({ isLoading: false, data: typologies });
     } catch (e) {
-        setTypologiesData({ loading: false, data: [] });
+      setTypologiesData({ isLoading: false, data: [] });
     }
   };
 
   const fetchLocations = async () => {
     try {
       const locations = await LocationService.getLocations();
-      setLocationsData({ loading: false, data: locations });
+      setLocationsData({ isLoading: false, data: locations });
     } catch (e) {
-        setLocationsData({ loading: false, data: [] });
+      setLocationsData({ isLoading: false, data: [] });
+    }
+  };
+
+  const fetchProcesses = async (processId) => {
+    try {
+      const processes = await ProcessService.getCustomProcesses();
+      setProcessesData({ isLoading: false, data: processes });
+      const organizationId = processes?.filter((p) => p?.id === processId)[0]
+        ?.organization?.id;
+      if (id !== undefined) {
+        if (organizationId !== undefined) {
+          fetchRelatedUsers(organizationId);
+        }
+      } else {
+        fetchRelatedUsers(processes[0]?.organization?.id);
+      }
+    } catch (e) {
+      setProcessesData({ isLoading: false, data: [] });
     }
   };
 
@@ -107,12 +134,13 @@ export default () => {
     try {
       // Get proces
       const asset = await AssetService.getAsset(id);
-      if( asset.hasOwnProperty("id") ) {
+      if (asset.hasOwnProperty("id")) {
         setAsset(asset);
         setDescription(asset?.description);
       } else {
-        setAsset({});
+        setAsset(null);
       }
+      fetchProcesses(asset?.process?.id);
       setIsLoading(false);
       setIsUnauthorized(false);
       setIsAssetError(false);
@@ -142,20 +170,20 @@ export default () => {
 
   const onSubmit = (data) => {
     console.log(data);
-      // Verify if data has file in case of update
+    // Verify if data has file in case of update
     if (
-        (data.updateImage !== null &&
-          data.updateImage === true &&
-          (file?.size === 0 || file === undefined || file === null)) ||
-        (!asset.hasOwnProperty("id") && file?.size === 0)
-      ) {
-        Swal.fire(
-          "L'image d'actif est invalide!",
-          "Veuillez selectionner un fichier valide!",
-          "error"
-        );
-        return;
-      }
+      (data.updateImage !== null &&
+        data.updateImage === true &&
+        (file?.size === 0 || file === undefined || file === null)) ||
+      (!asset.hasOwnProperty("id") && file?.size === 0)
+    ) {
+      Swal.fire(
+        "L'image d'actif est invalide!",
+        "Veuillez selectionner un fichier valide!",
+        "error"
+      );
+      return;
+    }
     setIsSaving(true);
     // Set FormData
     let formData = new FormData();
@@ -168,6 +196,7 @@ export default () => {
     formData.set("location", data.location);
     formData.set("owner", data.owner);
     formData.set("typology", data.typology);
+    formData.set("process", data.process);
     formData.set("confidentiality", data.confidentiality);
     formData.set("availability", data.availability);
     formData.set("integrity", data.integrity);
@@ -189,7 +218,7 @@ export default () => {
           Swal.fire(
             "Erreur!",
             `${
-              err.response?.data.message ||
+              err.response?.message ||
               "Les données d'entrées ne sont pas valides, veuillez ressayer!"
             }`,
             "error"
@@ -234,7 +263,7 @@ export default () => {
               )}
 
             {/** ERROR MESSAGE */}
-            {(isAssetError || isUnauthorized || process === null) &&
+            {(isAssetError || isUnauthorized || asset === null) &&
               !isLoading && (
                 <div className="col-12 mx-auto pt-5">
                   <div className="alert alert-warning text-center font-weight">
@@ -242,7 +271,7 @@ export default () => {
                       <FontAwesomeIcon icon="exclamation-circle" />{" "}
                       {isAssetError && "Une erreur est survenue!"}
                       {isUnauthorized && "Vous n'êtes pas autorisé!"}
-                      {process === null && "Aucun actif n'a été trouvé"}
+                      {asset === null && "Aucun actif n'a été trouvé"}
                       <button
                         onClick={() => setReload(!reload)}
                         className="btn btn-warning font-weight-bold ml-2"
@@ -259,7 +288,7 @@ export default () => {
                 </div>
               )}
 
-            {isLoading && !isAssetError && process !== null && (
+            {isLoading && !isAssetError && asset !== null && (
               <div className="col-12 text-center pt-5 pb-5">
                 <div className="overlay dark">
                   <i className="fas fa-2x fa-sync-alt fa-spin"></i>
@@ -268,7 +297,7 @@ export default () => {
             )}
 
             {/** PROCESS FORM */}
-            {process !== null &&
+            {asset !== null &&
               !isAssetError &&
               !isUnauthorized &&
               !isLoading && (
@@ -332,54 +361,54 @@ export default () => {
                     </div>
 
                     {/** ASSET IMAGE */}
-                  <div className="form-group">
-                    <label
-                      className="col-md-3 font-weight-bold"
-                      htmlFor="validatedCustomFile"
-                    >
-                      Image:{" "}
-                    </label>
-                    <div className="custom-file col-md-9">
-                      <input
-                        disabled={isSaving}
-                        type="file"
-                        id="validatedCustomFile"
-                        name="file"
-                        onChange={(event) => setFile(event.target.files[0])}
-                        className={`custom-file-input shadow-sm`}
-                        accept="image/*"
-                      />
+                    <div className="form-group">
                       <label
-                        className="custom-file-label shadow-sm"
+                        className="col-md-3 font-weight-bold"
                         htmlFor="validatedCustomFile"
                       >
-                        Choisir un fichier...
+                        Image:{" "}
                       </label>
-                    </div>
-
-                    {asset.id !== undefined && (
-                      <div className="custom-control custom-switch mt-2 text-center">
+                      <div className="custom-file col-md-9">
                         <input
                           disabled={isSaving}
-                          type="checkbox"
-                          className="custom-control-input"
-                          id="updateImage"
-                          name="updateImage"
-                          ref={register({
-                            required: false,
-                          })}
+                          type="file"
+                          id="validatedCustomFile"
+                          name="file"
+                          onChange={(event) => setFile(event.target.files[0])}
+                          className={`custom-file-input shadow-sm`}
+                          accept="image/*"
                         />
                         <label
-                          className="custom-control-label"
-                          htmlFor="updateImage"
+                          className="custom-file-label shadow-sm"
+                          htmlFor="validatedCustomFile"
                         >
-                          Mettre à jour l'image d'actif
+                          Choisir un fichier...
                         </label>
                       </div>
-                    )}
-                  </div>
 
-                    {/** APPROVE PROCESS */}
+                      {asset?.id !== undefined && (
+                        <div className="custom-control custom-switch mt-2 text-center">
+                          <input
+                            disabled={isSaving}
+                            type="checkbox"
+                            className="custom-control-input"
+                            id="updateImage"
+                            name="updateImage"
+                            ref={register({
+                              required: false,
+                            })}
+                          />
+                          <label
+                            className="custom-control-label"
+                            htmlFor="updateImage"
+                          >
+                            Mettre à jour l'image d'actif
+                          </label>
+                        </div>
+                      )}
+                    </div>
+
+                    {/** APPROVE ASSET */}
                     <div className="custom-control custom-switch mt-2 mb-2 text-center">
                       <input
                         disabled={isSaving}
@@ -400,6 +429,52 @@ export default () => {
                       </label>
                     </div>
 
+                    {/** Process */}
+                    <div className="form-group row">
+                      <label
+                        className="col-md-3 font-weight-bold"
+                        htmlFor="process"
+                      >
+                        Processus:{" "}
+                      </label>
+                      <div className="col-md-9">
+                        <select
+                          defaultValue={asset?.process?.id || ""}
+                          defaultChecked={asset?.process?.id || ""}
+                          className={`form-control form-control-sm shadow-sm ${
+                            errors.process ? "is-invalid" : ""
+                          }`}
+                          disabled={isSaving || processesData?.isLoading}
+                          ref={register({
+                            required: true,
+                          })}
+                          onChange={(e) => {
+                            fetchRelatedUsers(
+                              processesData.data.filter(
+                                (p) => p.id === e.target.value
+                              )[0]?.organization?.id
+                            );
+                          }}
+                          id="process"
+                          name="process"
+                        >
+                          {processesData?.data &&
+                            processesData?.data?.map((p, key) => (
+                              <option key={key} value={p?.id}>
+                                {p?.name}
+                              </option>
+                            ))}
+                        </select>
+                        {/** Required name error */}
+                        {errors.process &&
+                          errors.process.type === "required" && (
+                            <div className="invalid-feedback">
+                              Processus est requis
+                            </div>
+                          )}
+                      </div>
+                    </div>
+
                     {/** Organization */}
                     <div className="form-group row">
                       <label
@@ -410,19 +485,14 @@ export default () => {
                       </label>
                       <div className="col-md-9">
                         <select
-                          defaultValue={asset?.owner?.id}
-                          onClick={(event) => {
-                            if (
-                              usersData?.data === null ||
-                              usersData?.data?.length === 0
-                            ) {
-                              fetchUsers();
-                            }
+                          value={asset?.owner?.id}
+                          onChange={(e) => {
+                            setAsset({...asset, owner: {...asset.owner, id: e.target.value}});
                           }}
                           className={`form-control form-control-sm shadow-sm ${
-                            errors.company ? "is-invalid" : ""
+                            errors.owner ? "is-invalid" : ""
                           }`}
-                          disabled={isSaving || usersData?.loading}
+                          disabled={isSaving || usersData?.isLoading}
                           ref={register({
                             required: true,
                           })}
@@ -430,11 +500,17 @@ export default () => {
                           name="owner"
                         >
                           {usersData?.data?.map((user, key) => (
-                            <option key={key} value={user.id}>
+                            <option key={key} value={user?.id}>
                               {user?.firstName} {user?.lastName}
                             </option>
                           ))}
                         </select>
+                        {/** Required name error */}
+                        {errors.owner && errors.owner.type === "required" && (
+                          <div className="invalid-feedback">
+                            Propriétaire est requis
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -448,18 +524,14 @@ export default () => {
                       </label>
                       <div className="col-md-9">
                         <select
-                          defaultValue={
-                            asset?.typology?.id
-                          }
-                          defaultChecked={
-                            asset?.typology?.id
-                          }
+                          defaultValue={asset?.typology?.id}
+                          defaultChecked={asset?.typology?.id}
                           className={`form-control form-control-sm shadow-sm ${
                             errors.typology ? "is-invalid" : ""
                           }`}
-                          disabled={isSaving || typologiesData?.loading}
+                          disabled={isSaving || typologiesData?.isLoading}
                           ref={register({
-                            required: false,
+                            required: true,
                           })}
                           id="typology"
                           name="typology"
@@ -470,6 +542,13 @@ export default () => {
                             </option>
                           ))}
                         </select>
+                        {/** Required name error */}
+                        {errors.typology &&
+                          errors.typology.type === "required" && (
+                            <div className="invalid-feedback">
+                              La typologie est requise
+                            </div>
+                          )}
                       </div>
                     </div>
 
@@ -483,18 +562,14 @@ export default () => {
                       </label>
                       <div className="col-md-9">
                         <select
-                          defaultValue={
-                            asset?.location?.id
-                          }
-                          defaultChecked={
-                            asset?.location?.id
-                          }
+                          defaultValue={asset?.location?.id}
+                          defaultChecked={asset?.location?.id}
                           className={`form-control form-control-sm shadow-sm ${
                             errors.location ? "is-invalid" : ""
                           }`}
-                          disabled={isSaving || typologiesData?.loading}
+                          disabled={isSaving || typologiesData?.isLoading}
                           ref={register({
-                            required: false,
+                            required: true,
                           })}
                           id="location"
                           name="location"
@@ -505,6 +580,13 @@ export default () => {
                             </option>
                           ))}
                         </select>
+                        {/** Required name error */}
+                        {errors.location &&
+                          errors.location.type === "required" && (
+                            <div className="invalid-feedback">
+                              La localisation est requise
+                            </div>
+                          )}
                       </div>
                     </div>
 
@@ -518,9 +600,7 @@ export default () => {
                       </label>
                       <div className="col-md-9">
                         <select
-                          defaultValue={
-                            asset?.classification?.confidentiality
-                          }
+                          defaultValue={asset?.classification?.confidentiality}
                           defaultChecked={
                             asset?.classification?.confidentiality
                           }
@@ -540,6 +620,14 @@ export default () => {
                             </option>
                           ))}
                         </select>
+                        {/** Required name error */}
+                        {errors.confidentiality &&
+                          errors.confidentiality.type === "required" && (
+                            <div className="invalid-feedback">
+                              La confidentialité de la classification est
+                              requise
+                            </div>
+                          )}
                       </div>
                     </div>
 
@@ -553,12 +641,8 @@ export default () => {
                       </label>
                       <div className="col-md-9">
                         <select
-                          defaultValue={
-                            asset?.classification?.availability
-                          }
-                          defaultChecked={
-                            asset?.classification?.availability
-                          }
+                          defaultValue={asset?.classification?.availability}
+                          defaultChecked={asset?.classification?.availability}
                           className={`form-control form-control-sm shadow-sm ${
                             errors.availability ? "is-invalid" : ""
                           }`}
@@ -575,6 +659,13 @@ export default () => {
                             </option>
                           ))}
                         </select>
+                        {/** Required name error */}
+                        {errors.availability &&
+                          errors.availability.type === "required" && (
+                            <div className="invalid-feedback">
+                              La disponibilité de la classification est requise
+                            </div>
+                          )}
                       </div>
                     </div>
 
@@ -588,12 +679,8 @@ export default () => {
                       </label>
                       <div className="col-md-9">
                         <select
-                          defaultValue={
-                            asset?.classification?.integrity
-                          }
-                          defaultChecked={
-                            asset?.classification?.integrity
-                          }
+                          defaultValue={asset?.classification?.integrity}
+                          defaultChecked={asset?.classification?.integrity}
                           className={`form-control form-control-sm shadow-sm ${
                             errors.integrity ? "is-invalid" : ""
                           }`}
@@ -610,6 +697,13 @@ export default () => {
                             </option>
                           ))}
                         </select>
+                        {/** Required name error */}
+                        {errors.integrity &&
+                          errors.integrity.type === "required" && (
+                            <div className="invalid-feedback">
+                              L'intégrité de la classification est requise
+                            </div>
+                          )}
                       </div>
                     </div>
 
@@ -623,12 +717,8 @@ export default () => {
                       </label>
                       <div className="col-md-9">
                         <select
-                          defaultValue={
-                            asset?.classification?.traceability
-                          }
-                          defaultChecked={
-                            asset?.classification?.traceability
-                          }
+                          defaultValue={asset?.classification?.traceability}
+                          defaultChecked={asset?.classification?.traceability}
                           className={`form-control form-control-sm shadow-sm ${
                             errors.traceability ? "is-invalid" : ""
                           }`}
@@ -645,6 +735,13 @@ export default () => {
                             </option>
                           ))}
                         </select>
+                        {/** Required name error */}
+                        {errors.traceability &&
+                          errors.traceability.type === "required" && (
+                            <div className="invalid-feedback">
+                              La traçabilité de la classification est requise
+                            </div>
+                          )}
                       </div>
                     </div>
 
@@ -657,21 +754,19 @@ export default () => {
                         id="classificationStatus"
                         name="classificationStatus"
                         ref={register({
-                          required: false,
+                          required: true,
                         })}
                         onChange={(e) => {
                           if (asset?.classification) {
-                            asset.classification.status = !asset
-                              ?.classification?.status;
+                            asset.classification.status = !asset?.classification
+                              ?.status;
                           } else {
                             asset.classification = {
                               status: true,
                             };
                           }
                         }}
-                        defaultChecked={
-                            asset?.classification?.status
-                        }
+                        defaultChecked={asset?.classification?.status}
                       />
                       <label
                         className="custom-control-label"
@@ -708,8 +803,7 @@ export default () => {
                     <hr />
 
                     <div className="col-12 text-center">
-                      {(id !== undefined ||
-                        asset.hasOwnProperty("id")) && (
+                      {(id !== undefined || asset.hasOwnProperty("id")) && (
                         <Link
                           to={`/assets/view/${asset?.id}`}
                           type="submit"
@@ -722,8 +816,7 @@ export default () => {
                         to="/assets"
                         className="btn btn-secondary font-weight-bold text-center mx-2"
                       >
-                        <FontAwesomeIcon icon="undo" /> Naviguer vers les
-                        actifs
+                        <FontAwesomeIcon icon="undo" /> Naviguer vers les actifs
                       </Link>
                     </div>
                   </form>

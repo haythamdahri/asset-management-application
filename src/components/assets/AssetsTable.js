@@ -29,7 +29,7 @@ export default ({ asset }) => {
     } catch (err) {
       Swal.fire(
         "Erreur!",
-        err?.response?.data?.message ||
+        err?.response?.message ||
           `Une erreur est survenue, veuillez ressayer!`,
         "error"
       );
@@ -40,16 +40,16 @@ export default ({ asset }) => {
 
   return (
     <div
-      id="vulnerabilities_wrapper"
+      id="riskAnalyzes_wrapper"
       className="dataTables_wrapper dt-bootstrap4"
     >
       <div className="row">
         <div className="col-sm-12">
           <table
-            id="vulnerabilities"
+            id="riskAnalyzes"
             className="table table-bordered table-striped dataTable dtr-inline"
             role="grid"
-            aria-describedby="vulnerabilities_info"
+            aria-describedby="riskAnalyzes_info"
           >
             <thead align="center">
               <tr role="row">
@@ -63,7 +63,7 @@ export default ({ asset }) => {
               </tr>
             </thead>
             <tbody align="center">
-              {asset?.riskAnalyzes?.map((riskAnalysis, key) => (
+              {asset?.riskAnalyzes && asset?.riskAnalyzes?.map((riskAnalysis, key) => (
                 <tr
                   role="row"
                   key={key}

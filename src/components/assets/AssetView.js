@@ -6,7 +6,7 @@ import Swal from "sweetalert2";
 import CKEditor from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import Moment from "react-moment";
-import RiskAnalyzesTable from "../riskanalyzes/RiskAnalyzesTable";
+import RiskAnalyzesTable from "../riskAnalyzes/RiskAnalyzesTable";
 
 export default () => {
   const [asset, setAsset] = useState({});
@@ -111,8 +111,6 @@ export default () => {
   };
 
   const updateAssetStatus = async (asset, status) => {
-    console.log(status);
-    console.log(asset);
     // Perform User delete
     try {
       setIsApproving(true);
@@ -143,10 +141,7 @@ export default () => {
     // Perform User delete
     try {
       setIsApproving(true);
-      await AssetService.updateAssetClassificationStatus(
-        asset?.id,
-        status
-      );
+      await AssetService.updateAssetClassificationStatus(asset?.id, status);
       Swal.fire(
         "Operation éffectuée!",
         `Le statut de la classification d'actif à été ${
@@ -160,16 +155,13 @@ export default () => {
       console.log(err);
       Swal.fire(
         "Erreur!",
-        err?.response?.message ||
-          `Une erreur est survenue, veuillez ressayer!`,
+        err?.response?.message || `Une erreur est survenue, veuillez ressayer!`,
         "error"
       );
     } finally {
       setIsApproving(false);
     }
   };
-
-  
 
   return (
     <div className="content-wrapper bg-light pb-5 mb-5">
@@ -257,7 +249,8 @@ export default () => {
                           href="#classification"
                           data-toggle="tab"
                         >
-                          <FontAwesomeIcon icon="i-cursor" /> Classification d'actif
+                          <FontAwesomeIcon icon="i-cursor" /> Classification
+                          d'actif
                         </a>
                       </li>
                       <li className="nav-item flex-sm-fill">
@@ -266,7 +259,8 @@ export default () => {
                           href="#riskanalysis"
                           data-toggle="tab"
                         >
-                          <FontAwesomeIcon icon="diagnoses" />  Analyses Des Risques
+                          <FontAwesomeIcon icon="diagnoses" /> Analyses Des
+                          Risques
                         </a>
                       </li>
                     </ul>
@@ -278,6 +272,21 @@ export default () => {
                         <div className="table table-responsive float-left">
                           <table className="table table-striped">
                             <thead align="center">
+                              <tr>
+                                <th scope="col">Image</th>
+                                <td>
+                                  <img
+                                    src={`${process.env.REACT_APP_API_URL}/api/v1/assets/${asset?.id}/image/file`}
+                                    alt={asset?.name}
+                                    className="img-fluid img-circle"
+                                    style={{
+                                      height: "50px",
+                                      width: "50px",
+                                      cursor: "pointer",
+                                    }}
+                                  />
+                                </td>
+                              </tr>
                               <tr>
                                 <th scope="col">Nom</th>
                                 <td>{asset?.name}</td>
@@ -300,10 +309,24 @@ export default () => {
                                 </td>
                               </tr>
                               <tr>
+                                <th scope="col">Propriétaire</th>
+                                <td>
+                                  <Link
+                                    to={`/users/view/${asset?.owner?.id}`}
+                                  >
+                                    {asset?.owner?.firstName} {asset?.owner?.lastName}
+                                  </Link>
+                                </td>
+                              </tr>
+                              <tr>
                                 <th scope="col">Localisation</th>
                                 <td>
-                                    <Link to={`/locations/view/${asset?.location?.id}`}>
-                                    {asset?.location?.name}</Link></td>
+                                  <Link
+                                    to={`/locations/view/${asset?.location?.id}`}
+                                  >
+                                    {asset?.location?.name}
+                                  </Link>
+                                </td>
                               </tr>
                               <tr>
                                 <th scope="col">Typologie</th>
@@ -313,6 +336,24 @@ export default () => {
                                   >
                                     {asset?.typology?.name}
                                   </Link>
+                                </td>
+                              </tr>
+                              <tr>
+                                <th scope="col">Processus</th>
+                                <td>
+                                  <Link
+                                    to={`/processes/view/${asset?.process?.id}`}
+                                  >
+                                    {asset?.process?.name}
+                                  </Link>
+                                </td>
+                              </tr>
+                              <tr>
+                                <th scope="col">Date d'identification</th>
+                                <td>
+                                  <Moment format="YYYY/MM/DD HH:mm:ss">
+                                    {asset?.identificationDate}
+                                    </Moment>
                                 </td>
                               </tr>
                               <tr>
@@ -337,10 +378,7 @@ export default () => {
                                   )}
                                   <button
                                     onClick={(event) =>
-                                      updateAssetStatus(
-                                        asset,
-                                        !asset?.status
-                                      )
+                                      updateAssetStatus(asset, !asset?.status)
                                     }
                                     className={`ml-2 btn btn-${
                                       asset?.status ? "danger" : "success"
@@ -354,9 +392,7 @@ export default () => {
                                       }
                                       color="white"
                                     />
-                                    {asset?.status
-                                      ? " Rejeter"
-                                      : " Approuver"}
+                                    {asset?.status ? " Rejeter" : " Approuver"}
                                   </button>
                                 </td>
                               </tr>
@@ -365,8 +401,8 @@ export default () => {
                         </div>
                       </div>
 
-                       {/* /.tab-pane */}
-                       <div className="tab-pane" id="classification">
+                      {/* /.tab-pane */}
+                      <div className="tab-pane" id="classification">
                         <div className="col-12">
                           <div
                             className={`shadow shadow-sm alert ${
@@ -391,9 +427,7 @@ export default () => {
                         <div className="col-12">
                           <div className="callout callout-danger">
                             <h5>Confidentialité</h5>
-                            <p>
-                              {asset?.classification?.confidentiality || 0}
-                            </p>
+                            <p>{asset?.classification?.confidentiality || 0}</p>
                           </div>
                           <div className="callout callout-info">
                             <h5>Disponibilité</h5>
@@ -429,7 +463,7 @@ export default () => {
                                   )
                                 }
                                 className={`w-50 btn btn-${
-                                    asset?.classification?.status
+                                  asset?.classification?.status
                                     ? "danger"
                                     : "success"
                                 } btn-sm ${isApproving ? "disabled" : ""}`}
@@ -468,14 +502,12 @@ export default () => {
                           </div>
                         </div>
                       </div>
-                      
                     </div>
                     {/* /.tab-content */}
-                    </div>
-                    {/* /.tab-content */}
-                
+                  </div>
+                  {/* /.tab-content */}
                 </div>
-                </>
+              </>
             )}
           </div>
         </div>
