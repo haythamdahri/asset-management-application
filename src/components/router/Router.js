@@ -42,6 +42,8 @@ import VulnerabilityForm from "../vulnerabilities/VulnerabilityForm";
 import VulnerabilityView from "../vulnerabilities/VulnerabilityView";
 import Vulnerabilities from "../vulnerabilities/Vulnerabilities";
 import RiskScenarios from "../riskScenarios/RiskScenarios";
+import Assets from "../assets/Assets";
+import AssetView from "../assets/AssetView";
 
 export default () => {
   return (
@@ -159,6 +161,12 @@ export default () => {
           </UserRoute>
           <UserRoute exact={true} path="/vulnerabilities/create">
             <VulnerabilityForm />
+          </UserRoute>
+          <UserRoute exact={true} path="/assets">
+            <Assets />
+          </UserRoute>
+          <UserRoute exact={true} path="/assets/view/:id">
+            <AssetView />
           </UserRoute>
           <AuthenticatedGuard exact={true} path="/signin">
             <SignIn />

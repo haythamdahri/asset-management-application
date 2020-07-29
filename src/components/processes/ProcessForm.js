@@ -17,7 +17,7 @@ export default () => {
   const [isProcessError, setIsProcessError] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [reload, setReload] = useState(false);
-  const [process, setProcess] = useState({});
+  const [applicationProcess, setApplicationProcess] = useState({});
   const [organizationsData, setOrganizationsData] = useState({
     isLoading: true,
     data: [],
@@ -46,7 +46,7 @@ export default () => {
             fetchProcess();
           } else {
             setIsLoading(false);
-            setProcess({});
+            setApplicationProcess({});
           }
         } else {
           setIsLoading(false);
@@ -68,9 +68,13 @@ export default () => {
   }, [reload]);
 
   useEffect(() => {
-    if( process !== null && process.hasOwnProperty("id") && process !== "" ) {
-        // Fetch processes by the retrieved one organization
-        fetchOrganizationProcesses(process?.organization?.id);
+    if (
+      process !== null &&
+      applicationProcess.hasOwnProperty("id") &&
+      process !== ""
+    ) {
+      // Fetch processes by the retrieved one organization
+      fetchOrganizationProcesses(applicationProcess?.organization?.id);
     }
   }, [process]);
 
@@ -83,13 +87,17 @@ export default () => {
     }
   };
 
-  const fetchOrganizationProcesses = async (organizationId) => {
+  const fetchOrganizationProcesses = async (organizationId, pr) => {
     setProcessesData({ ...processesData, loading: true });
     try {
       const processes = await OrganizationService.getOrganizationProcesses(
         organizationId
       );
-      setProcessesData({ loading: false, data: processes?.filter(p => p?.id !== process?.id && p?.parentProcess?.id !== process?.id) || [] });
+      setProcessesData({
+        loading: false,
+        data:
+          processes?.filter((p) => p?.id !== pr?.id && p?.id !== pr?.id) || [],
+      });
     } catch (e) {
       setProcessesData({ loading: false, data: [] });
     }
@@ -98,15 +106,19 @@ export default () => {
   const fetchProcess = async () => {
     try {
       // Get proces
-      const process = await ProcessService.getProcess(id);
-      setProcess(process);
+      const applicationProcess = await ProcessService.getProcess(id);
+      setApplicationProcess(applicationProcess);
+      fetchOrganizationProcesses(
+        applicationProcess?.organization?.id,
+        applicationProcess
+      );
       setIsLoading(false);
       setIsUnauthorized(false);
       setIsProcessError(false);
     } catch (err) {
       const status = err.response?.status || null;
       setIsLoading(false);
-      setProcess({});
+      setApplicationProcess({});
       switch (status) {
         case 403:
           setIsUnauthorized(true);
@@ -124,7 +136,10 @@ export default () => {
   };
 
   const onEditorChange = (event, editor) => {
-    setProcess({ ...process, description: editor.getData() });
+    setApplicationProcess({
+      ...applicationProcess,
+      description: editor.getData(),
+    });
   };
 
   const onSubmit = (data) => {
@@ -132,12 +147,12 @@ export default () => {
     setIsSaving(true);
     const processRequest = {
       ...data,
-      id: process?.id,
-      description: process.description
+      id: applicationProcess?.id,
+      description: applicationProcess.description,
     };
     ProcessService.saveProcess(processRequest)
-      .then((orgnization) => {
-        setProcess(orgnization);
+      .then((p) => {
+        setApplicationProcess(p);
         setIsSaving(false);
         Swal.fire(
           "Operation effectuée!",
@@ -179,14 +194,14 @@ export default () => {
             </div>
 
             {/** BACK BUTTON */}
-            {(id !== undefined || process.hasOwnProperty("id")) &&
+            {(id !== undefined || applicationProcess.hasOwnProperty("id")) &&
               !isProcessError &&
               !isUnauthorized &&
               !isLoading &&
               process && (
                 <div className="col-12 text-center">
                   <Link
-                    to={`/processes/view/${process?.id}`}
+                    to={`/processes/view/${applicationProcess?.id}`}
                     type="submit"
                     className="btn btn-dark btn-sm mt-2 font-weight-bold text-center mx-2"
                   >
@@ -259,7 +274,7 @@ export default () => {
                           type="text"
                           id="name"
                           name="name"
-                          defaultValue={process?.name || ""}
+                          defaultValue={applicationProcess?.name || ""}
                           className={`form-control form-control-sm shadow-sm ${
                             errors.name ? "is-invalid" : ""
                           }`}
@@ -287,7 +302,7 @@ export default () => {
                       <div className="col-md-9">
                         <CKEditor
                           editor={ClassicEditor}
-                          data={process?.description || ""}
+                          data={applicationProcess?.description || ""}
                           disabled={isSaving}
                           onChange={onEditorChange}
                         />
@@ -306,9 +321,9 @@ export default () => {
                           required: false,
                         })}
                         onChange={(e) => {
-                          process.status = !process?.status
+                          applicationProcess.status = !applicationProcess?.status;
                         }}
-                        defaultChecked={process?.status}
+                        defaultChecked={applicationProcess?.status}
                       />
                       <label className="custom-control-label" htmlFor="status">
                         Approuver le processus
@@ -326,9 +341,12 @@ export default () => {
                       <div className="col-md-9">
                         <select
                           onChange={(e) =>
-                            fetchOrganizationProcesses(e.target.value)
+                            fetchOrganizationProcesses(
+                              e.target.value,
+                              applicationProcess
+                            )
                           }
-                          defaultValue={process?.organization?.id}
+                          defaultValue={applicationProcess?.organization?.id}
                           onClick={(event) => {
                             if (
                               organizationsData?.data === null ||
@@ -366,7 +384,12 @@ export default () => {
                       </label>
                       <div className="col-md-9">
                         <select
-                          defaultValue={process?.parentProcess?.id}
+                          defaultValue={
+                            applicationProcess?.parentProcess?.id
+                          }
+                          defaultChecked={
+                            applicationProcess?.parentProcess?.id
+                          }
                           className={`form-control form-control-sm shadow-sm ${
                             errors.parentProcess ? "is-invalid" : ""
                           }`}
@@ -378,12 +401,18 @@ export default () => {
                           name="parentProcess"
                         >
                           <option key={-1} value=""></option>
-                          {processesData?.data?.map((process, key) => (
-                            <option key={key} value={process?.id}>
-                              {process?.name}
+                          {processesData?.data?.map((localProcess, key) => (
+                            <option key={key} value={localProcess?.id}>
+                              {localProcess?.name}
                             </option>
                           ))}
                         </select>
+                        Processus parent courant:
+                        <Link
+                          to={`/processes/view/${applicationProcess?.parentProcess?.id}`}
+                        >{"  "}
+                          {applicationProcess?.parentProcess?.name}
+                        </Link>
                       </div>
                     </div>
 
@@ -398,10 +427,10 @@ export default () => {
                       <div className="col-md-9">
                         <select
                           defaultValue={
-                            process?.classification?.confidentiality
+                            applicationProcess?.classification?.confidentiality
                           }
                           defaultChecked={
-                            process?.classification?.confidentiality
+                            applicationProcess?.classification?.confidentiality
                           }
                           className={`form-control form-control-sm shadow-sm ${
                             errors.confidentiality ? "is-invalid" : ""
@@ -432,8 +461,12 @@ export default () => {
                       </label>
                       <div className="col-md-9">
                         <select
-                          defaultValue={process?.classification?.availability}
-                          defaultChecked={process?.classification?.availability}
+                          defaultValue={
+                            applicationProcess?.classification?.availability
+                          }
+                          defaultChecked={
+                            applicationProcess?.classification?.availability
+                          }
                           className={`form-control form-control-sm shadow-sm ${
                             errors.availability ? "is-invalid" : ""
                           }`}
@@ -463,7 +496,9 @@ export default () => {
                       </label>
                       <div className="col-md-9">
                         <select
-                          defaultValue={process?.classification?.integrity}
+                          defaultValue={
+                            applicationProcess?.classification?.integrity
+                          }
                           className={`form-control form-control-sm shadow-sm ${
                             errors.integrity ? "is-invalid" : ""
                           }`}
@@ -493,7 +528,9 @@ export default () => {
                       </label>
                       <div className="col-md-9">
                         <select
-                          defaultValue={process?.classification?.traceability}
+                          defaultValue={
+                            applicationProcess?.classification?.traceability
+                          }
                           className={`form-control form-control-sm shadow-sm ${
                             errors.traceability ? "is-invalid" : ""
                           }`}
@@ -525,13 +562,18 @@ export default () => {
                           required: false,
                         })}
                         onChange={(e) => {
-                          if( process?.classification ) {
-                            process.classification.status = !process?.classification?.status
+                          if (applicationProcess?.classification) {
+                            applicationProcess.classification.status = !applicationProcess
+                              ?.classification?.status;
                           } else {
-                            process.classification = {status: true};
+                            applicationProcess.classification = {
+                              status: true,
+                            };
                           }
                         }}
-                        defaultChecked={process?.classification?.status}
+                        defaultChecked={
+                          applicationProcess?.classification?.status
+                        }
                       />
                       <label
                         className="custom-control-label"
@@ -568,9 +610,10 @@ export default () => {
                     <hr />
 
                     <div className="col-12 text-center">
-                      {(id !== undefined || process.hasOwnProperty("id")) && (
+                      {(id !== undefined ||
+                        applicationProcess.hasOwnProperty("id")) && (
                         <Link
-                          to={`/processes/view/${process?.id}`}
+                          to={`/processes/view/${applicationProcess?.id}`}
                           type="submit"
                           className="btn btn-warning font-weight-bold text-center mx-2"
                         >

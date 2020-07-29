@@ -1,23 +1,20 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, Link, useHistory } from "react-router-dom";
-import ProcessService from "../../services/ProcessService";
+import AssetService from "../../services/AssetService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Swal from "sweetalert2";
 import CKEditor from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import Moment from "react-moment";
+import RiskAnalyzesTable from "../riskanalyzes/RiskAnalyzesTable";
 
 export default () => {
-  const [process, setProcess] = useState({});
+  const [asset, setAsset] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [isApproving, setIsApproving] = useState(false);
   const [isError, setIsError] = useState(false);
   const [isUnAuthorized, setIsUnAuthorized] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [assetsMore, setAssetsMore] = useState({
-    expanded: false,
-    itemsCount: 5,
-  });
   let history = useHistory();
   const aborderController = new AbortController();
 
@@ -26,27 +23,27 @@ export default () => {
   const ref = useRef(true);
 
   useEffect(() => {
-    document.title = "Gestion Des Processes";
-    fetchProcess();
+    document.title = "Gestion Des Actifs";
+    fetchAsset();
     return () => {
       ref.current = false;
     };
   }, [id]);
 
-  const fetchProcess = async () => {
+  const fetchAsset = async () => {
     setIsUnAuthorized(false);
     setIsLoading(true);
     setIsError(false);
-    setProcess({});
+    setAsset({});
     try {
-      const process = await ProcessService.getProcess(id);
-      if (!process.hasOwnProperty("id")) {
-        setProcess(null);
+      const asset = await AssetService.getAsset(id);
+      if (!asset.hasOwnProperty("id")) {
+        setAsset(null);
         setIsLoading(false);
         setIsError(false);
         setIsUnAuthorized(false);
       } else {
-        setProcess(process);
+        setAsset(asset);
         setIsLoading(false);
         setIsError(false);
         setIsUnAuthorized(false);
@@ -54,7 +51,7 @@ export default () => {
     } catch (e) {
       const status = e?.response?.status || null;
       setIsLoading(false);
-      setProcess({});
+      setAsset({});
       console.log(status);
       switch (status) {
         case 403:
@@ -64,7 +61,7 @@ export default () => {
         case 404:
           setIsUnAuthorized(false);
           setIsError(false);
-          setProcess(null);
+          setAsset(null);
           break;
         default:
           setIsError(true);
@@ -76,11 +73,11 @@ export default () => {
     };
   };
 
-  const deleteProcess = async () => {
+  const deleteAsset = async () => {
     // Confirm User Deletion
     Swal.fire({
-      title: "Êtes-vous sûr de supprimer le processus?",
-      text: "Voulez-vous supprimer le processus?",
+      title: "Êtes-vous sûr de supprimer l'actif'?",
+      text: "Voulez-vous supprimer l'actif?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -92,13 +89,13 @@ export default () => {
         // Perform User delete
         try {
           setIsDeleting(true);
-          await ProcessService.deleteProcess(id);
+          await AssetService.deleteAsset(id);
           Swal.fire(
             "Operation éffectuée!",
-            "Le processus à été supprimé avec succés!",
+            "L'actif à été supprimé avec succés!",
             "success"
           );
-          history.push("/processes");
+          history.push("/assets");
         } catch (err) {
           Swal.fire(
             "Erreur!",
@@ -112,20 +109,20 @@ export default () => {
     });
   };
 
-  const updateProcessStatus = async (process, status) => {
+  const updateAssetStatus = async (asset, status) => {
     // Perform User delete
     try {
       setIsApproving(true);
-      await ProcessService.updateProcessStatus(process?.id, status);
+      await AssetService.updateAssetStatus(asset?.id, status);
       Swal.fire(
         "Operation éffectuée!",
-        `Le statut de la classification à été ${
+        `Le statut d'actif' à été ${
           status ? "approuvé" : "rejeté"
         } avec succés!`,
         "success"
       );
-      // Set process status
-      process.status = status;
+      // Set asset status
+      asset.status = status;
       window.scrollTo(0, 0);
     } catch (err) {
       Swal.fire(
@@ -139,17 +136,17 @@ export default () => {
     }
   };
 
-  const updateClassificationStatus = async (process, status) => {
+  const updateClassificationStatus = async (asset, status) => {
     // Perform User delete
     try {
       setIsApproving(true);
-      await ProcessService.updateProcessClassificationStatus(
-        process?.id,
+      await AssetService.updateProcessClassificationStatus(
+        asset?.id,
         status
       );
       Swal.fire(
         "Operation éffectuée!",
-        `Le statut de la classification du processus à été ${
+        `Le statut de la classification d'actif à été ${
           status ? "approuvé" : "rejeté"
         } avec succés!`,
         "success"
@@ -167,6 +164,8 @@ export default () => {
       setIsApproving(false);
     }
   };
+
+  
 
   return (
     <div className="content-wrapper bg-light pb-5 mb-5">
@@ -188,7 +187,7 @@ export default () => {
                     {isUnAuthorized && "Vous n'êtes pas autorisé!"}
                     {process === null && "Aucun processus n'a été trouvé"}
                     <button
-                      onClick={() => fetchProcess()}
+                      onClick={() => fetchAsset()}
                       className="btn btn-warning font-weight-bold ml-2"
                     >
                       <FontAwesomeIcon icon="sync" /> Ressayer
@@ -224,7 +223,7 @@ export default () => {
                     </button>
                   </Link>{" "}
                   <button
-                    onClick={() => deleteProcess()}
+                    onClick={() => deleteAsset()}
                     className="btn btn-danger btn-sm"
                     disabled={isDeleting ? "disabled" : ""}
                   >
@@ -242,10 +241,10 @@ export default () => {
                       <li className="nav-item flex-sm-fill">
                         <a
                           className="nav-link active"
-                          href="#processes"
+                          href="#asset"
                           data-toggle="tab"
                         >
-                          Processus
+                          Actif
                         </a>
                       </li>
                       <li className="nav-item flex-sm-fill">
@@ -254,16 +253,16 @@ export default () => {
                           href="#classification"
                           data-toggle="tab"
                         >
-                          Classification
+                          Classification d'actif
                         </a>
                       </li>
                       <li className="nav-item flex-sm-fill">
                         <a
                           className="nav-link"
-                          href="#asssets"
+                          href="#riskanalysis"
                           data-toggle="tab"
                         >
-                          Actifs
+                          Analyses Des Risques
                         </a>
                       </li>
                     </ul>
@@ -271,13 +270,13 @@ export default () => {
 
                   <div className="card-body">
                     <div className="tab-content">
-                      <div className="tab-pane active" id="processes">
+                      <div className="tab-pane active" id="asset">
                         <div className="table table-responsive float-left">
                           <table className="table table-striped">
                             <thead align="center">
                               <tr>
                                 <th scope="col">Nom</th>
-                                <td>{process?.name}</td>
+                                <td>{asset?.name}</td>
                               </tr>
                             </thead>
                             <tbody align="center">
@@ -286,7 +285,7 @@ export default () => {
                                 <td>
                                   <CKEditor
                                     editor={ClassicEditor}
-                                    data={process?.description}
+                                    data={asset?.description}
                                     config={{
                                       toolbar: [],
                                       removePlugins: ["Heading", "Link"],
@@ -297,8 +296,10 @@ export default () => {
                                 </td>
                               </tr>
                               <tr>
-                                <th scope="col">Processus Superieur</th>
-                                <td><Link to={`/processes/view/${process?.parentProcess?.id}`}>{process?.parentProcess?.name}</Link></td>
+                                <th scope="col">Localisation</th>
+                                <td>
+                                    <Link to={`/locations/view/${asset?.location?.id}`}>
+                                    {asset?.location?.name}</Link></td>
                               </tr>
                               <tr>
                                 <th scope="col">Organisme</th>
@@ -332,9 +333,9 @@ export default () => {
                                   )}
                                   <button
                                     onClick={(event) =>
-                                      updateProcessStatus(
-                                        process,
-                                        !process?.status
+                                      updateAssetStatus(
+                                        asset,
+                                        !asset?.status
                                       )
                                     }
                                     className={`ml-2 btn btn-${
@@ -360,12 +361,12 @@ export default () => {
                         </div>
                       </div>
 
-                      {/* /.tab-pane */}
-                      <div className="tab-pane" id="classification">
+                       {/* /.tab-pane */}
+                       <div className="tab-pane" id="classification">
                         <div className="col-12">
                           <div
                             className={`shadow shadow-sm alert ${
-                              process?.classification?.status
+                              asset?.classification?.status
                                 ? "alert-success"
                                 : "alert-danger"
                             }`}
@@ -374,9 +375,9 @@ export default () => {
                               <i className="icon fas fa-ban" /> Statut de la
                               classification!
                             </h5>
-                            La classification du processus est{" "}
+                            La classification d'actif est{" "}
                             {`${
-                              process?.classification?.status
+                              asset?.classification?.status
                                 ? "approuvé"
                                 : "rejeté"
                             }`}
@@ -387,30 +388,30 @@ export default () => {
                           <div className="callout callout-danger">
                             <h5>Confidentialité</h5>
                             <p>
-                              {process?.classification?.confidentiality || 0}
+                              {asset?.classification?.confidentiality || 0}
                             </p>
                           </div>
                           <div className="callout callout-info">
                             <h5>Disponibilité</h5>
-                            <p>{process?.classification?.availability || 0}</p>
+                            <p>{asset?.classification?.availability || 0}</p>
                           </div>
                           <div className="callout callout-warning">
                             <h5>Intégrité</h5>
-                            <p>{process?.classification?.integrity || 0}</p>
+                            <p>{asset?.classification?.integrity || 0}</p>
                           </div>
                           <div className="callout callout-success">
                             <h5>Traçabilité</h5>
-                            <p>{process?.classification?.traceability || 0}</p>
+                            <p>{asset?.classification?.traceability || 0}</p>
                           </div>
                           <div className="callout callout-primary">
                             <h5>Score</h5>
-                            <p>{process?.classification?.score || 0}</p>
+                            <p>{asset?.classification?.score || 0}</p>
                           </div>
                           <div className="callout callout-info">
                             <h5>Date d'identification</h5>
                             <p>
                               <Moment format="YYYY/MM/DD HH:mm:ss">
-                                {process?.classification?.identificationDate}
+                                {asset?.classification?.identificationDate}
                               </Moment>
                             </p>
                           </div>
@@ -419,25 +420,25 @@ export default () => {
                               <button
                                 onClick={(event) =>
                                   updateClassificationStatus(
-                                    process,
-                                    !process?.classification?.status
+                                    asset,
+                                    !asset?.classification?.status
                                   )
                                 }
                                 className={`w-50 btn btn-${
-                                  process?.classification?.status
+                                    asset?.classification?.status
                                     ? "danger"
                                     : "success"
                                 } btn-sm ${isApproving ? "disabled" : ""}`}
                               >
                                 <FontAwesomeIcon
                                   icon={
-                                    process?.classification?.status
+                                    asset?.classification?.status
                                       ? "minus-circle"
                                       : "check-circle"
                                   }
                                   color="white"
                                 />
-                                {process?.classification?.status
+                                {asset?.classification?.status
                                   ? " Rejeter"
                                   : " Approuver"}
                               </button>
@@ -446,74 +447,31 @@ export default () => {
                         </div>
                       </div>
 
-                      {/** Assets */}
-                      <div className="tab-pane" id="asssets">
+                      {/* /.tab-pane */}
+                      <div className="tab-pane" id="riskanalysis">
                         <div className="col-12">
-                          <ul
-                            className="list-group list-group-flush font-weight-bold text-secondary text-center"
-                            style={{
-                              borderTop: "solid 2px blue",
-                              letterSpacing: "1px",
-                            }}
-                          >
-                            {!isLoading &&
-                              process?.assets?.map((asset, key) => (
-                                <div key={key}>
-                                  {key < assetsMore.itemsCount && (
-                                    <li className="list-group-item" key={key}>
-                                      <Link to={`/assets/view/${asset?.id}`}>
-                                        {asset?.name}
-                                      </Link>
-                                    </li>
-                                  )}
-                                </div>
-                              ))}
-                            {process?.assets?.length > 5 &&
-                              !assetsMore.expanded && (
-                                <Link
-                                  to="#"
-                                  onClick={() =>
-                                    setAssetsMore({
-                                      itemsCount: process?.assets?.length,
-                                      expanded: true,
-                                    })
-                                  }
-                                >
-                                  Voir plus
-                                </Link>
-                              )}
-                            {process?.assets?.length > 5 &&
-                              assetsMore.expanded && (
-                                <Link
-                                  to="#"
-                                  onClick={() =>
-                                    setAssetsMore({
-                                      itemsCount: 5,
-                                      expanded: false,
-                                    })
-                                  }
-                                >
-                                  Voir moins
-                                </Link>
-                              )}
-
-                            {!isLoading &&
-                              (process?.assets?.length === 0 ||
-                                process?.assets === null) && (
-                                <li className="list-group-item">
-                                  <FontAwesomeIcon icon="exclamation-circle" />{" "}
-                                  Aucun actif n'a été associé a ce processus
-                                </li>
-                              )}
-                          </ul>
+                          <div className="card">
+                            <div className="card-header">
+                              <h3 className="card-title">
+                                Analyses de risque de {asset?.name}
+                              </h3>
+                            </div>
+                            {/* /.card-header */}
+                            <div className="card-body">
+                              <RiskAnalyzesTable asset={asset} />
+                            </div>
+                            {/* /.card-body */}
+                          </div>
                         </div>
                       </div>
-                      {/* /.tab-content */}
+                      
                     </div>
                     {/* /.tab-content */}
-                  </div>
+                    </div>
+                    {/* /.tab-content */}
+                
                 </div>
-              </>
+                </>
             )}
           </div>
         </div>

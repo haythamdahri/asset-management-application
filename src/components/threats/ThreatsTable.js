@@ -98,7 +98,7 @@ export default ({ typology }) => {
                     </div>
                   </td>
                   <td>
-                    <Moment format="YYYY/MM/DD HH:MM:SS">
+                    <Moment format="YYYY/MM/DD HH:mm:ss">
                       {threat?.identificationDate}
                     </Moment>
                   </td>

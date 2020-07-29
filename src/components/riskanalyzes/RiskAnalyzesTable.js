@@ -1,31 +1,31 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import TypologyService from "../../services/TypologyService";
+import AssetService from "../../services/AssetService";
 import Swal from "sweetalert2";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Moment from "react-moment";
 
-export default ({ typology }) => {
+export default ({ asset }) => {
   const [isApproving, setIsApproving] = useState(false);
 
-  const updateRiskScenarioStatus = async (riskScenario, status) => {
+  const updateRiskAnalysisStatus = async (riskAnalysis, status) => {
     // Perform User delete
     try {
       setIsApproving(true);
-      await TypologyService.updateRiskScenarioStatus(
-        typology?.id,
-        riskScenario?.id,
+      await AssetService.updateAssetRiskAnalysisStatus(
+        asset?.id,
+        riskAnalysis?.id,
         status
       );
       Swal.fire(
         "Operation éffectuée!",
-        `Le statut du scénario de risque à été ${
+        `Le statut de l'analyse de risque à été ${
           status ? "approuvé" : "rejeté"
         } avec succés!`,
         "success"
       );
-      // Set riskScenario status
-      riskScenario.status = status;
+      // Set risk analysis status
+      riskAnalysis.status = status;
     } catch (err) {
       Swal.fire(
         "Erreur!",
@@ -39,65 +39,76 @@ export default ({ typology }) => {
   };
 
   return (
-    <div id="riskscanarios_wrapper" className="dataTables_wrapper dt-bootstrap4" >
+    <div
+      id="vulnerabilities_wrapper"
+      className="dataTables_wrapper dt-bootstrap4"
+    >
       <div className="row">
         <div className="col-sm-12">
           <table
-            id="riskscanarios"
+            id="vulnerabilities"
             className="table table-bordered table-striped dataTable dtr-inline"
             role="grid"
-            aria-describedby="riskscanarios_info"
+            aria-describedby="vulnerabilities_info"
           >
             <thead align="center">
               <tr role="row">
-                <th>Nom</th>
-                <th>Description</th>
+                <th>Actif</th>
+                <th>Probabilité</th>
+                <th>Impact financier</th>
+                <th>Impact financier</th>
+                <th>Impact réputationnel</th>
                 <th>Statut</th>
                 <th>Date d'identification</th>
               </tr>
             </thead>
             <tbody align="center">
-              {typology?.riskScenarios?.map((riskScenario, key) => (
+              {asset?.riskAnalyzes?.map((riskAnalysis, key) => (
                 <tr
                   role="row"
                   key={key}
                   className={key % 2 === 0 ? "odd" : "even"}
                 >
                   <td>
-                    <Link to={`/riskscenarios/view/${typology?.id}/${riskScenario?.id}`}>{riskScenario?.name || ""}</Link>
+                    <Link
+                      to={`/riskanalyzes/view/${asset?.id}/${riskAnalysis?.id}`}
+                    >
+                      {riskAnalysis?.name || ""}
+                    </Link>
                   </td>
-                  <td dangerouslySetInnerHTML={{
-                                __html: `${riskScenario?.description?.slice(
-                                  0,
-                                  20
-                                ) || ""} ${
-                                  riskScenario?.description?.length > 20 ? "..." : ""
-                                }`,
-                              }}></td>
+                  <td>{riskAnalysis?.probability}</td>
+                  <td>{riskAnalysis?.financialImpact}</td>
+                  <td>{riskAnalysis?.operationalImpact}</td>
+                  <td>{riskAnalysis?.reputationalImpact}</td>
                   <td>
                     <div className="text-center">
-                      {riskScenario?.status ? "APPROUVÉ" : "REJETÉ"}
+                      {riskAnalysis?.status ? "APPROUVÉ" : "REJETÉ"}
                       <button
                         onClick={(event) =>
-                          updateRiskScenarioStatus(riskScenario, !riskScenario?.status)
+                          updateRiskAnalysisStatus(
+                            riskAnalysis,
+                            !riskAnalysis?.status
+                          )
                         }
                         className={`ml-2 btn btn-${
-                          riskScenario?.status ? "danger" : "success"
+                          riskAnalysis?.status ? "danger" : "success"
                         } btn-sm ${isApproving ? "disabled" : ""}`}
                       >
                         <FontAwesomeIcon
                           icon={
-                            riskScenario?.status ? "minus-circle" : "check-circle"
+                            riskAnalysis?.status
+                              ? "minus-circle"
+                              : "check-circle"
                           }
                           color="white"
                         />
-                        {riskScenario?.status ? " Rejecter" : " Approuver"}
+                        {riskAnalysis?.status ? " Rejecter" : " Approuver"}
                       </button>
                     </div>
                   </td>
                   <td>
                     <Moment format="YYYY/MM/DD HH:mm:ss">
-                      {riskScenario?.identificationDate}
+                      {riskAnalysis?.identificationDate}
                     </Moment>
                   </td>
                 </tr>

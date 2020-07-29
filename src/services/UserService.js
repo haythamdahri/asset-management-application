@@ -263,6 +263,17 @@ class UserService {
       });
   }
 
+  async canEditAsset() {
+    return axios
+      .get(`${API_URL}/roles/checking/assets`, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
   async checkUserAdmin() {
     return axios
       .get(`${API_URL}/roles/checking/admin`, { headers: authHeader() })
