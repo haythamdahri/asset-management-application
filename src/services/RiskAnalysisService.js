@@ -19,6 +19,17 @@ class RiskAnalysisService {
         throw err;
       });
   }
+
+  saveRiskAnalysis(riskAnalysisRequest) {
+    return axios
+      .post(`${API_URL}/`, riskAnalysisRequest, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
 }
 
 export default new RiskAnalysisService();

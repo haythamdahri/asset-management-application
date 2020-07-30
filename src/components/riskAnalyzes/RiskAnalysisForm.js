@@ -1,131 +1,150 @@
 import React, { useState, useEffect } from "react";
 import UserService from "../../services/UserService";
-import TypologyService from "../../services/TypologyService";
-import ThreatService from "../../services/ThreatService";
+import AssetService from "../../services/AssetService";
+import RiskAnalysisService from "../../services/RiskAnalysisService";
 import { useForm } from "react-hook-form";
 import { useParams, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Swal from "sweetalert2";
 import CKEditor from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import VulnerabilityService from "../../services/VulnerabilityService";
+import { riskTreatmentStrategyTypes } from "../../services/ConstantsService";
 
 export default () => {
   const { register, handleSubmit, errors } = useForm();
 
   const [isLoading, setIsLoading] = useState(true);
   const [isUnauthorized, setIsUnauthorized] = useState(false);
-  const [isVulnerabilityError, setIsVulnerabilityError] = useState(false);
+  const [isRiskScenarioError, setIsRiskScenarioError] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [reload, setReload] = useState(false);
-  const [vulnerabilityResponse, setVulnerabilityResponse] = useState({});
-  const [description, setDescription] = useState("");
-  const [typologiesData, setTypologiesData] = useState({
-      isLoading: true,
-      data: []
-  })
-  document.title = "Gestion Des Menaces";
+  const [riskAnalysisResponse, setRiskAnalysisResponse] = useState({});
+  const [riskTreatmentPlan, setRiskTreatmentPlan] = useState("");
+  const [assets, setAssets] = useState([]);
+  const [typologyData, setTypologyData] = useState({
+    isLoading: true,
+    data: {},
+  });
+  const impactOptions = [1, 2, 3, 4];
+  document.title = "Gestion Des Scénarios De Risques";
 
   // Ids Extraction from URL
-  let { typologyId, vulnerabilityId } = useParams();
+  let { assetId, riskAnalysisId } = useParams();
 
   useEffect(() => {
     // Set loading
     setIsLoading(true);
-    setIsVulnerabilityError(false);
+    setIsRiskScenarioError(false);
     setIsUnauthorized(false);
-    setVulnerabilityResponse({});
+    setRiskAnalysisResponse({});
     // Check user permissions
-    UserService.canEditVulnerability()
+    UserService.canEditRiskAnalysis()
       .then((response) => {
-          if( response?.hasRole ) {
-              fetchTypologies();
-            if (typologyId !== undefined && vulnerabilityId !== undefined) {
-              fetchVulnerability();
-            } else {
-              setIsLoading(false);
-              setVulnerabilityResponse({});
-            }
+        if (response?.hasRole) {
+          fetchAssets();
+          if (assetId !== undefined && riskAnalysisId !== undefined) {
+            fetchRiskAnalysis();
+            fetchTypologyAssets(assetId);
           } else {
-            setIsUnauthorized(true);
-            setIsVulnerabilityError(false);
+            setIsLoading(false);
+            setRiskAnalysisResponse({});
           }
-          setIsLoading(false);
+        } else {
+          setIsUnauthorized(true);
+          setIsRiskScenarioError(false);
+        }
+        setIsLoading(false);
       })
       .catch((err) => {
         const status = err?.response?.data?.status;
         if (status === 403) {
           setIsUnauthorized(true);
-          setIsVulnerabilityError(false);
+          setIsRiskScenarioError(false);
         } else {
           setIsUnauthorized(false);
-          setIsVulnerabilityError(true);
+          setIsRiskScenarioError(true);
         }
         setIsLoading(false);
       });
   }, [reload]);
 
-  const fetchTypologies = async () => {
+  const fetchRiskAnalysis = async () => {
     try {
-      const typologies = await TypologyService.getCustomTypologies();
-      setTypologiesData({ loading: false, data: typologies });
-    } catch (e) {
-        setTypologiesData({ loading: false, data: [] });
-    }
-  };
-
-  const fetchVulnerability = async () => {
-    try {
-      // Get threat
-      const vulnerabilityResponse = await TypologyService.getVulnerability(typologyId, vulnerabilityId);
-      if( vulnerabilityResponse.hasOwnProperty("vulnerability") ) {
-        setVulnerabilityResponse(vulnerabilityResponse)
-        setDescription(vulnerabilityResponse?.vulnerability?.description);
+      // Get riskAnalysis
+      const riskAnalysisResponse = await AssetService.getRiskAnalysis(
+        assetId,
+        riskAnalysisId
+      );
+      if (riskAnalysisResponse.hasOwnProperty("riskAnalysis")) {
+        setRiskAnalysisResponse(riskAnalysisResponse);
+        setRiskTreatmentPlan(
+          riskAnalysisResponse?.riskAnalysis?.riskTreatmentPlan
+        );
       } else {
-        setVulnerabilityResponse(null);
+        setRiskAnalysisResponse(null);
       }
+      fetchTypologyAssets(riskAnalysisResponse?.assetId);
       setIsLoading(false);
       setIsUnauthorized(false);
-      setIsVulnerabilityError(false);
+      setIsRiskScenarioError(false);
     } catch (err) {
       const status = err.response?.status || null;
       setIsLoading(false);
-      setVulnerabilityResponse({});
+      setRiskAnalysisResponse({});
       switch (status) {
         case 403:
           setIsUnauthorized(true);
-          setIsVulnerabilityError(false);
+          setIsRiskScenarioError(false);
           break;
         case 404:
           setIsUnauthorized(false);
-          setIsVulnerabilityError(true);
+          setIsRiskScenarioError(true);
           break;
         default:
           setIsUnauthorized(false);
-          setIsVulnerabilityError(false);
-          setVulnerabilityResponse(null);
+          setIsRiskScenarioError(true);
       }
+    }
+  };
+  const fetchTypologyAssets = async (assetId) => {
+    try {
+      setTypologyData({ loading: true, data: {} });
+      const asset = await AssetService.getAsset(assetId);
+      const typology = asset?.typology;
+      setTypologyData({ loading: false, data: typology });
+    } catch (e) {
+      setTypologyData({ loading: false, data: {} });
+    }
+  };
+
+  const fetchAssets = async () => {
+    try {
+      const assets = await AssetService.getAssets();
+      setAssets(assets);
+    } catch (e) {
+      setAssets([]);
     }
   };
 
   const onEditorChange = (event, editor) => {
-    setDescription(editor.getData());
+    setRiskTreatmentPlan(editor.getData());
   };
 
   const onSubmit = async (data) => {
     setIsSaving(true);
-    VulnerabilityService.saveVulnerability({
-      currentTypology: typologyId,
-      vulnerability: vulnerabilityId,
+    RiskAnalysisService.saveRiskAnalysis({
+      currentAsset: assetId,
+      id: riskAnalysisId,
+      typology: typologyData?.data?.id,
       ...data,
-      description,
+      riskTreatmentPlan,
     })
       .then((vulnerability) => {
-        setVulnerabilityResponse(vulnerability);
+        setRiskAnalysisResponse(vulnerability);
         setIsSaving(false);
         Swal.fire(
           "Operation effectuée!",
-          `La vulnérabilité à été enregistrée avec succés!`,
+          `L'analyse de risque à été enregistrée avec succés!`,
           "success"
         );
       })
@@ -161,36 +180,43 @@ export default () => {
           <div className="row">
             <div className="col-12">
               <div className="ribbon-wrapper ribbon-lg">
-                <div className="ribbon bg-success text-lg">Vulnérabilités</div>
+                <div className="ribbon bg-success text-lg">A.R</div>
               </div>
             </div>
 
             {/** BACK BUTTON */}
-            {(typologyId !== undefined && vulnerabilityId !== undefined && vulnerabilityResponse !== null && vulnerabilityResponse.hasOwnProperty("vulnerability")) &&
-              !isVulnerabilityError &&
+            {assetId !== undefined &&
+              riskAnalysisId !== undefined &&
+              riskAnalysisResponse !== null &&
+              riskAnalysisResponse.hasOwnProperty("riskAnalysis") &&
+              !isRiskScenarioError &&
               !isUnauthorized &&
               !isLoading && (
                 <div className="col-12 text-center">
                   <Link
-                    to={`/vulnerabilities/view/${vulnerabilityResponse?.typologyId}/${vulnerabilityResponse?.vulnerability?.id}`}
+                    to={`/riskanalyzes/view/${riskAnalysisResponse?.assetId}/${riskAnalysisResponse?.riskAnalysis?.id}`}
                     type="submit"
                     className="btn btn-dark btn-sm mt-2 font-weight-bold text-center mx-2"
                   >
-                    <FontAwesomeIcon icon="user" /> Retourner vers la vulnérabilité
+                    <FontAwesomeIcon icon="user" /> Retourner vers l'analyse de
+                    risque
                   </Link>
                 </div>
               )}
 
             {/** ERROR MESSAGE */}
-            {(isVulnerabilityError || isUnauthorized || vulnerabilityResponse === null) &&
+            {(isRiskScenarioError ||
+              isUnauthorized ||
+              riskAnalysisResponse === null) &&
               !isLoading && (
                 <div className="col-12 mx-auto pt-5">
                   <div className="alert alert-warning text-center font-weight">
                     <h2 className="col-md-12 font-weight-bold">
                       <FontAwesomeIcon icon="exclamation-circle" />{" "}
-                      {isVulnerabilityError && "Une erreur est survenue!"}
+                      {isRiskScenarioError && "Une erreur est survenue!"}
                       {isUnauthorized && "Vous n'êtes pas autorisé!"}
-                      {vulnerabilityResponse === null && "Aucune vulnérabilité n'a été trouvée"}
+                      {riskAnalysisResponse === null &&
+                        "Aucune analyse de risque n'a été trouvée"}
                       <button
                         onClick={() => setReload(!reload)}
                         className="btn btn-warning font-weight-bold ml-2"
@@ -199,24 +225,27 @@ export default () => {
                       </button>{" "}
                       <Link to={`/groups`}>
                         <button className="btn btn-light font-weight-bold ml-2">
-                          <FontAwesomeIcon icon="users" /> Gestion Des Vulnérabilités
+                          <FontAwesomeIcon icon="users" /> Gestion Des Analyse
+                          De Risque
                         </button>
                       </Link>
                     </h2>
                   </div>
                 </div>
               )}
-            {isLoading && !isVulnerabilityError && vulnerabilityResponse !== null && (
-              <div className="col-12 text-center pt-5 pb-5">
-                <div className="overlay dark">
-                  <i className="fas fa-2x fa-sync-alt fa-spin"></i>
+            {isLoading &&
+              !isRiskScenarioError &&
+              riskAnalysisResponse !== null && (
+                <div className="col-12 text-center pt-5 pb-5">
+                  <div className="overlay dark">
+                    <i className="fas fa-2x fa-sync-alt fa-spin"></i>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/** VULNERABILITY FORM */}
-            {vulnerabilityResponse !== null &&
-              !isVulnerabilityError &&
+            {/** RISK ANALYSIS FORM */}
+            {riskAnalysisResponse !== null &&
+              !isRiskScenarioError &&
               !isUnauthorized &&
               !isLoading && (
                 <div
@@ -228,100 +257,631 @@ export default () => {
                     noValidate
                     className="p-3 mb-5"
                   >
-                    {/** NAME */}
+                    {/** Asset */}
                     <div className="form-group row">
                       <label
                         className="col-md-3 font-weight-bold"
-                        htmlFor="name"
+                        htmlFor="asset"
                       >
-                        Nom:{" "}
+                        Actif:{" "}
                       </label>
                       <div className="col-md-9">
-                        <input
-                          disabled={isSaving}
-                          placeholder="Nom ..."
-                          type="text"
-                          id="name"
-                          name="name"
-                          defaultValue={vulnerabilityResponse?.vulnerability?.name || ""}
+                        <select
+                          defaultValue={riskAnalysisResponse?.assetId || ""}
+                          defaultChecked={riskAnalysisResponse?.assetId || ""}
                           className={`form-control form-control-sm shadow-sm ${
-                            errors.name ? "is-invalid" : ""
+                            errors.process ? "is-invalid" : ""
                           }`}
+                          disabled={isSaving}
                           ref={register({
                             required: true,
                           })}
-                        />
+                          onChange={(e) => {
+                            fetchTypologyAssets(e.target.value);
+                          }}
+                          id="asset"
+                          name="asset"
+                        >
+                          {assets &&
+                            assets?.map((a, key) => (
+                              <option key={key} value={a?.id}>
+                                {a?.name}
+                              </option>
+                            ))}
+                        </select>
                         {/** Required name error */}
-                        {errors.name && errors.name.type === "required" && (
+                        {errors.asset && errors.asset.type === "required" && (
                           <div className="invalid-feedback">
-                            Nom de la vulnérabilité est requis
+                            L'actif est requis
                           </div>
                         )}
                       </div>
                     </div>
 
-                    {/** Description */}
+                    {/** THREAT */}
                     <div className="form-group row">
                       <label
                         className="col-md-3 font-weight-bold"
-                        htmlFor="notes"
+                        htmlFor="threat"
                       >
-                        Description:{" "}
+                        Menace:{" "}
                       </label>
+                      <div className="col-md-9">
+                        <select
+                          defaultValue={
+                            riskAnalysisResponse?.riskAnalysis?.threat?.id || ""
+                          }
+                          defaultChecked={
+                            riskAnalysisResponse?.riskAnalysis?.threat?.id || ""
+                          }
+                          className={`form-control form-control-sm shadow-sm ${
+                            errors.threat ? "is-invalid" : ""
+                          }`}
+                          disabled={isSaving || typologyData?.isLoading}
+                          ref={register({
+                            required: false,
+                          })}
+                          id="threat"
+                          name="threat"
+                        >
+                          {typologyData?.data &&
+                            typologyData?.data?.threats?.map((threat, key) => (
+                              <option key={key} value={threat?.id}>
+                                {threat?.name}
+                              </option>
+                            ))}{" "}
+                        </select>
+                      </div>
+                    </div>
+
+                    {/** RISK SCENARIO */}
+                    <div className="form-group row">
+                      <label
+                        className="col-md-3 font-weight-bold"
+                        htmlFor="riskScenario"
+                      >
+                        Scénario de risque:{" "}
+                      </label>
+                      <div className="col-md-9">
+                        <select
+                          defaultValue={
+                            riskAnalysisResponse?.riskAnalysis?.riskScenario
+                              ?.id || ""
+                          }
+                          defaultChecked={
+                            riskAnalysisResponse?.riskAnalysis?.riskScenario
+                              ?.id || ""
+                          }
+                          className={`form-control form-control-sm shadow-sm ${
+                            errors.riskScenario ? "is-invalid" : ""
+                          }`}
+                          disabled={isSaving || typologyData?.isLoading}
+                          ref={register({
+                            required: false,
+                          })}
+                          id="riskScenario"
+                          name="riskScenario"
+                        >
+                          {typologyData?.data &&
+                            typologyData?.data?.riskScenarios?.map((riskScenario, key) => (
+                              <option key={key} value={riskScenario?.id}>
+                                {riskScenario?.name}
+                              </option>
+                            ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    {/** VULNERABILITY SCENARIO */}
+                    <div className="form-group row">
+                      <label
+                        className="col-md-3 font-weight-bold"
+                        htmlFor="vulnerability"
+                      >
+                        Vulnérabilité:{" "}
+                      </label>
+                      <div className="col-md-9">
+                        <select
+                          defaultValue={
+                            riskAnalysisResponse?.riskAnalysis?.vulnerability
+                              ?.id || ""
+                          }
+                          defaultChecked={
+                            riskAnalysisResponse?.riskAnalysis?.vulnerability
+                              ?.id || ""
+                          }
+                          className={`form-control form-control-sm shadow-sm ${
+                            errors.vulnerability ? "is-invalid" : ""
+                          }`}
+                          disabled={isSaving || typologyData?.isLoading}
+                          ref={register({
+                            required: true,
+                          })}
+                          id="vulnerability"
+                          name="vulnerability"
+                        >
+                          {typologyData?.data &&
+                            typologyData?.data?.vulnerabilities?.map((vulnerability, key) => (
+                              <option key={key} value={vulnerability?.id}>
+                                {vulnerability?.name}
+                              </option>
+                            ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    {/** Probability */}
+                    <div className="form-group row">
+                      <label
+                        className="col-md-3 font-weight-bold"
+                        htmlFor="probability"
+                      >
+                        Probabilité:{" "}
+                      </label>
+                      <div className="col-md-9">
+                        <select
+                          defaultValue={
+                            riskAnalysisResponse?.riskAnalysis?.probability
+                          }
+                          defaultChecked={
+                            riskAnalysisResponse?.riskAnalysis?.probability
+                          }
+                          className={`form-control form-control-sm shadow-sm ${
+                            errors.probability ? "is-invalid" : ""
+                          }`}
+                          disabled={isSaving}
+                          ref={register({
+                            required: true,
+                          })}
+                          id="probability"
+                          name="probability"
+                        >
+                          {impactOptions?.map((option, key) => (
+                            <option key={key} value={option}>
+                              {option}
+                            </option>
+                          ))}
+                        </select>
+                        {/** Required name error */}
+                        {errors.probability &&
+                          errors.probability.type === "required" && (
+                            <div className="invalid-feedback">
+                              La probabilité de l'analyse de risque est requise
+                            </div>
+                          )}
+                      </div>
+                    </div>
+
+                    {/** Financial Impact */}
+                    <div className="form-group row">
+                      <label
+                        className="col-md-3 font-weight-bold"
+                        htmlFor="financialImpact"
+                      >
+                        Impact financier:{" "}
+                      </label>
+                      <div className="col-md-9">
+                        <select
+                          defaultValue={
+                            riskAnalysisResponse?.riskAnalysis?.financialImpact
+                          }
+                          defaultChecked={
+                            riskAnalysisResponse?.riskAnalysis?.financialImpact
+                          }
+                          className={`form-control form-control-sm shadow-sm ${
+                            errors.financialImpact ? "is-invalid" : ""
+                          }`}
+                          disabled={isSaving}
+                          ref={register({
+                            required: true,
+                          })}
+                          id="financialImpact"
+                          name="financialImpact"
+                        >
+                          {impactOptions?.map((option, key) => (
+                            <option key={key} value={option}>
+                              {option}
+                            </option>
+                          ))}
+                        </select>
+                        {/** Required name error */}
+                        {errors.probability &&
+                          errors.probability.type === "required" && (
+                            <div className="invalid-feedback">
+                              L'impact financier de l'analyse de risque est
+                              requis
+                            </div>
+                          )}
+                      </div>
+                    </div>
+
+                    {/** Operational Impact */}
+                    <div className="form-group row">
+                      <label
+                        className="col-md-3 font-weight-bold"
+                        htmlFor="operationalImpact"
+                      >
+                        Impact operationnel:{" "}
+                      </label>
+                      <div className="col-md-9">
+                        <select
+                          defaultValue={
+                            riskAnalysisResponse?.riskAnalysis
+                              ?.operationalImpact
+                          }
+                          defaultChecked={
+                            riskAnalysisResponse?.riskAnalysis
+                              ?.operationalImpact
+                          }
+                          className={`form-control form-control-sm shadow-sm ${
+                            errors.operationalImpact ? "is-invalid" : ""
+                          }`}
+                          disabled={isSaving}
+                          ref={register({
+                            required: true,
+                          })}
+                          id="operationalImpact"
+                          name="operationalImpact"
+                        >
+                          {impactOptions?.map((option, key) => (
+                            <option key={key} value={option}>
+                              {option}
+                            </option>
+                          ))}
+                        </select>
+                        {/** Required name error */}
+                        {errors.probability &&
+                          errors.probability.type === "required" && (
+                            <div className="invalid-feedback">
+                              L'impact operationnel de l'analyse de risque est
+                              requis
+                            </div>
+                          )}
+                      </div>
+                    </div>
+
+                    {/** Reputational Impact */}
+                    <div className="form-group row">
+                      <label
+                        className="col-md-3 font-weight-bold"
+                        htmlFor="reputationalImpact"
+                      >
+                        Impact réputationnel:{" "}
+                      </label>
+                      <div className="col-md-9">
+                        <select
+                          defaultValue={
+                            riskAnalysisResponse?.riskAnalysis
+                              ?.reputationalImpact
+                          }
+                          defaultChecked={
+                            riskAnalysisResponse?.riskAnalysis
+                              ?.reputationalImpact
+                          }
+                          className={`form-control form-control-sm shadow-sm ${
+                            errors.reputationalImpact ? "is-invalid" : ""
+                          }`}
+                          disabled={isSaving}
+                          ref={register({
+                            required: true,
+                          })}
+                          id="reputationalImpact"
+                          name="reputationalImpact"
+                        >
+                          {impactOptions?.map((option, key) => (
+                            <option key={key} value={option}>
+                              {option}
+                            </option>
+                          ))}
+                        </select>
+                        {/** Required name error */}
+                        {errors.probability &&
+                          errors.probability.type === "required" && (
+                            <div className="invalid-feedback">
+                              L'impact réputationnel de l'analyse de risque est
+                              requis
+                            </div>
+                          )}
+                      </div>
+                    </div>
+
+                    {/** Risk Treatement Strategy */}
+                    <div className="form-group row">
+                      <label
+                        className="col-md-3 font-weight-bold"
+                        htmlFor="riskTreatmentStrategyType"
+                      >
+                        Stratégie de traitement des risques:{" "}
+                      </label>
+                      <div className="col-md-9">
+                        <select
+                          defaultValue={
+                            riskAnalysisResponse?.riskAnalysis
+                              ?.riskTreatmentStrategyType
+                          }
+                          defaultChecked={
+                            riskAnalysisResponse?.riskAnalysis
+                              ?.riskTreatmentStrategyType
+                          }
+                          className={`form-control form-control-sm shadow-sm ${
+                            errors.riskTreatmentStrategyType ? "is-invalid" : ""
+                          }`}
+                          disabled={isSaving}
+                          ref={register({
+                            required: true,
+                          })}
+                          id="riskTreatmentStrategyType"
+                          name="riskTreatmentStrategyType"
+                        >
+                          {Object.keys(riskTreatmentStrategyTypes)?.map(
+                            (key) => (
+                              <option key={key} value={key}>
+                                {riskTreatmentStrategyTypes[key]}
+                              </option>
+                            )
+                          )}
+                        </select>
+                        {/** Required name error */}
+                        {errors.riskTreatmentStrategy &&
+                          errors.riskTreatmentStrategy.type === "required" && (
+                            <div className="invalid-feedback">
+                              La stratégie de traitement des risque est requise
+                            </div>
+                          )}
+                      </div>
+                    </div>
+
+                    {/** Risk Treatement Plan */}
+                    <div className="form-group row">
+                      <label
+                        className="col-md-3 font-weight-bold"
+                        htmlFor="riskTreatmentPlan"
+                      >
+                        Plan de traitement de risque:{" "}
+                      </label>
+                      {/** Description */}
                       <div className="col-md-9">
                         <CKEditor
                           editor={ClassicEditor}
-                          data={vulnerabilityResponse?.vulnerability?.description || ""}
+                          data={
+                            riskAnalysisResponse?.riskAnalysis
+                              ?.riskTreatmentPlan || ""
+                          }
                           disabled={isSaving}
                           onChange={onEditorChange}
                         />
                       </div>
                     </div>
 
-
-                    {/** TYPOLOGY */}
-                  <div className="form-group row">
-                    <label
-                      className="col-md-3 font-weight-bold"
-                      htmlFor="roles"
-                    >
-                      Typologie:
-                    </label>
-                    <div className="col-md-9">
-                      {!typologiesData.isLoading && (
+                    {/** Target Financial Impact */}
+                    <div className="form-group row">
+                      <label
+                        className="col-md-3 font-weight-bold"
+                        htmlFor="targetFinancialImpact"
+                      >
+                        Impact financier cible:{" "}
+                      </label>
+                      <div className="col-md-9">
                         <select
-                          defaultValue={typologyId || ""}
-                          defaultChecked={typologyId || ""}
-                          onClick={(event) => {
-                            if (
-                            typologiesData?.data === null ||
-                            typologiesData?.data?.length === 0
-                            ) {
-                              fetchTypologies();
-                            }
-                          }}
+                          defaultValue={
+                            riskAnalysisResponse?.riskAnalysis
+                              ?.targetFinancialImpact
+                          }
+                          defaultChecked={
+                            riskAnalysisResponse?.riskAnalysis
+                              ?.targetFinancialImpact
+                          }
                           className={`form-control form-control-sm shadow-sm ${
-                            errors.roles ? "is-invalid" : ""
+                            errors.targetFinancialImpact ? "is-invalid" : ""
                           }`}
-                          disabled={isSaving || typologiesData?.isLoading}
+                          disabled={isSaving}
                           ref={register({
-                            required: false,
+                            required: true,
                           })}
-                          id="typology"
-                          name="typology"
+                          id="targetFinancialImpact"
+                          name="targetFinancialImpact"
                         >
-                          {typologiesData?.data?.map((typology, key) => (
-                            <option key={key} value={typology?.id}>
-                              {typology?.name}
+                          {impactOptions?.map((option, key) => (
+                            <option key={key} value={option}>
+                              {option}
                             </option>
                           ))}
                         </select>
-                      )}
+                        {/** Required name error */}
+                        {errors.targetFinancialImpact &&
+                          errors.targetFinancialImpact.type === "required" && (
+                            <div className="invalid-feedback">
+                              L'impact financier cible de l'analyse de risque
+                              est requis
+                            </div>
+                          )}
+                      </div>
                     </div>
-                  </div>
 
-                   {/** APPROVE THREAT */}
-                   <div className="custom-control custom-switch mt-2 mb-2 text-center">
+                    {/** Target Operational Impact */}
+                    <div className="form-group row">
+                      <label
+                        className="col-md-3 font-weight-bold"
+                        htmlFor="targetOperationalImpact"
+                      >
+                        Impact operationnel cible:{" "}
+                      </label>
+                      <div className="col-md-9">
+                        <select
+                          defaultValue={
+                            riskAnalysisResponse?.riskAnalysis
+                              ?.targetOperationalImpact
+                          }
+                          defaultChecked={
+                            riskAnalysisResponse?.riskAnalysis
+                              ?.targetOperationalImpact
+                          }
+                          className={`form-control form-control-sm shadow-sm ${
+                            errors.targetOperationalImpact ? "is-invalid" : ""
+                          }`}
+                          disabled={isSaving}
+                          ref={register({
+                            required: true,
+                          })}
+                          id="targetOperationalImpact"
+                          name="targetOperationalImpact"
+                        >
+                          {impactOptions?.map((option, key) => (
+                            <option key={key} value={option}>
+                              {option}
+                            </option>
+                          ))}
+                        </select>
+                        {/** Required name error */}
+                        {errors.targetOperationalImpact &&
+                          errors.targetOperationalImpact.type ===
+                            "required" && (
+                            <div className="invalid-feedback">
+                              L'impact operationnel cible de l'analyse de risque
+                              est requis
+                            </div>
+                          )}
+                      </div>
+                    </div>
+
+                    {/** Target Reputational Impact */}
+                    <div className="form-group row">
+                      <label
+                        className="col-md-3 font-weight-bold"
+                        htmlFor="targetReputationalImpact"
+                      >
+                        Impact réputationnel cible:{" "}
+                      </label>
+                      <div className="col-md-9">
+                        <select
+                          defaultValue={
+                            riskAnalysisResponse?.riskAnalysis
+                              ?.targetReputationalImpact
+                          }
+                          defaultChecked={
+                            riskAnalysisResponse?.riskAnalysis
+                              ?.targetReputationalImpact
+                          }
+                          className={`form-control form-control-sm shadow-sm ${
+                            errors.targetReputationalImpact ? "is-invalid" : ""
+                          }`}
+                          disabled={isSaving}
+                          ref={register({
+                            required: true,
+                          })}
+                          id="targetReputationalImpact"
+                          name="targetReputationalImpact"
+                        >
+                          {impactOptions?.map((option, key) => (
+                            <option key={key} value={option}>
+                              {option}
+                            </option>
+                          ))}
+                        </select>
+                        {/** Required name error */}
+                        {errors.targetReputationalImpact &&
+                          errors.targetReputationalImpact.type ===
+                            "required" && (
+                            <div className="invalid-feedback">
+                              L'impact réputationnel cible de l'analyse de
+                              risque est requis
+                            </div>
+                          )}
+                      </div>
+                    </div>
+
+                    {/** Target Probability Impact */}
+                    <div className="form-group row">
+                      <label
+                        className="col-md-3 font-weight-bold"
+                        htmlFor="targetProbability"
+                      >
+                        Probabilité Cible:{" "}
+                      </label>
+                      <div className="col-md-9">
+                        <select
+                          defaultValue={
+                            riskAnalysisResponse?.riskAnalysis
+                              ?.targetProbability
+                          }
+                          defaultChecked={
+                            riskAnalysisResponse?.riskAnalysis
+                              ?.targetProbability
+                          }
+                          className={`form-control form-control-sm shadow-sm ${
+                            errors.targetProbability ? "is-invalid" : ""
+                          }`}
+                          disabled={isSaving}
+                          ref={register({
+                            required: true,
+                          })}
+                          id="targetProbability"
+                          name="targetProbability"
+                        >
+                          {impactOptions?.map((option, key) => (
+                            <option key={key} value={option}>
+                              {option}
+                            </option>
+                          ))}
+                        </select>
+                        {/** Required name error */}
+                        {errors.targetProbability &&
+                          errors.targetProbability.type === "required" && (
+                            <div className="invalid-feedback">
+                              La probabilité cible de l'analyse de risque est
+                              requis
+                            </div>
+                          )}
+                      </div>
+                    </div>
+
+                    {/** Acceptable Risidual Risk */}
+                    <div className="form-group row">
+                      <label
+                        className="col-md-3 font-weight-bold"
+                        htmlFor="targetProbability"
+                      >
+                        Risque Résiduel Acceptable:{" "}
+                      </label>
+                      <div className="col-md-9">
+                        <select
+                          defaultValue={
+                            riskAnalysisResponse?.riskAnalysis
+                              ?.acceptableResidualRisk
+                          }
+                          defaultChecked={
+                            riskAnalysisResponse?.riskAnalysis
+                              ?.acceptableResidualRisk
+                          }
+                          className={`form-control form-control-sm shadow-sm ${
+                            errors.acceptableResidualRisk ? "is-invalid" : ""
+                          }`}
+                          disabled={isSaving}
+                          ref={register({
+                            required: true,
+                          })}
+                          id="acceptableResidualRisk"
+                          name="acceptableResidualRisk"
+                        >
+                          {impactOptions?.map((option, key) => (
+                            <option key={key} value={option}>
+                              {option}
+                            </option>
+                          ))}
+                        </select>
+                        {/** Required name error */}
+                        {errors.acceptableResidualRisk &&
+                          errors.acceptableResidualRisk.type === "required" && (
+                            <div className="invalid-feedback">
+                              Le risque résiduel acceptable de l'analyse de
+                              risque est requis
+                            </div>
+                          )}
+                      </div>
+                    </div>
+
+                    {/** APPROVE RISK ANALYSIS */}
+                    <div className="custom-control custom-switch mt-2 mb-2 text-center">
                       <input
                         disabled={isSaving}
                         type="checkbox"
@@ -332,17 +892,19 @@ export default () => {
                           required: false,
                         })}
                         onChange={(e) => {
-                            if( vulnerabilityResponse?.vulnerability?.status ) {
-                              vulnerabilityResponse.vulnerability.status = !vulnerabilityResponse?.vulnerability?.status
-                            }
+                          if (riskAnalysisResponse?.riskAnalysis?.status) {
+                            riskAnalysisResponse.riskAnalysis.status = !riskAnalysisResponse
+                              ?.riskAnalysis?.status;
+                          }
                         }}
-                        defaultChecked={vulnerabilityResponse?.vulnerability?.status}
+                        defaultChecked={
+                          riskAnalysisResponse?.riskAnalysis?.status
+                        }
                       />
                       <label className="custom-control-label" htmlFor="status">
-                        Approuver la vulnérabilité
+                        Approuver l'analyse de risque
                       </label>
                     </div>
-
 
                     <div className="col-8 text-center mb-4 mt-4 mx-auto">
                       <button
@@ -371,13 +933,18 @@ export default () => {
                     <hr />
 
                     <div className="col-12 text-center">
-                      {((typologyId !== undefined && vulnerabilityId !== undefined ) || vulnerabilityResponse.hasOwnProperty("vulnerability")) && (
+                      {((assetId !== undefined &&
+                        riskAnalysisId !== undefined) ||
+                        riskAnalysisResponse.hasOwnProperty(
+                          "riskAnalysis"
+                        )) && (
                         <Link
-                          to={`/vulnerabilities/view/${vulnerabilityResponse?.typologyId}/${vulnerabilityResponse?.vulnerability?.id}`}
+                          to={`/riskanalyzes/view/${riskAnalysisResponse?.assetId}/${riskAnalysisResponse?.riskAnalysis?.id}`}
                           type="submit"
                           className="btn btn-warning font-weight-bold text-center mx-2"
                         >
-                          <FontAwesomeIcon icon="user" /> Retourner vers la vulnérabilité
+                          <FontAwesomeIcon icon="user" /> Retourner vers
+                          l'analyse de risque
                         </Link>
                       )}
                       <Link
@@ -385,7 +952,8 @@ export default () => {
                         type="submit"
                         className="btn btn-secondary font-weight-bold text-center mx-2"
                       >
-                        <FontAwesomeIcon icon="undo" /> Naviguer vers les vulnérabilités
+                        <FontAwesomeIcon icon="undo" /> Naviguer vers les
+                        analyses des risques
                       </Link>
                     </div>
                   </form>

@@ -283,6 +283,22 @@ export default () => {
               riskAnalysisResponse !== null && (
                 <>
                   {/** DATA */}
+                  <div className="col-md-12 mx-auto mt-3 mb-3 text-center">
+                    <Link
+                      to={`/riskanalyzes/${riskAnalysisResponse?.assetId}/${riskAnalysisResponse?.riskAnalysis?.id}/edit`}
+                    >
+                      <button className="btn btn-secondary btn-sm">
+                        <FontAwesomeIcon icon="edit" color="white" />
+                      </button>
+                    </Link>{" "}
+                    <button
+                      onClick={() => deleteRiskAnalysis()}
+                      className="btn btn-danger btn-sm"
+                      disabled={isDeleting ? "disabled" : ""}
+                    >
+                      <FontAwesomeIcon icon="trash-alt" color="white" />
+                    </button>
+                  </div>
 
                   <div
                     className="col-md-12 bg-white mx-auto mt-3 mb-3"
@@ -336,22 +352,6 @@ export default () => {
                     <div className="card-body">
                       <div className="tab-content">
                         <div className="tab-pane active" id="riskAnalysis">
-                          <div className="col-md-12 mx-auto mt-3 mb-3 text-center">
-                            <Link
-                              to={`/riskanalyzes/${riskAnalysisResponse?.assetId}/${riskAnalysisResponse?.riskAnalysis?.id}/edit`}
-                            >
-                              <button className="btn btn-secondary btn-sm">
-                                <FontAwesomeIcon icon="edit" color="white" />
-                              </button>
-                            </Link>{" "}
-                            <button
-                              onClick={() => deleteRiskAnalysis()}
-                              className="btn btn-danger btn-sm"
-                              disabled={isDeleting ? "disabled" : ""}
-                            >
-                              <FontAwesomeIcon icon="trash-alt" color="white" />
-                            </button>
-                          </div>
                           <div
                             className="col-md-12 bg-white mx-auto mt-3 mb-3"
                             style={{ borderTop: "blue solid 2px" }}
@@ -468,10 +468,19 @@ export default () => {
                                       Plan de traitement de risque
                                     </th>
                                     <td>
-                                      {
-                                        riskAnalysisResponse?.riskAnalysis
-                                          ?.riskTreatmentPlan
-                                      }
+                                      <CKEditor
+                                        editor={ClassicEditor}
+                                        data={
+                                          riskAnalysisResponse?.riskAnalysis
+                                            ?.riskTreatmentPlan || ""
+                                        }
+                                        config={{
+                                          toolbar: [],
+                                          removePlugins: ["Heading", "Link"],
+                                          isReadOnly: true,
+                                        }}
+                                        disabled={true}
+                                      />
                                     </td>
                                   </tr>
                                   <tr>
@@ -587,106 +596,129 @@ export default () => {
                           >
                             <div className="table table-responsive float-left">
                               <table className="table table-striped">
-                                <thead align="center">
-                                  <tr>
-                                    <td colSpan={2}>
-                                      <div
-                                        className={`shadow shadow-sm alert ${
-                                          riskAnalysisResponse?.riskAnalysis
-                                            ?.threat?.status
-                                            ? "alert-success"
-                                            : "alert-danger"
-                                        }`}
-                                      >
-                                        <h5>
-                                          <i className="icon fas fa-ban" />{" "}
-                                          Statut de la menace!
-                                        </h5>
-                                        La menace est{" "}
-                                        {`${
-                                          riskAnalysisResponse?.riskAnalysis
-                                            ?.threat?.status
-                                            ? "approuvée"
-                                            : "rejetée"
-                                        }`}
-                                      </div>
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <th scope="col">Nom</th>
-                                    <td>
-                                      {
-                                        riskAnalysisResponse?.riskAnalysis
-                                          ?.threat?.name
-                                      }
-                                    </td>
-                                  </tr>
-                                </thead>
-                                <tbody align="center">
-                                  <tr>
-                                    <th scope="col">Description</th>
-                                    <td>
-                                      {riskAnalysisResponse?.riskAnalysis
-                                        ?.threat?.description &&
-                                        riskAnalysisResponse?.riskAnalysis
-                                          ?.threat?.description?.length > 0 && (
-                                          <CKEditor
-                                            editor={ClassicEditor}
-                                            data={
+                                {riskAnalysisResponse?.riskAnalysis?.threat ? (
+                                  <>
+                                    <thead align="center">
+                                      <tr>
+                                        <td colSpan={2}>
+                                          <div
+                                            className={`shadow shadow-sm alert ${
                                               riskAnalysisResponse?.riskAnalysis
-                                                ?.threat?.description
+                                                ?.threat?.status
+                                                ? "alert-success"
+                                                : "alert-danger"
+                                            }`}
+                                          >
+                                            <h5>
+                                              <i className="icon fas fa-ban" />{" "}
+                                              Statut de la menace!
+                                            </h5>
+                                            La menace est{" "}
+                                            {`${
+                                              riskAnalysisResponse?.riskAnalysis
+                                                ?.threat?.status
+                                                ? "approuvée"
+                                                : "rejetée"
+                                            }`}
+                                          </div>
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <th scope="col">Nom</th>
+                                        <td>
+                                          {
+                                            riskAnalysisResponse?.riskAnalysis
+                                              ?.threat?.name
+                                          }
+                                        </td>
+                                      </tr>
+                                    </thead>
+                                    <tbody align="center">
+                                      <tr>
+                                        <th scope="col">Description</th>
+                                        <td>
+                                          {riskAnalysisResponse?.riskAnalysis
+                                            ?.threat?.description &&
+                                            riskAnalysisResponse?.riskAnalysis
+                                              ?.threat?.description?.length >
+                                              0 && (
+                                              <CKEditor
+                                                editor={ClassicEditor}
+                                                data={
+                                                  riskAnalysisResponse
+                                                    ?.riskAnalysis?.threat
+                                                    ?.description
+                                                }
+                                                config={{
+                                                  toolbar: [],
+                                                  removePlugins: [
+                                                    "Heading",
+                                                    "Link",
+                                                  ],
+                                                  isReadOnly: true,
+                                                }}
+                                                disabled={true}
+                                              />
+                                            )}
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <th scope="col">
+                                          Date d'identification
+                                        </th>
+                                        <td>
+                                          <Moment format="YYYY/MM/DD HH:mm:ss">
+                                            {
+                                              riskAnalysisResponse?.riskAnalysis
+                                                ?.threat?.identificationDate
                                             }
-                                            config={{
-                                              toolbar: [],
-                                              removePlugins: [
-                                                "Heading",
-                                                "Link",
-                                              ],
-                                              isReadOnly: true,
-                                            }}
-                                            disabled={true}
-                                          />
-                                        )}
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <th scope="col">Date d'identification</th>
-                                    <td>
-                                      <Moment format="YYYY/MM/DD HH:mm:ss">
-                                        {
-                                          riskAnalysisResponse?.riskAnalysis
-                                            ?.threat?.identificationDate
-                                        }
-                                      </Moment>
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <th scope="col">Statut</th>
-                                    <td>
-                                      <div className="text-center">
-                                        {riskAnalysisResponse?.riskAnalysis
-                                          ?.threat?.status
-                                          ? "APPROUVÉ"
-                                          : "REJETÉ"}
-                                        {"  "}
-                                        <FontAwesomeIcon
-                                          icon={
-                                            riskAnalysisResponse?.riskAnalysis
+                                          </Moment>
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <th scope="col">Statut</th>
+                                        <td>
+                                          <div className="text-center">
+                                            {riskAnalysisResponse?.riskAnalysis
                                               ?.threat?.status
-                                              ? "minus-circle"
-                                              : "check-circle"
-                                          }
-                                          color={
-                                            riskAnalysisResponse?.riskAnalysis
-                                              ?.threat?.status
-                                              ? "green"
-                                              : "red"
-                                          }
-                                        />
-                                      </div>
-                                    </td>
-                                  </tr>
-                                </tbody>
+                                              ? "APPROUVÉ"
+                                              : "REJETÉ"}
+                                            {"  "}
+                                            <FontAwesomeIcon
+                                              icon={
+                                                riskAnalysisResponse
+                                                  ?.riskAnalysis?.threat?.status
+                                                  ? "minus-circle"
+                                                  : "check-circle"
+                                              }
+                                              color={
+                                                riskAnalysisResponse
+                                                  ?.riskAnalysis?.threat?.status
+                                                  ? "green"
+                                                  : "red"
+                                              }
+                                            />
+                                          </div>
+                                        </td>
+                                      </tr>
+                                    </tbody>
+                                  </>
+                                ) : (
+                                  <thead align="center">
+                                    <tr>
+                                      <td>
+                                        <div
+                                          className={`shadow shadow-sm alert alert-warning`}
+                                        >
+                                          <h5>
+                                            <FontAwesomeIcon icon="exclamation-circle" />{" "}
+                                            Aucune menace n'a été affectée
+                                          </h5>
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  </thead>
+                                )}
                               </table>
                             </div>
                           </div>
@@ -699,106 +731,135 @@ export default () => {
                           >
                             <div className="table table-responsive float-left">
                               <table className="table table-striped">
-                                <thead align="center">
-                                  <tr>
-                                    <td colSpan={2}>
-                                      <div
-                                        className={`shadow shadow-sm alert ${
-                                          riskAnalysisResponse?.riskAnalysis
-                                            ?.threat?.status
-                                            ? "alert-success"
-                                            : "alert-danger"
-                                        }`}
-                                      >
-                                        <h5>
-                                          <i className="icon fas fa-ban" />{" "}
-                                          Statut de la vulnérabilité!
-                                        </h5>
-                                        La vulnérabilité est{" "}
-                                        {`${
-                                          riskAnalysisResponse?.riskAnalysis
-                                            ?.threat?.status
-                                            ? "approuvée"
-                                            : "rejetée"
-                                        }`}
-                                      </div>
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <th scope="col">Nom</th>
-                                    <td>
-                                      {
-                                        riskAnalysisResponse?.riskAnalysis
-                                          ?.vulnerability?.name
-                                      }
-                                    </td>
-                                  </tr>
-                                </thead>
-                                <tbody align="center">
-                                  <tr>
-                                    <th scope="col">Description</th>
-                                    <td>
-                                      {riskAnalysisResponse?.riskAnalysis
-                                        ?.vulnerability?.description &&
-                                        riskAnalysisResponse?.riskAnalysis
-                                          ?.threat?.description?.length > 0 && (
-                                          <CKEditor
-                                            editor={ClassicEditor}
-                                            data={
+                                {riskAnalysisResponse?.riskAnalysis
+                                  ?.vulnerability ? (
+                                  <>
+                                    <thead align="center">
+                                      <tr>
+                                        <td colSpan={2}>
+                                          <div
+                                            className={`shadow shadow-sm alert ${
                                               riskAnalysisResponse?.riskAnalysis
-                                                ?.vulnerability?.description
+                                                ?.vulnerability?.status
+                                                ? "alert-success"
+                                                : "alert-danger"
+                                            }`}
+                                          >
+                                            <h5>
+                                              <i className="icon fas fa-ban" />{" "}
+                                              Statut de la vulnérabilité!
+                                            </h5>
+                                            La vulnérabilité est{" "}
+                                            {`${
+                                              riskAnalysisResponse?.riskAnalysis
+                                                ?.vulnerability?.status
+                                                ? "approuvée"
+                                                : "rejetée"
+                                            }`}
+                                          </div>
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <th scope="col">Nom</th>
+                                        <td>
+                                          {
+                                            riskAnalysisResponse?.riskAnalysis
+                                              ?.vulnerability?.name
+                                          }
+                                        </td>
+                                      </tr>
+                                    </thead>
+                                    <tbody align="center">
+                                      <tr>
+                                        <th scope="col">Description</th>
+                                        <td>
+                                          {riskAnalysisResponse?.riskAnalysis
+                                            ?.vulnerability?.description &&
+                                            riskAnalysisResponse?.riskAnalysis
+                                              ?.threat?.description?.length >
+                                              0 && (
+                                              <CKEditor
+                                                editor={ClassicEditor}
+                                                data={
+                                                  riskAnalysisResponse
+                                                    ?.riskAnalysis
+                                                    ?.vulnerability?.description
+                                                }
+                                                config={{
+                                                  toolbar: [],
+                                                  removePlugins: [
+                                                    "Heading",
+                                                    "Link",
+                                                  ],
+                                                  isReadOnly: true,
+                                                }}
+                                                disabled={true}
+                                              />
+                                            )}
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <th scope="col">
+                                          Date d'identification
+                                        </th>
+                                        <td>
+                                          <Moment format="YYYY/MM/DD HH:mm:ss">
+                                            {
+                                              riskAnalysisResponse?.riskAnalysis
+                                                ?.vulnerability
+                                                ?.identificationDate
                                             }
-                                            config={{
-                                              toolbar: [],
-                                              removePlugins: [
-                                                "Heading",
-                                                "Link",
-                                              ],
-                                              isReadOnly: true,
-                                            }}
-                                            disabled={true}
-                                          />
-                                        )}
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <th scope="col">Date d'identification</th>
-                                    <td>
-                                      <Moment format="YYYY/MM/DD HH:mm:ss">
-                                        {
-                                          riskAnalysisResponse?.riskAnalysis
-                                            ?.vulnerability?.identificationDate
-                                        }
-                                      </Moment>
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <th scope="col">Statut</th>
-                                    <td>
-                                      <div className="text-center">
-                                        {riskAnalysisResponse?.riskAnalysis
-                                          ?.vulnerability?.status
-                                          ? "APPROUVÉ"
-                                          : "REJETÉ"}
-                                        {"  "}
-                                        <FontAwesomeIcon
-                                          icon={
-                                            riskAnalysisResponse?.riskAnalysis
+                                          </Moment>
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <th scope="col">Statut</th>
+                                        <td>
+                                          <div className="text-center">
+                                            {riskAnalysisResponse?.riskAnalysis
                                               ?.vulnerability?.status
-                                              ? "minus-circle"
-                                              : "check-circle"
-                                          }
-                                          color={
-                                            riskAnalysisResponse?.riskAnalysis
-                                              ?.vulnerability?.status
-                                              ? "green"
-                                              : "red"
-                                          }
-                                        />
-                                      </div>
-                                    </td>
-                                  </tr>
-                                </tbody>
+                                              ? "APPROUVÉ"
+                                              : "REJETÉ"}
+                                            {"  "}
+                                            <FontAwesomeIcon
+                                              icon={
+                                                riskAnalysisResponse
+                                                  ?.riskAnalysis?.vulnerability
+                                                  ?.status
+                                                  ? "minus-circle"
+                                                  : "check-circle"
+                                              }
+                                              color={
+                                                riskAnalysisResponse
+                                                  ?.riskAnalysis?.vulnerability
+                                                  ?.status
+                                                  ? "green"
+                                                  : "red"
+                                              }
+                                            />
+                                          </div>
+                                        </td>
+                                      </tr>
+                                      )}
+                                    </tbody>
+                                  </>
+                                ) : (
+                                  <thead align="center">
+                                    <tr>
+                                      <td>
+                                        <div
+                                          className={`shadow shadow-sm alert alert-warning`}
+                                        >
+                                          <h5>
+                                            <FontAwesomeIcon icon="exclamation-circle" />{" "}
+                                            Aucune vulnérabilité n'a été
+                                            affectée
+                                          </h5>
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  </thead>
+                                )}
                               </table>
                             </div>
                           </div>
@@ -811,107 +872,133 @@ export default () => {
                           >
                             <div className="table table-responsive float-left">
                               <table className="table table-striped">
-                                <thead align="center">
-                                  <tr>
-                                    <td colSpan={2}>
-                                      <div
-                                        className={`shadow shadow-sm alert ${
-                                          riskAnalysisResponse?.riskAnalysis
-                                            ?.riskScenario?.status
-                                            ? "alert-success"
-                                            : "alert-danger"
-                                        }`}
-                                      >
-                                        <h5>
-                                          <i className="icon fas fa-ban" />{" "}
-                                          Statut du scénario de risque!
-                                        </h5>
-                                        Le scénario de risque est{" "}
-                                        {`${
-                                          riskAnalysisResponse?.riskAnalysis
-                                            ?.riskScenario?.status
-                                            ? "approuvé"
-                                            : "rejeté"
-                                        }`}
-                                      </div>
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <th scope="col">Nom</th>
-                                    <td>
-                                      {
-                                        riskAnalysisResponse?.riskAnalysis
-                                          ?.riskScenario?.name
-                                      }
-                                    </td>
-                                  </tr>
-                                </thead>
-                                <tbody align="center">
-                                  <tr>
-                                    <th scope="col">Description</th>
-                                    <td>
-                                      {riskAnalysisResponse?.riskAnalysis
-                                        ?.riskScenario?.description &&
-                                        riskAnalysisResponse?.riskAnalysis
-                                          ?.riskScenario?.description?.length >
-                                          0 && (
-                                          <CKEditor
-                                            editor={ClassicEditor}
-                                            data={
+                                {riskAnalysisResponse?.riskAnalysis
+                                  ?.riskScenario ? (
+                                  <>
+                                    <thead align="center">
+                                      <tr>
+                                        <td colSpan={2}>
+                                          <div
+                                            className={`shadow shadow-sm alert ${
                                               riskAnalysisResponse?.riskAnalysis
-                                                ?.riskScenario?.description
+                                                ?.riskScenario?.status
+                                                ? "alert-success"
+                                                : "alert-danger"
+                                            }`}
+                                          >
+                                            <h5>
+                                              <i className="icon fas fa-ban" />{" "}
+                                              Statut du scénario de risque!
+                                            </h5>
+                                            Le scénario de risque est{" "}
+                                            {`${
+                                              riskAnalysisResponse?.riskAnalysis
+                                                ?.riskScenario?.status
+                                                ? "approuvé"
+                                                : "rejeté"
+                                            }`}
+                                          </div>
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <th scope="col">Nom</th>
+                                        <td>
+                                          {
+                                            riskAnalysisResponse?.riskAnalysis
+                                              ?.riskScenario?.name
+                                          }
+                                        </td>
+                                      </tr>
+                                    </thead>
+                                    <tbody align="center">
+                                      <tr>
+                                        <th scope="col">Description</th>
+                                        <td>
+                                          {riskAnalysisResponse?.riskAnalysis
+                                            ?.riskScenario?.description &&
+                                            riskAnalysisResponse?.riskAnalysis
+                                              ?.riskScenario?.description
+                                              ?.length > 0 && (
+                                              <CKEditor
+                                                editor={ClassicEditor}
+                                                data={
+                                                  riskAnalysisResponse
+                                                    ?.riskAnalysis?.riskScenario
+                                                    ?.description
+                                                }
+                                                config={{
+                                                  toolbar: [],
+                                                  removePlugins: [
+                                                    "Heading",
+                                                    "Link",
+                                                  ],
+                                                  isReadOnly: true,
+                                                }}
+                                                disabled={true}
+                                              />
+                                            )}
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <th scope="col">
+                                          Date d'identification
+                                        </th>
+                                        <td>
+                                          <Moment format="YYYY/MM/DD HH:mm:ss">
+                                            {
+                                              riskAnalysisResponse?.riskAnalysis
+                                                ?.riskScenario
+                                                ?.identificationDate
                                             }
-                                            config={{
-                                              toolbar: [],
-                                              removePlugins: [
-                                                "Heading",
-                                                "Link",
-                                              ],
-                                              isReadOnly: true,
-                                            }}
-                                            disabled={true}
-                                          />
-                                        )}
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <th scope="col">Date d'identification</th>
-                                    <td>
-                                      <Moment format="YYYY/MM/DD HH:mm:ss">
-                                        {
-                                          riskAnalysisResponse?.riskAnalysis
-                                            ?.riskScenario?.identificationDate
-                                        }
-                                      </Moment>
-                                    </td>
-                                  </tr>
-                                  <tr>
-                                    <th scope="col">Statut</th>
-                                    <td>
-                                      <div className="text-center">
-                                        {riskAnalysisResponse?.riskAnalysis
-                                          ?.riskScenario?.status
-                                          ? "APPROUVÉ"
-                                          : "REJETÉ"}
-                                        {"  "}
-                                        <FontAwesomeIcon
-                                          icon={
-                                            riskAnalysisResponse?.riskAnalysis
+                                          </Moment>
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <th scope="col">Statut</th>
+                                        <td>
+                                          <div className="text-center">
+                                            {riskAnalysisResponse?.riskAnalysis
                                               ?.riskScenario?.status
-                                              ? "minus-circle"
-                                              : "check-circle"
-                                          }
-                                          color={
-                                            riskAnalysisResponse?.riskAnalysis
-                                              ?.riskScenario?.status
-                                              ? "green"
-                                              : "red"
-                                          }
-                                        />
-                                      </div>
-                                    </td>
-                                  </tr>
-                                </tbody>
+                                              ? "APPROUVÉ"
+                                              : "REJETÉ"}
+                                            {"  "}
+                                            <FontAwesomeIcon
+                                              icon={
+                                                riskAnalysisResponse
+                                                  ?.riskAnalysis?.riskScenario
+                                                  ?.status
+                                                  ? "minus-circle"
+                                                  : "check-circle"
+                                              }
+                                              color={
+                                                riskAnalysisResponse
+                                                  ?.riskAnalysis?.riskScenario
+                                                  ?.status
+                                                  ? "green"
+                                                  : "red"
+                                              }
+                                            />
+                                          </div>
+                                        </td>
+                                      </tr>
+                                    </tbody>
+                                  </>
+                                ) : (
+                                  <thead align="center">
+                                    <tr>
+                                      <td>
+                                        <div
+                                          className={`shadow shadow-sm alert alert-warning`}
+                                        >
+                                          <h5>
+                                            <FontAwesomeIcon icon="exclamation-circle" />{" "}
+                                            Aucun vulnérabilité n'a été affecté
+                                          </h5>
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  </thead>
+                                )}
                               </table>
                             </div>
                           </div>
