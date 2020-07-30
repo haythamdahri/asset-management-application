@@ -45,6 +45,8 @@ import RiskScenarios from "../riskScenarios/RiskScenarios";
 import Assets from "../assets/Assets";
 import AssetView from "../assets/AssetView";
 import AssetForm from "../assets/AssetForm";
+import RiskAnalyzes from "../riskAnalyzes/RiskAnalyzes";
+import RiskAnalysisView from "../riskAnalyzes/RiskAnalysisView";
 
 export default () => {
   return (
@@ -174,6 +176,12 @@ export default () => {
           </UserRoute>
           <UserRoute exact={true} path="/assets/create">
             <AssetForm />
+          </UserRoute>
+          <UserRoute exact={true} path="/riskanalyzes">
+            <RiskAnalyzes />
+          </UserRoute>
+          <UserRoute exact={true} path="/riskanalyzes/view/:assetId/:riskAnalysisId">
+            <RiskAnalysisView />
           </UserRoute>
           <AuthenticatedGuard exact={true} path="/signin">
             <SignIn />

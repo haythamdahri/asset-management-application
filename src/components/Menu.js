@@ -115,6 +115,12 @@ export default () => {
                   <p>Actifs</p>
                 </Link>
               </li>
+              <li className="nav-item">
+                <Link to="/riskanalyzes" className="nav-link">
+                <i className="nav-icon fas fa-diagnoses" />
+                  <p>Analyse des risques</p>
+                </Link>
+              </li>
               <li className="nav-header">
                   Typologies And Risques
               </li>

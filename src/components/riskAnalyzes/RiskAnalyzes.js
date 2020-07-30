@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import VulnerabilityService from "../../services/VulnerabilityService";
-import TypologyService from "../../services/TypologyService";
+import RiskAnalysisService from "../../services/RiskAnalysisService";
+import AssetService from "../../services/AssetService";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Swal from "sweetalert2";
@@ -13,37 +13,45 @@ export default () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const [isUnAuthorized, setIsUnAuthorized] = useState(false);
-  const [vulnerabilitiesPage, setVulnerabilitiesPage] = useState(new Page());
+  const [riskAnalyzesPage, setRiskAnalyzesPage] = useState(new Page());
+  const [assets, setAssets] = useState([]);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
   const searchInput = useRef(null);
 
   useEffect(() => {
-    document.title = "Gestion Des Vulnérabilités";
-    fetchVulnerabilitiesPage();
+    document.title = "Gestion Des Analyses Des Risques";
+    fetchRiskAnalyzesPage();
+    fetchAssets();
     return () => {
-      setVulnerabilitiesPage(null);
+      setRiskAnalyzesPage(null);
     };
   }, []);
 
-  const fetchVulnerabilitiesPage = async () => {
+  const fetchAssets = async () => {
+    try {
+      setAssets(await AssetService.getAssets());
+    } catch (e) {}
+  };
+
+  const fetchRiskAnalyzesPage = async () => {
     const search = searchInput?.current?.value || "";
     try {
       setIsLoading(true);
       setIsError(false);
       setIsUnAuthorized(false);
-      setVulnerabilitiesPage(new Page());
-      const response = await VulnerabilityService.getVulnerabilitiesPage(
+      setRiskAnalyzesPage(new Page());
+      const response = await RiskAnalysisService.getRiskAnalysisPage(
         search,
-        vulnerabilitiesPage?.pageable || new Page()
+        riskAnalyzesPage?.pageable || new Page()
       );
       setIsLoading(false);
-      setVulnerabilitiesPage(response);
+      setRiskAnalyzesPage(response);
       setIsError(false);
     } catch (e) {
       const status = e.response?.status || null;
       setIsLoading(false);
-      setVulnerabilitiesPage(null);
+      setRiskAnalyzesPage(null);
       if (status === 403) {
         setIsUnAuthorized(true);
         setIsError(false);
@@ -69,25 +77,25 @@ export default () => {
   };
 
   const getNextPage = () => {
-    vulnerabilitiesPage.pageable = CustomPaginationService.getNextPage(
-      vulnerabilitiesPage
+    riskAnalyzesPage.pageable = CustomPaginationService.getNextPage(
+      riskAnalyzesPage
     );
-    fetchVulnerabilitiesPage();
+    fetchRiskAnalyzesPage();
   };
 
   const getPreviousPage = () => {
-    vulnerabilitiesPage.pageable = CustomPaginationService.getPreviousPage(
-      vulnerabilitiesPage
+    riskAnalyzesPage.pageable = CustomPaginationService.getPreviousPage(
+      riskAnalyzesPage
     );
-    fetchVulnerabilitiesPage();
+    fetchRiskAnalyzesPage();
   };
 
   const getPageInNewSize = (pageSize) => {
-    vulnerabilitiesPage.pageable = CustomPaginationService.getPageInNewSize(
-      vulnerabilitiesPage,
+    riskAnalyzesPage.pageable = CustomPaginationService.getPageInNewSize(
+      riskAnalyzesPage,
       pageSize
     );
-    fetchVulnerabilitiesPage();
+    fetchRiskAnalyzesPage();
   };
 
   const onSearchSubmit = async (event) => {
@@ -98,11 +106,11 @@ export default () => {
     }
   };
 
-  const deleteVulnerability = async (typologyId, vulnerabilityId) => {
+  const deleteRiskAnalysis = async (assetId, riskAnalysisId) => {
     // Confirm User Deletion
     Swal.fire({
-      title: "Êtes-vous sûr de supprimer la vulnérabilité",
-      text: "Voulez-vous supprimer la vulnérabilité?",
+      title: "Êtes-vous sûr de supprimer l'analyse de risque",
+      text: "Voulez-vous supprimer l'analyse de risque?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -114,20 +122,20 @@ export default () => {
         // Perform User delete
         try {
           setIsDeleting(true);
-          await TypologyService.deleteVulnerability(typologyId, vulnerabilityId);
+          await AssetService.deleteRiskAnalysis(assetId, riskAnalysisId);
           Swal.fire(
             "Operation éffectuée!",
-            "La vulnérabilité à été supprimée avec succés!",
+            "L'analyse de reisque à été supprimée avec succés!",
             "success"
           );
           // Clear search
           searchInput.current.value = "";
           // Fetch users
-          fetchVulnerabilitiesPage();
+          fetchRiskAnalyzesPage();
         } catch (err) {
           Swal.fire(
             "Erreur!",
-            err?.response?.message ||
+            err?.response?.data?.message ||
               `Une erreur est survenue, veuillez ressayer!`,
             "error"
           );
@@ -138,29 +146,28 @@ export default () => {
     });
   };
 
-  const updateVulnerabilityStatus = async (typologyId, vulnerability, status) => {
+  const updateRiskAnalysisStatus = async (assetId, riskAnalysis, status) => {
     // Perform User delete
     try {
       setIsApproving(true);
-      await TypologyService.updateVulnerabilityStatus(
-        typologyId,
-        vulnerability?.id,
+      await AssetService.updateAssetRiskAnalysisStatus(
+        assetId,
+        riskAnalysis?.id,
         status
       );
       Swal.fire(
         "Operation éffectuée!",
-        `La vulnérabilité à été ${
+        `L'analyse de risque à été ${
           status ? "approuvée" : "rejetée"
         } avec succés!`,
         "success"
       );
       // Set vulnerability status
-      vulnerability.status = status;
+      riskAnalysis.status = status;
     } catch (err) {
       Swal.fire(
         "Erreur!",
-        err?.response?.data?.message ||
-          `Une erreur est survenue, veuillez ressayer!`,
+        err?.response?.message || `Une erreur est survenue, veuillez ressayer!`,
         "error"
       );
     } finally {
@@ -177,7 +184,7 @@ export default () => {
           <div className="container-fluid">
             <div className="row mb-2">
               <div className="col-sm-6">
-                <h1>Vulnérabilités</h1>
+                <h1>Analyses Des Risque</h1>
               </div>
               <div className="col-sm-6">
                 <ol className="breadcrumb float-sm-right">
@@ -187,7 +194,7 @@ export default () => {
                     </Link>
                   </li>
                   <li className="breadcrumb-item active">
-                    Vulnérabilités
+                    Analyses Des Risque
                   </li>
                 </ol>
               </div>
@@ -202,7 +209,7 @@ export default () => {
               {!isUnAuthorized && !isError && !isLoading && (
                 <div className="col-12 text-center">
                   <CustomPagination
-                    page={vulnerabilitiesPage}
+                    page={riskAnalyzesPage}
                     loading={isLoading}
                     nextPageEvent={getNextPage}
                     previousPageEvent={getPreviousPage}
@@ -215,15 +222,28 @@ export default () => {
                 <form onSubmit={onSearchSubmit}>
                   <div className="form-row">
                     <div className="col-sm-12 col-md-10 col-lg-10 col-xl-10 mx-auto">
-                      <input
-                        type="search"
-                        id="userSearch"
-                        placeholder="Nom de la vulnérabilité ..."
-                        name="search"
-                        className="form-control"
-                        ref={searchInput}
-                        disabled={isUnAuthorized || isLoading ? true : ""}
-                      />
+                      <div className="form-group row">
+                        <label htmlFor="asset" className="col-sm-2 col-form-label">
+                          Actif
+                        </label>
+                        <div className="col-sm-10">
+                          <select
+                            id="asset"
+                            name="search"
+                            ref={searchInput}
+                            className="form-control"
+                            disabled={isUnAuthorized || isLoading ? true : ""}
+                          >
+                            {assets !== null &&
+                              assets !== undefined &&
+                              assets?.map((asset, key) => (
+                                <option key={key} value={asset?.id}>
+                                  {asset?.name}
+                                </option>
+                              ))}
+                          </select>
+                        </div>
+                      </div>
                     </div>
                     <div className="col-sm-12 col-md-2 col-lg-2 col-xl-2 mx-auto">
                       <button
@@ -238,8 +258,12 @@ export default () => {
               </div>
 
               <div className="col-12 mb-3 text-center">
-                <Link to="/vulnerabilities/create" className="btn btn-primary btn-sm">
-                  <FontAwesomeIcon icon="plus-circle" /> Ajouter une vulnérabilité
+                <Link
+                  to="/riskanalyzes/create"
+                  className="btn btn-primary btn-sm"
+                >
+                  <FontAwesomeIcon icon="plus-circle" /> Ajouter une analyse de
+                  risque
                 </Link>
               </div>
 
@@ -260,9 +284,12 @@ export default () => {
                   <table className="table table-hover table-bordered ">
                     <thead className="thead-light text-center">
                       <tr>
-                        <th>Nom de la vulnérabilité</th>
-                        <th>Description</th>
-                        <th>Typologie</th>
+                        <th>Actif</th>
+                        <th>Probabilité</th>
+                        <th>Impact financier</th>
+                        <th>Impact operationnel</th>
+                        <th>Impact réputationnel</th>
+                        <th>Impact</th>
                         <th>Statut</th>
                         <th>Date d'identification</th>
                         <th colSpan={4}>Actions</th>
@@ -271,7 +298,7 @@ export default () => {
                     <tbody className="text-center">
                       {isLoading && (
                         <tr>
-                          <td colSpan={9} className="text-center bg-light">
+                          <td colSpan={12} className="text-center bg-light">
                             <div
                               className="spinner-border text-primary"
                               role="status"
@@ -282,16 +309,16 @@ export default () => {
                         </tr>
                       )}
                       {!isLoading &&
-                        vulnerabilitiesPage !== null &&
-                        vulnerabilitiesPage?.content?.length === 0 && (
+                        riskAnalyzesPage !== null &&
+                        riskAnalyzesPage?.content?.length === 0 && (
                           <tr>
                             <td
-                              colSpan={9}
+                              colSpan={12}
                               className="text-center alert alert-dark"
                             >
                               <h2 className="font-weight-bold">
                                 <FontAwesomeIcon icon="exclamation-circle" />{" "}
-                                Aucune vulnérabilité n'a été trouvée!
+                                Aucune analyse de risque n'a été trouvée!
                               </h2>
                             </td>
                           </tr>
@@ -299,7 +326,7 @@ export default () => {
                       {(isError || isUnAuthorized) && (
                         <tr>
                           <td
-                            colSpan={9}
+                            colSpan={12}
                             className={`text-center alert ${
                               isError ? "alert-warning" : "alert-danger"
                             }`}
@@ -310,7 +337,10 @@ export default () => {
                                 ? "Une erreur est survenue!"
                                 : "Vous n'êtes pas autorisé!"}
                               <button
-                                onClick={() => fetchVulnerabilitiesPage()}
+                                onClick={() => {
+                                  fetchRiskAnalyzesPage();
+                                  fetchAssets();
+                                }}
                                 className="btn btn-warning font-weight-bold ml-2"
                               >
                                 <FontAwesomeIcon icon="sync" /> Ressayer
@@ -320,39 +350,46 @@ export default () => {
                         </tr>
                       )}
 
-                      {vulnerabilitiesPage &&
-                        vulnerabilitiesPage?.content?.map(
-                          (vulnerabilityResponse, key) => (
+                      {riskAnalyzesPage &&
+                        riskAnalyzesPage?.content?.map(
+                          (riskAnalysisResponse, key) => (
                             <tr key={key}>
                               <td>
                                 <Link
-                                  to={`/vulnerabilities/view/${vulnerabilityResponse?.typologyId}/${vulnerabilityResponse?.vulnerability?.id}`}
+                                  to={`/assets/view/${riskAnalysisResponse?.assetId}`}
                                 >
-                                  {vulnerabilityResponse?.vulnerability?.name}
-                                </Link>
-                              </td>
-                              <td
-                                dangerouslySetInnerHTML={{
-                                  __html: `${vulnerabilityResponse?.vulnerability?.description?.slice(
-                                    0,
-                                    20
-                                  )} ${
-                                    vulnerabilityResponse?.vulnerability
-                                      ?.description?.length > 20
-                                      ? "..."
-                                      : ""
-                                  }`,
-                                }}
-                              ></td>
-                              <td>
-                                <Link
-                                  to={`/typologies/view/${vulnerabilityResponse?.typologyId}`}
-                                >
-                                  {vulnerabilityResponse?.typologyName}
+                                  {riskAnalysisResponse?.assetName}
                                 </Link>
                               </td>
                               <td>
-                                {vulnerabilityResponse?.vulnerability?.status ? (
+                                {
+                                  riskAnalysisResponse?.riskAnalysis
+                                    ?.probability
+                                }
+                              </td>
+                              <td>
+                                {
+                                  riskAnalysisResponse?.riskAnalysis
+                                    ?.financialImpact
+                                }
+                              </td>
+                              <td>
+                                {
+                                  riskAnalysisResponse?.riskAnalysis
+                                    ?.operationalImpact
+                                }
+                              </td>
+                              <td>
+                                {
+                                  riskAnalysisResponse?.riskAnalysis
+                                    ?.reputationalImpact
+                                }
+                              </td>
+                              <td>
+                                {riskAnalysisResponse?.riskAnalysis?.impact}
+                              </td>
+                              <td>
+                                {riskAnalysisResponse?.riskAnalysis?.status ? (
                                   <>
                                     <FontAwesomeIcon
                                       icon="check-circle"
@@ -373,7 +410,7 @@ export default () => {
                               <td>
                                 <Moment format="YYYY/MM/DD HH:mm:ss">
                                   {
-                                    vulnerabilityResponse?.vulnerability
+                                    riskAnalysisResponse?.riskAnalysis
                                       ?.identificationDate
                                   }
                                 </Moment>
@@ -381,15 +418,15 @@ export default () => {
                               <td>
                                 <button
                                   onClick={(event) =>
-                                    updateVulnerabilityStatus(
-                                      vulnerabilityResponse?.typologyId,
-                                      vulnerabilityResponse?.vulnerability,
-                                      !vulnerabilityResponse?.vulnerability
+                                    updateRiskAnalysisStatus(
+                                      riskAnalysisResponse?.assetId,
+                                      riskAnalysisResponse?.riskAnalysis,
+                                      !riskAnalysisResponse?.riskAnalysis
                                         ?.status
                                     )
                                   }
                                   className={`btn btn-${
-                                    vulnerabilityResponse?.vulnerability?.status
+                                    riskAnalysisResponse?.riskAnalysis?.status
                                       ? "danger"
                                       : "success"
                                   } btn-sm ${isApproving ? "disabled" : ""}`}
@@ -402,14 +439,14 @@ export default () => {
                                     }
                                     color="white"
                                   />
-                                  {vulnerabilityResponse?.vulnerability?.status
-                                    ? " Rejecter"
+                                  {riskAnalysisResponse?.riskAnalysis?.status
+                                    ? " Rejeter"
                                     : " Approuver"}
                                 </button>
                               </td>
                               <td>
                                 <Link
-                                  to={`/vulnerabilities/${vulnerabilityResponse?.typologyId}/${vulnerabilityResponse?.vulnerability?.id}/edit`}
+                                  to={`/riskanalyzes/${riskAnalysisResponse?.assetId}/${riskAnalysisResponse?.riskAnalysis?.id}/edit`}
                                 >
                                   <button className="btn btn-primary btn-sm">
                                     <FontAwesomeIcon
@@ -422,9 +459,9 @@ export default () => {
                               <td>
                                 <button
                                   onClick={(event) =>
-                                    deleteVulnerability(
-                                      vulnerabilityResponse?.typologyId,
-                                      vulnerabilityResponse?.vulnerability?.id
+                                    deleteRiskAnalysis(
+                                      riskAnalysisResponse?.assetId,
+                                      riskAnalysisResponse?.riskAnalysis?.id
                                     )
                                   }
                                   className={`btn btn-danger btn-sm ${
@@ -439,7 +476,7 @@ export default () => {
                               </td>
                               <td>
                                 <Link
-                                  to={`/vulnerabilities/view/${vulnerabilityResponse?.typologyId}/${vulnerabilityResponse?.vulnerability?.id}`}
+                                  to={`/riskanalyzes/view/${riskAnalysisResponse?.assetId}/${riskAnalysisResponse?.riskAnalysis?.id}`}
                                 >
                                   <button className="btn btn-secondary btn-sm">
                                     <FontAwesomeIcon

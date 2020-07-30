@@ -118,6 +118,17 @@ class AssetService {
         throw err;
       });
   }
+
+  deleteRiskAnalysis(assetId, RiskAnalysisId) {
+    return axios
+      .delete(`${API_URL}/${assetId}/riskanalyzes/${RiskAnalysisId}`, { headers: authHeader() })
+      .then(() => {
+        return true;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
 }
 
 export default new AssetService();
