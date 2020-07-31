@@ -8,7 +8,7 @@ import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import Moment from "react-moment";
 
 export default () => {
-  const [process, setProcess] = useState({});
+  const [applicationProcess, setApplicationProcess] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [isApproving, setIsApproving] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -37,24 +37,26 @@ export default () => {
     setIsUnAuthorized(false);
     setIsLoading(true);
     setIsError(false);
-    setProcess({});
+    setApplicationProcess({});
     try {
-      const process = await ProcessService.getProcess(id);
-      if (!process.hasOwnProperty("id")) {
-        setProcess(null);
+      const applicationProcess = await ProcessService.getProcess(id);
+      console.log(applicationProcess)
+      if (!applicationProcess.hasOwnProperty("id")) {
+        setApplicationProcess(null);
         setIsLoading(false);
         setIsError(false);
         setIsUnAuthorized(false);
       } else {
-        setProcess(process);
+        setApplicationProcess(applicationProcess);
         setIsLoading(false);
         setIsError(false);
         setIsUnAuthorized(false);
       }
     } catch (e) {
+      console.log(e);
       const status = e?.response?.status || null;
       setIsLoading(false);
-      setProcess({});
+      setApplicationProcess({});
       console.log(status);
       switch (status) {
         case 403:
@@ -64,7 +66,7 @@ export default () => {
         case 404:
           setIsUnAuthorized(false);
           setIsError(false);
-          setProcess(null);
+          setApplicationProcess(null);
           break;
         default:
           setIsError(true);
@@ -112,11 +114,11 @@ export default () => {
     });
   };
 
-  const updateProcessStatus = async (process, status) => {
+  const updateProcessStatus = async (applicationProcess, status) => {
     // Perform User delete
     try {
       setIsApproving(true);
-      await ProcessService.updateProcessStatus(process?.id, status);
+      await ProcessService.updateProcessStatus(applicationProcess?.id, status);
       Swal.fire(
         "Operation éffectuée!",
         `Le statut de la classification à été ${
@@ -125,7 +127,7 @@ export default () => {
         "success"
       );
       // Set process status
-      process.status = status;
+      applicationProcess.status = status;
       window.scrollTo(0, 0);
     } catch (err) {
       Swal.fire(
@@ -139,12 +141,12 @@ export default () => {
     }
   };
 
-  const updateClassificationStatus = async (process, status) => {
+  const updateClassificationStatus = async (applicationProcess, status) => {
     // Perform User delete
     try {
       setIsApproving(true);
       await ProcessService.updateProcessClassificationStatus(
-        process?.id,
+        applicationProcess?.id,
         status
       );
       Swal.fire(
@@ -155,7 +157,7 @@ export default () => {
         "success"
       );
       // Set process status
-      process.classification.status = status;
+      applicationProcess.classification.status = status;
     } catch (err) {
       Swal.fire(
         "Erreur!",
@@ -179,14 +181,14 @@ export default () => {
               </div>
             </div>
 
-            {(isError || isUnAuthorized || process === null) && !isLoading && (
+            {(isError || isUnAuthorized || applicationProcess === null) && !isLoading && (
               <div className="col-10 mx-auto pt-5">
                 <div className="alert alert-warning text-center font-weight">
                   <h2 className="font-weight-bold">
                     <FontAwesomeIcon icon="exclamation-circle" />{" "}
                     {isError && "Une erreur est survenue!"}
                     {isUnAuthorized && "Vous n'êtes pas autorisé!"}
-                    {process === null && "Aucun processus n'a été trouvé"}
+                    {applicationProcess === null && "Aucun processus n'a été trouvé"}
                     <button
                       onClick={() => fetchProcess()}
                       className="btn btn-warning font-weight-bold ml-2"
@@ -215,10 +217,10 @@ export default () => {
               </div>
             )}
 
-            {!isLoading && !isError && !isUnAuthorized && process !== null && (
+            {!isLoading && !isError && !isUnAuthorized && applicationProcess !== null && (
               <>
                 <div className="col-12 text-center mt-2">
-                  <Link to={`/processes/${process.id}/edit`}>
+                  <Link to={`/processes/${applicationProcess?.id}/edit`}>
                     <button className="btn btn-secondary btn-sm">
                       <FontAwesomeIcon icon="edit" color="white" />
                     </button>
@@ -245,7 +247,7 @@ export default () => {
                           href="#processes"
                           data-toggle="tab"
                         >
-                          Processus
+                          <FontAwesomeIcon icon="microchip" /> Processus
                         </a>
                       </li>
                       <li className="nav-item flex-sm-fill">
@@ -254,7 +256,7 @@ export default () => {
                           href="#classification"
                           data-toggle="tab"
                         >
-                          Classification
+                          <FontAwesomeIcon icon="i-cursor" /> Classification
                         </a>
                       </li>
                       <li className="nav-item flex-sm-fill">
@@ -263,7 +265,7 @@ export default () => {
                           href="#asssets"
                           data-toggle="tab"
                         >
-                          Actifs
+                          <FontAwesomeIcon icon="server" /> Actifs
                         </a>
                       </li>
                     </ul>
@@ -275,9 +277,30 @@ export default () => {
                         <div className="table table-responsive float-left">
                           <table className="table table-striped">
                             <thead align="center">
+                            <tr>
+                          <td colSpan={2}>
+                          <div
+                            className={`shadow shadow-sm alert ${
+                              applicationProcess?.status
+                                ? "alert-success"
+                                : "alert-danger"
+                            }`}
+                          >
+                            <h5>
+                              <i className="icon fas fa-ban" /> Statut du processus!
+                            </h5>
+                            Le processus est{" "}
+                            {`${
+                              applicationProcess?.status
+                                ? "approuvé"
+                                : "rejeté"
+                            }`}
+                          </div>
+                          </td>
+                        </tr>
                               <tr>
                                 <th scope="col">Nom</th>
-                                <td>{process?.name}</td>
+                                <td>{applicationProcess?.name}</td>
                               </tr>
                             </thead>
                             <tbody align="center">
@@ -286,7 +309,7 @@ export default () => {
                                 <td>
                                   <CKEditor
                                     editor={ClassicEditor}
-                                    data={process?.description}
+                                    data={applicationProcess?.description}
                                     config={{
                                       toolbar: [],
                                       removePlugins: ["Heading", "Link"],
@@ -298,22 +321,22 @@ export default () => {
                               </tr>
                               <tr>
                                 <th scope="col">Processus Superieur</th>
-                                <td><Link to={`/processes/view/${process?.parentProcess?.id}`}>{process?.parentProcess?.name}</Link></td>
+                                <td><Link to={`/processes/view/${applicationProcess?.parentapplicationProcess?.id}`}>{applicationProcess?.parentapplicationProcess?.name}</Link></td>
                               </tr>
                               <tr>
                                 <th scope="col">Organisme</th>
                                 <td>
                                   <Link
-                                    to={`/organizations/view/${process?.organization?.id}`}
+                                    to={`/organizations/view/${applicationProcess?.organization?.id}`}
                                   >
-                                    {process?.organization?.name}
+                                    {applicationProcess?.organization?.name}
                                   </Link>
                                 </td>
                               </tr>
                               <tr>
                                 <th scope="col">Statut</th>
                                 <td>
-                                  {process?.status ? (
+                                  {applicationProcess?.status ? (
                                     <>
                                       <FontAwesomeIcon
                                         icon="check-circle"
@@ -333,23 +356,23 @@ export default () => {
                                   <button
                                     onClick={(event) =>
                                       updateProcessStatus(
-                                        process,
-                                        !process?.status
+                                        applicationProcess,
+                                        !applicationProcess?.status
                                       )
                                     }
                                     className={`ml-2 btn btn-${
-                                      process?.status ? "danger" : "success"
+                                      applicationProcess?.status ? "danger" : "success"
                                     } btn-sm ${isApproving ? "disabled" : ""}`}
                                   >
                                     <FontAwesomeIcon
                                       icon={
-                                        process.status
+                                        applicationProcess?.status
                                           ? "minus-circle"
                                           : "check-circle"
                                       }
                                       color="white"
                                     />
-                                    {process?.status
+                                    {applicationProcess?.status
                                       ? " Rejeter"
                                       : " Approuver"}
                                   </button>
@@ -365,7 +388,7 @@ export default () => {
                         <div className="col-12">
                           <div
                             className={`shadow shadow-sm alert ${
-                              process?.classification?.status
+                              applicationProcess?.classification?.status
                                 ? "alert-success"
                                 : "alert-danger"
                             }`}
@@ -376,7 +399,7 @@ export default () => {
                             </h5>
                             La classification du processus est{" "}
                             {`${
-                              process?.classification?.status
+                              applicationProcess?.classification?.status
                                 ? "approuvé"
                                 : "rejeté"
                             }`}
@@ -387,57 +410,57 @@ export default () => {
                           <div className="callout callout-danger">
                             <h5>Confidentialité</h5>
                             <p>
-                              {process?.classification?.confidentiality || 0}
+                              {applicationProcess?.classification?.confidentiality || 0}
                             </p>
                           </div>
                           <div className="callout callout-info">
                             <h5>Disponibilité</h5>
-                            <p>{process?.classification?.availability || 0}</p>
+                            <p>{applicationProcess?.classification?.availability || 0}</p>
                           </div>
                           <div className="callout callout-warning">
                             <h5>Intégrité</h5>
-                            <p>{process?.classification?.integrity || 0}</p>
+                            <p>{applicationProcess?.classification?.integrity || 0}</p>
                           </div>
                           <div className="callout callout-success">
                             <h5>Traçabilité</h5>
-                            <p>{process?.classification?.traceability || 0}</p>
+                            <p>{applicationProcess?.classification?.traceability || 0}</p>
                           </div>
                           <div className="callout callout-primary">
                             <h5>Score</h5>
-                            <p>{process?.classification?.score || 0}</p>
+                            <p>{applicationProcess?.classification?.score || 0}</p>
                           </div>
                           <div className="callout callout-info">
                             <h5>Date d'identification</h5>
                             <p>
                               <Moment format="YYYY/MM/DD HH:mm:ss">
-                                {process?.classification?.identificationDate}
+                                {applicationProcess?.classification?.identificationDate}
                               </Moment>
                             </p>
                           </div>
-                          {process?.classification !== null && (
+                          {applicationProcess?.classification !== null && (
                             <div className="text-center">
                               <button
                                 onClick={(event) =>
                                   updateClassificationStatus(
-                                    process,
-                                    !process?.classification?.status
+                                    applicationProcess,
+                                    !applicationProcess?.classification?.status
                                   )
                                 }
                                 className={`w-50 btn btn-${
-                                  process?.classification?.status
+                                  applicationProcess?.classification?.status
                                     ? "danger"
                                     : "success"
                                 } btn-sm ${isApproving ? "disabled" : ""}`}
                               >
                                 <FontAwesomeIcon
                                   icon={
-                                    process?.classification?.status
+                                    applicationProcess?.classification?.status
                                       ? "minus-circle"
                                       : "check-circle"
                                   }
                                   color="white"
                                 />
-                                {process?.classification?.status
+                                {applicationProcess?.classification?.status
                                   ? " Rejeter"
                                   : " Approuver"}
                               </button>
@@ -457,7 +480,7 @@ export default () => {
                             }}
                           >
                             {!isLoading &&
-                              process?.assets?.map((asset, key) => (
+                              applicationProcess?.assets?.map((asset, key) => (
                                 <div key={key}>
                                   {key < assetsMore.itemsCount && (
                                     <li className="list-group-item" key={key}>
@@ -468,13 +491,13 @@ export default () => {
                                   )}
                                 </div>
                               ))}
-                            {process?.assets?.length > 5 &&
+                            {applicationProcess?.assets?.length > 5 &&
                               !assetsMore.expanded && (
                                 <Link
                                   to="#"
                                   onClick={() =>
                                     setAssetsMore({
-                                      itemsCount: process?.assets?.length,
+                                      itemsCount: applicationProcess?.assets?.length,
                                       expanded: true,
                                     })
                                   }
@@ -482,7 +505,7 @@ export default () => {
                                   Voir plus
                                 </Link>
                               )}
-                            {process?.assets?.length > 5 &&
+                            {applicationProcess?.assets?.length > 5 &&
                               assetsMore.expanded && (
                                 <Link
                                   to="#"
@@ -498,8 +521,8 @@ export default () => {
                               )}
 
                             {!isLoading &&
-                              (process?.assets?.length === 0 ||
-                                process?.assets === null) && (
+                              (applicationProcess?.assets?.length === 0 ||
+                                applicationProcess?.assets === null) && (
                                 <li className="list-group-item">
                                   <FontAwesomeIcon icon="exclamation-circle" />{" "}
                                   Aucun actif n'a été associé a ce processus

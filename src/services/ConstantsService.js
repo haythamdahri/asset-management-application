@@ -21,7 +21,7 @@ export const RISK_TYPE = {
   },
 };
 
-export const RISK_TREATEMENT_STRATEGY_TYPE = {
+export const RISK_TREATMENT_STRATEGY_TYPE = {
   fr: {
     REDUCE: "Réduire",
     ACCEPT: "Accepter",
@@ -36,7 +36,7 @@ export const RISK_TREATEMENT_STRATEGY_TYPE = {
   },
 };
 
-export const riskTreatmentStrategyTypes = {
+export const RISK_TREATMENT_STRATEGY_TYPES = {
   REDUCE: "Réduire",
   ACCEPT: "Accepter",
   TRANSFER: "Transferer",

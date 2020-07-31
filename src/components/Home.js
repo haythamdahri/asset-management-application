@@ -173,7 +173,7 @@ export default () => {
                   <div className="icon">
                     <i className="ion ion-stats-bars" />
                   </div>
-                  <Link to="/users" className="small-box-footer">
+                  <Link to="/processes" className="small-box-footer">
                   Plus d'informations <i className="fas fa-arrow-circle-right" />
                   </Link>
                 </div>

@@ -227,7 +227,7 @@ export default () => {
 
               <div className="col-12 mb-3 text-center">
                 <Link to="/processes/create" className="btn btn-primary btn-sm">
-                  <FontAwesomeIcon icon="user-plus" /> Ajouter un processus
+                  <FontAwesomeIcon icon="plus-circle" /> Ajouter un processus
                 </Link>
               </div>
 

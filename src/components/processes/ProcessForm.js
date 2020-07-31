@@ -69,9 +69,9 @@ export default () => {
 
   useEffect(() => {
     if (
-      process !== null &&
+      applicationProcess !== null &&
       applicationProcess.hasOwnProperty("id") &&
-      process !== ""
+      applicationProcess !== ""
     ) {
       // Fetch processes by the retrieved one organization
       fetchOrganizationProcesses(applicationProcess?.organization?.id, applicationProcess);
@@ -380,9 +380,12 @@ export default () => {
                       </label>
                       <div className="col-md-9">
                         <select
-                          defaultValue={
+                          value={
                             applicationProcess?.parentProcess?.id
                           }
+                          onChange={(e) => {
+                            setApplicationProcess({...applicationProcess, parentProcess: processesData?.data?.filter(p => p?.id === e.target.value)[0]})
+                          }}
                           defaultChecked={
                             applicationProcess?.parentProcess?.id
                           }
@@ -403,12 +406,6 @@ export default () => {
                             </option>
                           ))}
                         </select>
-                        Processus parent courant:
-                        <Link
-                          to={`/processes/view/${applicationProcess?.parentProcess?.id}`}
-                        >{"  "}
-                          {applicationProcess?.parentProcess?.name}
-                        </Link>
                       </div>
                     </div>
 

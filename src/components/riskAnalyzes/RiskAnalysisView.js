@@ -5,10 +5,9 @@ import Swal from "sweetalert2";
 import CKEditor from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import AssetService from "../../services/AssetService";
-import TypologyService from "../../services/TypologyService";
 import Moment from "react-moment";
 import {
-  RISK_TREATEMENT_STRATEGY_TYPE,
+  RISK_TREATMENT_STRATEGY_TYPE,
   RISK_TYPE,
 } from "../../services/ConstantsService";
 
@@ -140,94 +139,7 @@ export default () => {
     }
   };
 
-  const updateThreatStatus = async (typologyId, threat, status) => {
-    // Perform User delete
-    try {
-      setIsApproving(true);
-      await TypologyService.updateThreatStatus(typologyId, threat?.id, status);
-      Swal.fire(
-        "Operation éffectuée!",
-        `Le statut de la menace à été ${
-          status ? "approuvé" : "rejeté"
-        } avec succés!`,
-        "success"
-      );
-      // Set threat status
-      threat.status = status;
-    } catch (err) {
-      Swal.fire(
-        "Erreur!",
-        err?.response?.message || `Une erreur est survenue, veuillez ressayer!`,
-        "error"
-      );
-    } finally {
-      setIsApproving(false);
-    }
-  };
-
-  const updateVulnerabilityStatus = async (
-    typologyId,
-    vulnerability,
-    status
-  ) => {
-    // Perform User delete
-    try {
-      setIsApproving(true);
-      await TypologyService.updateVulnerabilityStatus(
-        typologyId,
-        vulnerability?.id,
-        status
-      );
-      Swal.fire(
-        "Operation éffectuée!",
-        `Le statut de la vulnérabilité à été ${
-          status ? "approuvé" : "rejeté"
-        } avec succés!`,
-        "success"
-      );
-      // Set vulnerability status
-      vulnerability.status = status;
-    } catch (err) {
-      Swal.fire(
-        "Erreur!",
-        err?.response?.message || `Une erreur est survenue, veuillez ressayer!`,
-        "error"
-      );
-    } finally {
-      setIsApproving(false);
-    }
-  };
-
-  const updateRiskScenarioStatus = async (typologyId, riskScenario, status) => {
-    // Perform User delete
-    try {
-      setIsApproving(true);
-      await TypologyService.updateRiskScenarioStatus(
-        typologyId,
-        riskScenario?.id,
-        status
-      );
-      Swal.fire(
-        "Operation éffectuée!",
-        `Le statut du scénario de risque à été ${
-          status ? "approuvé" : "rejeté"
-        } avec succés!`,
-        "success"
-      );
-      // Set risk scenario status
-      riskScenario.status = status;
-    } catch (err) {
-      Swal.fire(
-        "Erreur!",
-        err?.response?.data?.message ||
-          `Une erreur est survenue, veuillez ressayer!`,
-        "error"
-      );
-    } finally {
-      setIsApproving(false);
-    }
-  };
-
+ 
   return (
     <div className="content-wrapper bg-light pb-5 mb-5">
       <section className="content">
@@ -235,7 +147,7 @@ export default () => {
           <div className="row">
             <div className="col-12">
               <div className="ribbon-wrapper ribbon-lg">
-                <div className="ribbon bg-success text-lg">Groupe</div>
+                <div className="ribbon bg-success text-lg">A.R</div>
               </div>
             </div>
 
@@ -342,7 +254,7 @@ export default () => {
                             data-toggle="tab"
                           >
                             <i className="nav-icon fas fa-object-ungroup" />{" "}
-                            Scénarios des risque
+                            Scénario de risque
                           </a>
                         </li>
                       </ul>
@@ -439,7 +351,10 @@ export default () => {
                                       }
                                     </td>
                                   </tr>
-                                  <tr>
+                                  <tr className={`bg-${riskAnalysisResponse?.riskAnalysis?.riskAnalysis === RISK_TYPE.en.HIGH ? "danger" : 
+                                    (riskAnalysisResponse?.riskAnalysis?.riskAnalysis === RISK_TYPE.en.MEDIUM) ? "warning" : 
+                                    (riskAnalysisResponse?.riskAnalysis?.riskAnalysis === RISK_TYPE.en.LOW) ? "primary" : "success"}`
+                                  }>
                                     <th scope="col">Analyse de risque</th>
                                     <td>
                                       {
@@ -456,7 +371,7 @@ export default () => {
                                     </th>
                                     <td>
                                       {
-                                        RISK_TREATEMENT_STRATEGY_TYPE.fr[
+                                        RISK_TREATMENT_STRATEGY_TYPE.fr[
                                           riskAnalysisResponse?.riskAnalysis
                                             ?.riskTreatmentStrategy
                                         ]
@@ -776,7 +691,7 @@ export default () => {
                                           {riskAnalysisResponse?.riskAnalysis
                                             ?.vulnerability?.description &&
                                             riskAnalysisResponse?.riskAnalysis
-                                              ?.threat?.description?.length >
+                                              ?.vulnerability?.description?.length >
                                               0 && (
                                               <CKEditor
                                                 editor={ClassicEditor}
@@ -840,7 +755,6 @@ export default () => {
                                           </div>
                                         </td>
                                       </tr>
-                                      )}
                                     </tbody>
                                   </>
                                 ) : (
@@ -992,7 +906,7 @@ export default () => {
                                         >
                                           <h5>
                                             <FontAwesomeIcon icon="exclamation-circle" />{" "}
-                                            Aucun vulnérabilité n'a été affecté
+                                            Aucun scénario de risque n'a été affecté
                                           </h5>
                                         </div>
                                       </td>

@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Swal from "sweetalert2";
 import CKEditor from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import { riskTreatmentStrategyTypes } from "../../services/ConstantsService";
+import { RISK_TREATMENT_STRATEGY_TYPES } from "../../services/ConstantsService";
 
 export default () => {
   const { register, handleSubmit, errors } = useForm();
@@ -308,12 +308,20 @@ export default () => {
                       </label>
                       <div className="col-md-9">
                         <select
-                          defaultValue={
+                          value={
                             riskAnalysisResponse?.riskAnalysis?.threat?.id || ""
                           }
-                          defaultChecked={
-                            riskAnalysisResponse?.riskAnalysis?.threat?.id || ""
-                          }
+                          onChange={(e) => {
+                            setRiskAnalysisResponse({
+                              ...riskAnalysisResponse,
+                              riskAnalysis: {
+                                ...riskAnalysisResponse.riskAnalysis,
+                                threat: typologyData?.data?.threats?.filter(
+                                  (t) => t.id === e.target.value
+                                )[0],
+                              },
+                            });
+                          }}
                           className={`form-control form-control-sm shadow-sm ${
                             errors.threat ? "is-invalid" : ""
                           }`}
@@ -324,12 +332,61 @@ export default () => {
                           id="threat"
                           name="threat"
                         >
+                          <option></option>
                           {typologyData?.data &&
                             typologyData?.data?.threats?.map((threat, key) => (
                               <option key={key} value={threat?.id}>
                                 {threat?.name}
                               </option>
                             ))}{" "}
+                        </select>
+                      </div>
+                    </div>
+
+                    {/** VULNERABILITY */}
+                    <div className="form-group row">
+                      <label
+                        className="col-md-3 font-weight-bold"
+                        htmlFor="vulnerability"
+                      >
+                        Vulnérabilité:{" "}
+                      </label>
+                      <div className="col-md-9">
+                        <select
+                          value={
+                            riskAnalysisResponse?.riskAnalysis?.vulnerability
+                              ?.id || ""
+                          }
+                          onChange={(e) => {
+                            setRiskAnalysisResponse({
+                              ...riskAnalysisResponse,
+                              riskAnalysis: {
+                                ...riskAnalysisResponse.riskAnalysis,
+                                vulnerability: typologyData?.data?.vulnerabilities?.filter(
+                                  (v) => v.id === e.target.value
+                                )[0],
+                              },
+                            });
+                          }}
+                          className={`form-control form-control-sm shadow-sm ${
+                            errors.vulnerability ? "is-invalid" : ""
+                          }`}
+                          disabled={isSaving || typologyData?.isLoading}
+                          ref={register({
+                            required: false,
+                          })}
+                          id="vulnerability"
+                          name="vulnerability"
+                        >
+                          <option></option>
+                          {typologyData?.data &&
+                            typologyData?.data?.vulnerabilities?.map(
+                              (vulnerability, key) => (
+                                <option key={key} value={vulnerability?.id}>
+                                  {vulnerability?.name}
+                                </option>
+                              )
+                            )}
                         </select>
                       </div>
                     </div>
@@ -344,14 +401,21 @@ export default () => {
                       </label>
                       <div className="col-md-9">
                         <select
-                          defaultValue={
+                          value={
                             riskAnalysisResponse?.riskAnalysis?.riskScenario
                               ?.id || ""
                           }
-                          defaultChecked={
-                            riskAnalysisResponse?.riskAnalysis?.riskScenario
-                              ?.id || ""
-                          }
+                          onChange={(e) => {
+                            setRiskAnalysisResponse({
+                              ...riskAnalysisResponse,
+                              riskAnalysis: {
+                                ...riskAnalysisResponse.riskAnalysis,
+                                riskScenario: typologyData?.data?.riskScenarios?.filter(
+                                  (r) => r.id === e.target.value
+                                )[0],
+                              },
+                            });
+                          }}
                           className={`form-control form-control-sm shadow-sm ${
                             errors.riskScenario ? "is-invalid" : ""
                           }`}
@@ -362,50 +426,15 @@ export default () => {
                           id="riskScenario"
                           name="riskScenario"
                         >
+                          <option></option>
                           {typologyData?.data &&
-                            typologyData?.data?.riskScenarios?.map((riskScenario, key) => (
-                              <option key={key} value={riskScenario?.id}>
-                                {riskScenario?.name}
-                              </option>
-                            ))}
-                        </select>
-                      </div>
-                    </div>
-
-                    {/** VULNERABILITY SCENARIO */}
-                    <div className="form-group row">
-                      <label
-                        className="col-md-3 font-weight-bold"
-                        htmlFor="vulnerability"
-                      >
-                        Vulnérabilité:{" "}
-                      </label>
-                      <div className="col-md-9">
-                        <select
-                          defaultValue={
-                            riskAnalysisResponse?.riskAnalysis?.vulnerability
-                              ?.id || ""
-                          }
-                          defaultChecked={
-                            riskAnalysisResponse?.riskAnalysis?.vulnerability
-                              ?.id || ""
-                          }
-                          className={`form-control form-control-sm shadow-sm ${
-                            errors.vulnerability ? "is-invalid" : ""
-                          }`}
-                          disabled={isSaving || typologyData?.isLoading}
-                          ref={register({
-                            required: true,
-                          })}
-                          id="vulnerability"
-                          name="vulnerability"
-                        >
-                          {typologyData?.data &&
-                            typologyData?.data?.vulnerabilities?.map((vulnerability, key) => (
-                              <option key={key} value={vulnerability?.id}>
-                                {vulnerability?.name}
-                              </option>
-                            ))}
+                            typologyData?.data?.riskScenarios?.map(
+                              (riskScenario, key) => (
+                                <option key={key} value={riskScenario?.id}>
+                                  {riskScenario?.name}
+                                </option>
+                              )
+                            )}
                         </select>
                       </div>
                     </div>
@@ -420,9 +449,12 @@ export default () => {
                       </label>
                       <div className="col-md-9">
                         <select
-                          defaultValue={
+                          value={
                             riskAnalysisResponse?.riskAnalysis?.probability
                           }
+                          onChange={(e) => {
+                            setRiskAnalysisResponse({...riskAnalysisResponse, riskAnalysis: {...riskAnalysisResponse?.riskAnalysis, probability: e.target.value}})
+                          }}
                           defaultChecked={
                             riskAnalysisResponse?.riskAnalysis?.probability
                           }
@@ -462,12 +494,12 @@ export default () => {
                       </label>
                       <div className="col-md-9">
                         <select
-                          defaultValue={
+                          value={
                             riskAnalysisResponse?.riskAnalysis?.financialImpact
                           }
-                          defaultChecked={
-                            riskAnalysisResponse?.riskAnalysis?.financialImpact
-                          }
+                          onChange={(e) => {
+                            setRiskAnalysisResponse({...riskAnalysisResponse, riskAnalysis: {...riskAnalysisResponse?.riskAnalysis, financialImpact: e.target.value}})
+                          }}
                           className={`form-control form-control-sm shadow-sm ${
                             errors.financialImpact ? "is-invalid" : ""
                           }`}
@@ -505,14 +537,12 @@ export default () => {
                       </label>
                       <div className="col-md-9">
                         <select
-                          defaultValue={
-                            riskAnalysisResponse?.riskAnalysis
-                              ?.operationalImpact
+                          value={
+                            riskAnalysisResponse?.riskAnalysis?.operationalImpact
                           }
-                          defaultChecked={
-                            riskAnalysisResponse?.riskAnalysis
-                              ?.operationalImpact
-                          }
+                          onChange={(e) => {
+                            setRiskAnalysisResponse({...riskAnalysisResponse, riskAnalysis: {...riskAnalysisResponse?.riskAnalysis, operationalImpact: e.target.value}})
+                          }}
                           className={`form-control form-control-sm shadow-sm ${
                             errors.operationalImpact ? "is-invalid" : ""
                           }`}
@@ -550,14 +580,12 @@ export default () => {
                       </label>
                       <div className="col-md-9">
                         <select
-                          defaultValue={
-                            riskAnalysisResponse?.riskAnalysis
-                              ?.reputationalImpact
+                          value={
+                            riskAnalysisResponse?.riskAnalysis?.reputationalImpact
                           }
-                          defaultChecked={
-                            riskAnalysisResponse?.riskAnalysis
-                              ?.reputationalImpact
-                          }
+                          onChange={(e) => {
+                            setRiskAnalysisResponse({...riskAnalysisResponse, riskAnalysis: {...riskAnalysisResponse?.riskAnalysis, reputationalImpact: e.target.value}})
+                          }}
                           className={`form-control form-control-sm shadow-sm ${
                             errors.reputationalImpact ? "is-invalid" : ""
                           }`}
@@ -595,14 +623,19 @@ export default () => {
                       </label>
                       <div className="col-md-9">
                         <select
-                          defaultValue={
+                          value={
                             riskAnalysisResponse?.riskAnalysis
-                              ?.riskTreatmentStrategyType
+                              ?.riskTreatmentStrategy
                           }
-                          defaultChecked={
-                            riskAnalysisResponse?.riskAnalysis
-                              ?.riskTreatmentStrategyType
-                          }
+                          onChange={(e) => {
+                            setRiskAnalysisResponse({
+                              ...riskAnalysisResponse,
+                              riskAnalysis: {
+                                ...riskAnalysisResponse.riskAnalysis,
+                                riskTreatmentStrategy: e.target.value,
+                              },
+                            });
+                          }}
                           className={`form-control form-control-sm shadow-sm ${
                             errors.riskTreatmentStrategyType ? "is-invalid" : ""
                           }`}
@@ -613,17 +646,19 @@ export default () => {
                           id="riskTreatmentStrategyType"
                           name="riskTreatmentStrategyType"
                         >
-                          {Object.keys(riskTreatmentStrategyTypes)?.map(
+                          <option></option>
+                          {Object.keys(RISK_TREATMENT_STRATEGY_TYPES)?.map(
                             (key) => (
                               <option key={key} value={key}>
-                                {riskTreatmentStrategyTypes[key]}
+                                {RISK_TREATMENT_STRATEGY_TYPES[key]}
                               </option>
                             )
                           )}
                         </select>
                         {/** Required name error */}
-                        {errors.riskTreatmentStrategy &&
-                          errors.riskTreatmentStrategy.type === "required" && (
+                        {errors.riskTreatmentStrategyType &&
+                          errors.riskTreatmentStrategyType.type ===
+                            "required" && (
                             <div className="invalid-feedback">
                               La stratégie de traitement des risque est requise
                             </div>
@@ -663,14 +698,12 @@ export default () => {
                       </label>
                       <div className="col-md-9">
                         <select
-                          defaultValue={
-                            riskAnalysisResponse?.riskAnalysis
-                              ?.targetFinancialImpact
+                          value={
+                            riskAnalysisResponse?.riskAnalysis?.targetFinancialImpact
                           }
-                          defaultChecked={
-                            riskAnalysisResponse?.riskAnalysis
-                              ?.targetFinancialImpact
-                          }
+                          onChange={(e) => {
+                            setRiskAnalysisResponse({...riskAnalysisResponse, riskAnalysis: {...riskAnalysisResponse?.riskAnalysis, targetFinancialImpact: e.target.value}})
+                          }}
                           className={`form-control form-control-sm shadow-sm ${
                             errors.targetFinancialImpact ? "is-invalid" : ""
                           }`}
@@ -708,14 +741,12 @@ export default () => {
                       </label>
                       <div className="col-md-9">
                         <select
-                          defaultValue={
-                            riskAnalysisResponse?.riskAnalysis
-                              ?.targetOperationalImpact
+                          value={
+                            riskAnalysisResponse?.riskAnalysis?.targetOperationalImpact
                           }
-                          defaultChecked={
-                            riskAnalysisResponse?.riskAnalysis
-                              ?.targetOperationalImpact
-                          }
+                          onChange={(e) => {
+                            setRiskAnalysisResponse({...riskAnalysisResponse, riskAnalysis: {...riskAnalysisResponse?.riskAnalysis, targetOperationalImpact: e.target.value}})
+                          }}
                           className={`form-control form-control-sm shadow-sm ${
                             errors.targetOperationalImpact ? "is-invalid" : ""
                           }`}
@@ -754,14 +785,12 @@ export default () => {
                       </label>
                       <div className="col-md-9">
                         <select
-                          defaultValue={
-                            riskAnalysisResponse?.riskAnalysis
-                              ?.targetReputationalImpact
+                          value={
+                            riskAnalysisResponse?.riskAnalysis?.targetReputationalImpact
                           }
-                          defaultChecked={
-                            riskAnalysisResponse?.riskAnalysis
-                              ?.targetReputationalImpact
-                          }
+                          onChange={(e) => {
+                            setRiskAnalysisResponse({...riskAnalysisResponse, riskAnalysis: {...riskAnalysisResponse?.riskAnalysis, targetReputationalImpact: e.target.value}})
+                          }}
                           className={`form-control form-control-sm shadow-sm ${
                             errors.targetReputationalImpact ? "is-invalid" : ""
                           }`}
@@ -800,14 +829,12 @@ export default () => {
                       </label>
                       <div className="col-md-9">
                         <select
-                          defaultValue={
-                            riskAnalysisResponse?.riskAnalysis
-                              ?.targetProbability
+                          value={
+                            riskAnalysisResponse?.riskAnalysis?.targetProbability
                           }
-                          defaultChecked={
-                            riskAnalysisResponse?.riskAnalysis
-                              ?.targetProbability
-                          }
+                          onChange={(e) => {
+                            setRiskAnalysisResponse({...riskAnalysisResponse, riskAnalysis: {...riskAnalysisResponse?.riskAnalysis, targetProbability: e.target.value}})
+                          }}
                           className={`form-control form-control-sm shadow-sm ${
                             errors.targetProbability ? "is-invalid" : ""
                           }`}
@@ -845,14 +872,12 @@ export default () => {
                       </label>
                       <div className="col-md-9">
                         <select
-                          defaultValue={
-                            riskAnalysisResponse?.riskAnalysis
-                              ?.acceptableResidualRisk
+                          value={
+                            riskAnalysisResponse?.riskAnalysis?.acceptableResidualRisk
                           }
-                          defaultChecked={
-                            riskAnalysisResponse?.riskAnalysis
-                              ?.acceptableResidualRisk
-                          }
+                          onChange={(e) => {
+                            setRiskAnalysisResponse({...riskAnalysisResponse, riskAnalysis: {...riskAnalysisResponse?.riskAnalysis, acceptableResidualRisk: e.target.value}})
+                          }}
                           className={`form-control form-control-sm shadow-sm ${
                             errors.acceptableResidualRisk ? "is-invalid" : ""
                           }`}
