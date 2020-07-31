@@ -321,7 +321,7 @@ export default () => {
                               </tr>
                               <tr>
                                 <th scope="col">Processus Superieur</th>
-                                <td><Link to={`/processes/view/${applicationProcess?.parentapplicationProcess?.id}`}>{applicationProcess?.parentapplicationProcess?.name}</Link></td>
+                                <td><Link to={`/processes/view/${applicationProcess?.parentProcess?.id}`}>{applicationProcess?.parentProcess?.name}</Link></td>
                               </tr>
                               <tr>
                                 <th scope="col">Organisme</th>

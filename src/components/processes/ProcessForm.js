@@ -67,17 +67,6 @@ export default () => {
       });
   }, [reload]);
 
-  useEffect(() => {
-    if (
-      applicationProcess !== null &&
-      applicationProcess.hasOwnProperty("id") &&
-      applicationProcess !== ""
-    ) {
-      // Fetch processes by the retrieved one organization
-      fetchOrganizationProcesses(applicationProcess?.organization?.id, applicationProcess);
-    }
-  }, [applicationProcess]);
-
   const fetchOrganizations = async () => {
     try {
       const organizations = await OrganizationService.getOrganizations();
@@ -108,6 +97,8 @@ export default () => {
       // Get proces
       const applicationProcess = await ProcessService.getProcess(id);
       setApplicationProcess(applicationProcess);
+      // Fetch processes by the retrieved one organization
+      fetchOrganizationProcesses(applicationProcess?.organization?.id, applicationProcess);
       setIsLoading(false);
       setIsUnauthorized(false);
       setIsProcessError(false);
