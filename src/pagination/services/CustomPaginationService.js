@@ -3,7 +3,6 @@ import { Pageable } from "../Pageable";
 class CustomPaginationService {
 
   getNextPage(page) {
-    console.log(page);
     if (!page.last) {
       page.pageable.pageNumber = page.pageable.pageNumber + 1;
     }
@@ -18,8 +17,6 @@ class CustomPaginationService {
   }
 
   getPageInNewSize(page, pageSize) {
-    console.log(page);
-    console.log(pageSize);
     page.pageable.pageSize = pageSize;
     page.pageable.pageNumber = Pageable.FIRST_PAGE_NUMBER;
 

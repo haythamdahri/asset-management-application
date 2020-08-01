@@ -285,6 +285,17 @@ class UserService {
       });
   }
 
+  async canEditLocation() {
+    return axios
+      .get(`${API_URL}/roles/checking/locations`, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
   async checkUserAdmin() {
     return axios
       .get(`${API_URL}/roles/checking/admin`, { headers: authHeader() })

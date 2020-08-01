@@ -121,8 +121,14 @@ export default () => {
                   <p>Analyse des risques</p>
                 </Link>
               </li>
+              <li className="nav-item">
+                <Link to="/locations" className="nav-link">
+                <i className="nav-icon fas fa-map-marker-alt"></i>
+                  <p>Localisations</p>
+                </Link>
+              </li>
               <li className="nav-header">
-                  Typologies And Risques
+                  Typologies Et Risques
               </li>
               <li className="nav-item">
                 <Link to="/typologies" className="nav-link">

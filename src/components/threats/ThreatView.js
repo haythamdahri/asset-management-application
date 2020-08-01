@@ -23,7 +23,7 @@ export default () => {
   useEffect(() => {
     console.log(typologyId);
     console.log(threatId);
-    document.title = "Gestion Groupes";
+    document.title = "Gestion Des Menaces";
     fetchThreat();
     return () => {
       ref.current = false;
@@ -137,7 +137,7 @@ export default () => {
           <div className="row">
             <div className="col-12">
               <div className="ribbon-wrapper ribbon-lg">
-                <div className="ribbon bg-success text-lg">Groupe</div>
+                <div className="ribbon bg-success text-lg">Menaces</div>
               </div>
             </div>
 
