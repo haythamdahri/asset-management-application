@@ -15,6 +15,17 @@ class EntityService {
       });
   }
 
+  getOrganizationEntities(organizationId) {
+    return axios
+      .get(`${API_URL}/organizations/${organizationId}`, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
   getEntity(id) {
     return axios
       .get(`${API_URL}/${id}`, { headers: authHeader() })

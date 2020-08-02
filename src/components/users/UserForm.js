@@ -75,8 +75,6 @@ export default () => {
           fetchLanguages();
           // Fetch users
           fetchUsers();
-          // Fetch departments
-          fetchEntities();
           // Fetch locations
           fetchLocations();
           // Fetch groups
@@ -111,6 +109,9 @@ export default () => {
     try {
       const organizations = await OrganizationService.getOrganizations();
       setOrganizationsData({ loading: false, data: organizations });
+      if( id === undefined ) {
+        fetchOrganizationEntities(organizations[0]?.id);
+      }
     } catch (e) {
       setOrganizationsData({ loading: false, data: [] });
     }
@@ -134,9 +135,11 @@ export default () => {
     }
   };
 
-  const fetchEntities = async () => {
+  const fetchOrganizationEntities = async (organizationId) => {
     try {
-      const entities = await EntityService.getEntities();
+      setEntitiesData({ loading: true });
+      const entities = await EntityService.getOrganizationEntities(organizationId);
+      console.log(entities)
       setEntitiesData({ loading: false, data: entities });
     } catch (e) {
       setEntitiesData({ loading: false, data: [] });
@@ -175,7 +178,6 @@ export default () => {
     setLoading(true);
     setUserError(false);
     setUser({});
-
     if (id !== undefined) {
       try {
         const user = await UserService.getUser(id);
@@ -186,6 +188,8 @@ export default () => {
           setUnauthorized(false);
         } else {
           setUser(user);
+          console.log(user);
+          fetchOrganizationEntities(user?.organization?.id);
           setLoading(false);
           setUserError(false);
           setUnauthorized(false);
@@ -638,13 +642,8 @@ export default () => {
                       <select
                         defaultValue={user?.organization?.id}
                         defaultChecked={user?.organization?.id}
-                        onClick={(event) => {
-                          if (
-                            organizationsData?.data === null ||
-                            organizationsData?.data?.length === 0
-                          ) {
-                            fetchOrganizations();
-                          }
+                        onChange={(event) => {
+                          fetchOrganizationEntities(event.target.value);
                         }}
                         className={`form-control form-control-sm shadow-sm ${
                           errors.company ? "is-invalid" : ""
@@ -659,6 +658,39 @@ export default () => {
                         {organizationsData?.data?.map((organization, key) => (
                           <option key={key} value={organization.id}>
                             {organization?.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {/** ENTITY */}
+                  <div className="form-group row">
+                    <label
+                      className="col-md-3 font-weight-bold"
+                      htmlFor="entity"
+                    >
+                      Entité:{" "}
+                    </label>
+                    <div className="col-md-9">
+                      <select
+                        value={user?.entity?.id}
+                        onChange={e => {
+                          setUser({...user, entity: entitiesData?.data?.filter(entity => entity?.id === e.target.value)[0]})
+                        }}
+                        className={`form-control form-control-sm shadow-sm ${
+                          errors.department ? "is-invalid" : ""
+                        }`}
+                        disabled={saving || entitiesData?.loading}
+                        ref={register({
+                          required: true,
+                        })}
+                        id="entity"
+                        name="entity"
+                      >
+                        {entitiesData?.data?.map((entity, key) => (
+                          <option key={key} value={entity?.id}>
+                            {entity?.name}
                           </option>
                         ))}
                       </select>
@@ -839,44 +871,6 @@ export default () => {
                               </option>
                             )
                         )}
-                      </select>
-                    </div>
-                  </div>
-
-                  {/** ENTITY */}
-                  <div className="form-group row">
-                    <label
-                      className="col-md-3 font-weight-bold"
-                      htmlFor="entity"
-                    >
-                      Entité:{" "}
-                    </label>
-                    <div className="col-md-9">
-                      <select
-                        defaultValue={user?.department?.id}
-                        onClick={(event) => {
-                          if (
-                            entitiesData?.data === null ||
-                            entitiesData?.data?.length === 0
-                          ) {
-                            fetchEntities();
-                          }
-                        }}
-                        className={`form-control form-control-sm shadow-sm ${
-                          errors.department ? "is-invalid" : ""
-                        }`}
-                        disabled={saving || entitiesData?.loading}
-                        ref={register({
-                          required: true,
-                        })}
-                        id="entity"
-                        name="entity"
-                      >
-                        {entitiesData?.data?.map((entity, key) => (
-                          <option key={key} value={entity?.id}>
-                            {entity?.name}
-                          </option>
-                        ))}
                       </select>
                     </div>
                   </div>
