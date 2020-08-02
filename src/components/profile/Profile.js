@@ -222,7 +222,7 @@ export default () => {
                             href="#profileDetails"
                             data-toggle="tab"
                           >
-                            Détails profil
+                            <FontAwesomeIcon icon="info-circle" /> Détails profil
                           </a>
                         </li>
                         <li className="nav-item flex-sm-fill" key="LI4">
@@ -231,7 +231,7 @@ export default () => {
                             href="#settings"
                             data-toggle="tab"
                           >
-                            Paramétrage
+                            <FontAwesomeIcon icon="cogs" /> Paramétrage
                           </a>
                         </li>
                       </ul>

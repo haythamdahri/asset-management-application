@@ -166,7 +166,7 @@ export default () => {
               <li className="nav-item">
                 <Link to="/settings" className="nav-link">
                 <i className="nav-icon fas fa-cogs" />
-                  <p>paramétres d'application</p>
+                  <p>Paramétres d'application</p>
                 </Link>
               </li>
             </ul>
