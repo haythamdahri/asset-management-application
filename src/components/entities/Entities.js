@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import ThreatService from "../../services/ThreatService";
-import TypologyService from "../../services/TypologyService";
+import EntityService from "../../services/EntityService";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Swal from "sweetalert2";
@@ -13,37 +12,36 @@ export default () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const [isUnAuthorized, setIsUnAuthorized] = useState(false);
-  const [threatsPage, setThreatsPage] = useState(new Page());
+  const [entitiesPage, setEntitiesPage] = useState(new Page());
   const [isDeleting, setIsDeleting] = useState(false);
-  const [isApproving, setIsApproving] = useState(false);
   const searchInput = useRef(null);
 
   useEffect(() => {
-    document.title = "Gestion Des Menaces";
-    fetchThreats();
+    document.title = "Gestion Des Entités";
+    fetchEntities();
     return () => {
-      setThreatsPage(null);
+      setEntitiesPage(null);
     };
   }, []);
 
-  const fetchThreats = async () => {
+  const fetchEntities = async () => {
     const search = searchInput?.current?.value || "";
     try {
       setIsLoading(true);
       setIsError(false);
       setIsUnAuthorized(false);
-      setThreatsPage(new Page());
-      const response = await ThreatService.getThreatsPage(
+      setEntitiesPage(new Page());
+      const response = await EntityService.getEntitiesPage(
         search,
-        threatsPage?.pageable || new Page()
+        entitiesPage?.pageable || new Page()
       );
       setIsLoading(false);
-      setThreatsPage(response);
+      setEntitiesPage(response);
       setIsError(false);
     } catch (e) {
       const status = e.response?.status || null;
       setIsLoading(false);
-      setThreatsPage(null);
+      setEntitiesPage(null);
       if (status === 403) {
         setIsUnAuthorized(true);
         setIsError(false);
@@ -69,21 +67,21 @@ export default () => {
   };
 
   const getNextPage = () => {
-    threatsPage.pageable = CustomPaginationService.getNextPage(threatsPage);
-    fetchThreats();
+    entitiesPage.pageable = CustomPaginationService.getNextPage(entitiesPage);
+    fetchEntities();
   };
 
   const getPreviousPage = () => {
-    threatsPage.pageable = CustomPaginationService.getPreviousPage(threatsPage);
-    fetchThreats();
+    entitiesPage.pageable = CustomPaginationService.getPreviousPage(entitiesPage);
+    fetchEntities();
   };
 
   const getPageInNewSize = (pageSize) => {
-    threatsPage.pageable = CustomPaginationService.getPageInNewSize(
-      threatsPage,
+    entitiesPage.pageable = CustomPaginationService.getPageInNewSize(
+      entitiesPage,
       pageSize
     );
-    fetchThreats();
+    fetchEntities();
   };
 
   const onSearchSubmit = async (event) => {
@@ -94,11 +92,11 @@ export default () => {
     }
   };
 
-  const deleteThreat = async (typologyId, threatId) => {
+  const deleteEntity = async (id) => {
     // Confirm User Deletion
     Swal.fire({
-      title: "Êtes-vous sûr de supprimer la menace",
-      text: "Voulez-vous supprimer la menace?",
+      title: "Êtes-vous sûr de supprimer l'entité",
+      text: "Voulez-vous supprimer l'entité?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -110,16 +108,16 @@ export default () => {
         // Perform User delete
         try {
           setIsDeleting(true);
-          await TypologyService.deleteThreat(typologyId, threatId);
+          await EntityService.deleteEntity(id);
           Swal.fire(
             "Operation éffectuée!",
-            "La menace à été supprimée avec succés!",
+            "L'entité à été supprimée avec succés!",
             "success"
           );
           // Clear search
           searchInput.current.value = "";
-          // Fetch users
-          fetchThreats();
+          // Fetch entities
+          fetchEntities();
         } catch (err) {
           Swal.fire(
             "Erreur!",
@@ -133,39 +131,6 @@ export default () => {
       }
     });
   };
-
-  const updateThreatStatus = async (typologyId, threat, status) => {
-    console.log(threat);
-    console.log(status);
-  // Perform User delete
-  try {
-    setIsApproving(true);
-    await TypologyService.updateThreatStatus(
-      typologyId,
-      threat?.id,
-      status
-    );
-    Swal.fire(
-      "Operation éffectuée!",
-      `Le statut de la menace à été ${
-        status ? "approuvé" : "rejeté"
-      } avec succés!`,
-      "success"
-    );
-    // Set threat status
-    threat.status = status;
-  } catch (err) {
-    Swal.fire(
-      "Erreur!",
-      err?.response?.data?.message ||
-        `Une erreur est survenue, veuillez ressayer!`,
-      "error"
-    );
-  } finally {
-    setIsApproving(false);
-  }
-};
-
   return (
     <div>
       {/* Content Wrapper. Contains page content */}
@@ -175,7 +140,7 @@ export default () => {
           <div className="container-fluid">
             <div className="row mb-2">
               <div className="col-sm-6">
-                <h1>Menaces</h1>
+                <h1>Entités</h1>
               </div>
               <div className="col-sm-6">
                 <ol className="breadcrumb float-sm-right">
@@ -184,7 +149,7 @@ export default () => {
                       <FontAwesomeIcon icon="home" /> Acceuil
                     </Link>
                   </li>
-                  <li className="breadcrumb-item active">Menaces</li>
+                  <li className="breadcrumb-item active">Entités</li>
                 </ol>
               </div>
             </div>
@@ -198,7 +163,7 @@ export default () => {
               {!isUnAuthorized && !isError && !isLoading && (
                 <div className="col-12 text-center">
                   <CustomPagination
-                    page={threatsPage}
+                    page={entitiesPage}
                     loading={isLoading}
                     nextPageEvent={getNextPage}
                     previousPageEvent={getPreviousPage}
@@ -214,7 +179,7 @@ export default () => {
                       <input
                         type="search"
                         id="userSearch"
-                        placeholder="Nom de la menace ..."
+                        placeholder="Nom de l'entité ..."
                         name="search"
                         className="form-control"
                         ref={searchInput}
@@ -234,13 +199,13 @@ export default () => {
               </div>
 
               <div className="col-12 mb-3 text-center">
-                <Link to="/threats/create" className="btn btn-primary btn-sm">
-                  <FontAwesomeIcon icon="plus-circle" /> Ajouter une menace
+                <Link to="/entities/create" className="btn btn-primary btn-sm">
+                  <FontAwesomeIcon icon="plus-circle" /> Ajouter une entité
                 </Link>
               </div>
 
               {/** DELTING PROGRESS */}
-              {(isDeleting || isApproving) && (
+              {(isDeleting) && (
                 <div className="col-12 mt-2 mb-3">
                   <div className="overlay text-center">
                     <i className="fas fa-2x fa-sync-alt fa-spin"></i>
@@ -256,18 +221,15 @@ export default () => {
                   <table className="table table-hover table-bordered ">
                     <thead className="thead-light text-center">
                       <tr>
-                        <th>Nom de la menace</th>
-                        <th>Description</th>
-                        <th>Typologie</th>
-                        <th>Statut</th>
-                        <th>Date d'identification</th>
-                        <th colSpan={4}>Actions</th>
+                        <th>Nom de l'entité</th>
+                        <th>Organisme</th>
+                        <th colSpan={3}>Actions</th>
                       </tr>
                     </thead>
                     <tbody className="text-center">
                       {isLoading && (
                         <tr>
-                          <td colSpan={9} className="text-center bg-light">
+                          <td colSpan={5} className="text-center bg-light">
                             <div
                               className="spinner-border text-primary"
                               role="status"
@@ -278,16 +240,16 @@ export default () => {
                         </tr>
                       )}
                       {!isLoading &&
-                        threatsPage !== null &&
-                        threatsPage?.content?.length === 0 && (
+                        entitiesPage !== null &&
+                        entitiesPage?.content?.length === 0 && (
                           <tr>
                             <td
-                              colSpan={9}
+                              colSpan={5}
                               className="text-center alert alert-dark"
                             >
                               <h2 className="font-weight-bold">
                                 <FontAwesomeIcon icon="exclamation-circle" />{" "}
-                                Aucune menace n'a été trouvée!
+                                Aucune entité n'a été trouvée!
                               </h2>
                             </td>
                           </tr>
@@ -295,7 +257,7 @@ export default () => {
                       {(isError || isUnAuthorized) && (
                         <tr>
                           <td
-                            colSpan={9}
+                            colSpan={5}
                             className={`text-center alert ${
                               isError ? "alert-warning" : "alert-danger"
                             }`}
@@ -306,7 +268,7 @@ export default () => {
                                 ? "Une erreur est survenue!"
                                 : "Vous n'êtes pas autorisé!"}
                               <button
-                                onClick={() => fetchThreats()}
+                                onClick={() => fetchEntities()}
                                 className="btn btn-warning font-weight-bold ml-2"
                               >
                                 <FontAwesomeIcon icon="sync" /> Ressayer
@@ -316,77 +278,19 @@ export default () => {
                         </tr>
                       )}
 
-                      {threatsPage &&
-                        threatsPage?.content?.map((threatResponse, key) => (
+                      {entitiesPage &&
+                        entitiesPage?.content?.map((entity, key) => (
                           <tr key={key}>
                             <td>
-                              <Link to={`/threats/view/${threatResponse?.typologyId}/${threatResponse?.threat?.id}`}>
-                                {threatResponse?.threat?.name}
-                              </Link>
-                            </td>
-                            <td
-                              dangerouslySetInnerHTML={{
-                                __html: `${threatResponse?.threat?.description?.slice(
-                                  0,
-                                  20
-                                )} ${
-                                  threatResponse?.threat?.description?.length > 20 ? "..." : ""
-                                }`,
-                              }}
-                            ></td>
-                            <td>
-                              <Link
-                                to={`/typologies/view/${threatResponse?.typologyId}`}
-                              >
-                                {threatResponse?.typologyName}
+                              <Link to={`/entities/view/${entity?.id}`}>
+                                {entity?.name}
                               </Link>
                             </td>
                             <td>
-                              {threatResponse?.threat?.status ? (
-                                <>
-                                  <FontAwesomeIcon
-                                    icon="check-circle"
-                                    color="green"
-                                  />{" "}
-                                  APPROUVÉ
-                                </>
-                              ) : (
-                                <>
-                                  <FontAwesomeIcon
-                                    icon="times-circle"
-                                    color="red"
-                                  />{" "}
-                                  NON APPROUVÉ
-                                </>
-                              )}
+                              <Link to={`/organizations/view/${entity?.organization?.id}`}>{entity?.organization?.name}</Link>
                             </td>
                             <td>
-                              <Moment format="YYYY/MM/DD HH:mm:ss">
-                                {threatResponse?.threat?.identificationDate}
-                              </Moment>
-                            </td>
-                            <td>
-                              <button
-                                onClick={(event) =>
-                                  updateThreatStatus(threatResponse?.typologyId, threatResponse?.threat, !threatResponse?.threat?.status)
-                                }
-                                className={`btn btn-${
-                                  threatResponse?.threat?.status ? "danger" : "success"
-                                } btn-sm ${isApproving ? "disabled" : ""}`}
-                              >
-                                <FontAwesomeIcon
-                                  icon={
-                                    threatResponse?.threat?.status
-                                      ? "minus-circle"
-                                      : "check-circle"
-                                  }
-                                  color="white"
-                                />
-                                {threatResponse?.threat?.status ? " Rejecter" : " Approuver"}
-                              </button>
-                            </td>
-                            <td>
-                              <Link to={`/threats/${threatResponse?.typologyId}/${threatResponse?.threat?.id}/edit`}>
+                              <Link to={`/entities/${entity?.id}/edit`}>
                                 <button className="btn btn-primary btn-sm">
                                   <FontAwesomeIcon icon="edit" color="white" />
                                 </button>
@@ -394,7 +298,7 @@ export default () => {
                             </td>
                             <td>
                               <button
-                                onClick={(event) => deleteThreat(threatResponse?.typologyId, threatResponse?.threat?.id)}
+                                onClick={(event) => deleteEntity(entity?.id)}
                                 className={`btn btn-danger btn-sm ${
                                   isDeleting ? "disabled" : ""
                                 }`}
@@ -406,7 +310,7 @@ export default () => {
                               </button>
                             </td>
                             <td>
-                              <Link to={`/threats/view/${threatResponse?.typologyId}/${threatResponse?.threat?.id}`}>
+                              <Link to={`/entities/view/${entity?.id}`}>
                                 <button className="btn btn-secondary btn-sm">
                                   <FontAwesomeIcon
                                     icon="binoculars"

@@ -202,7 +202,7 @@ export default () => {
 
               <div className="col-12 mb-3 text-center">
                 <Link to="/organizations/create" className="btn btn-primary btn-sm">
-                  <FontAwesomeIcon icon="user-plus" /> Ajouter un organisme
+                  <FontAwesomeIcon icon="plus-circle" /> Ajouter un organisme
                 </Link>
               </div>
 

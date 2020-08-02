@@ -296,6 +296,17 @@ class UserService {
       });
   }
 
+  async canEditEntity() {
+    return axios
+      .get(`${API_URL}/roles/checking/entities`, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
   async checkUserAdmin() {
     return axios
       .get(`${API_URL}/roles/checking/admin`, { headers: authHeader() })

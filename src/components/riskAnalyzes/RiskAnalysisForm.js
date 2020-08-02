@@ -198,7 +198,7 @@ export default () => {
                     type="submit"
                     className="btn btn-dark btn-sm mt-2 font-weight-bold text-center mx-2"
                   >
-                    <FontAwesomeIcon icon="user" /> Retourner vers l'analyse de
+                    <FontAwesomeIcon icon="backward" /> Retourner vers l'analyse de
                     risque
                   </Link>
                 </div>

@@ -139,7 +139,6 @@ export default () => {
     }
   };
 
- 
   return (
     <div className="content-wrapper bg-light pb-5 mb-5">
       <section className="content">
@@ -210,6 +209,11 @@ export default () => {
                     >
                       <FontAwesomeIcon icon="trash-alt" color="white" />
                     </button>
+                    </div>
+
+                  <div className="col-md-12 mx-auto mt-3 mb-3 text-center font-weight-bold display-4">
+                      Analyse de risque pour l'actif:{" "}
+                      <Link to={`/assets/${riskAnalysisResponse?.assetId}`}>{riskAnalysisResponse?.assetName}</Link>
                   </div>
 
                   <div
@@ -351,10 +355,21 @@ export default () => {
                                       }
                                     </td>
                                   </tr>
-                                  <tr className={`bg-${riskAnalysisResponse?.riskAnalysis?.riskAnalysis === RISK_TYPE.en.HIGH ? "danger" : 
-                                    (riskAnalysisResponse?.riskAnalysis?.riskAnalysis === RISK_TYPE.en.MEDIUM) ? "warning" : 
-                                    (riskAnalysisResponse?.riskAnalysis?.riskAnalysis === RISK_TYPE.en.LOW) ? "primary" : "success"}`
-                                  }>
+                                  <tr
+                                    className={`bg-${
+                                      riskAnalysisResponse?.riskAnalysis
+                                        ?.riskAnalysis === RISK_TYPE.en.HIGH
+                                        ? "danger"
+                                        : riskAnalysisResponse?.riskAnalysis
+                                            ?.riskAnalysis ===
+                                          RISK_TYPE.en.MEDIUM
+                                        ? "warning"
+                                        : riskAnalysisResponse?.riskAnalysis
+                                            ?.riskAnalysis === RISK_TYPE.en.LOW
+                                        ? "primary"
+                                        : "success"
+                                    }`}
+                                  >
                                     <th scope="col">Analyse de risque</th>
                                     <td>
                                       {
@@ -691,8 +706,8 @@ export default () => {
                                           {riskAnalysisResponse?.riskAnalysis
                                             ?.vulnerability?.description &&
                                             riskAnalysisResponse?.riskAnalysis
-                                              ?.vulnerability?.description?.length >
-                                              0 && (
+                                              ?.vulnerability?.description
+                                              ?.length > 0 && (
                                               <CKEditor
                                                 editor={ClassicEditor}
                                                 data={
@@ -906,7 +921,8 @@ export default () => {
                                         >
                                           <h5>
                                             <FontAwesomeIcon icon="exclamation-circle" />{" "}
-                                            Aucun scénario de risque n'a été affecté
+                                            Aucun scénario de risque n'a été
+                                            affecté
                                           </h5>
                                         </div>
                                       </td>

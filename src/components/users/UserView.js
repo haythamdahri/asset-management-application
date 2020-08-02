@@ -231,7 +231,7 @@ export default () => {
                         <tr>
                           <th scope="col">Localisation</th>
                           <td>
-                            <Link to={`/locations/${user?.location?.id}`}>
+                            <Link to={`/locations/view/${user?.location?.id}`}>
                               {user?.location?.name}
                             </Link>
                           </td>
@@ -239,7 +239,7 @@ export default () => {
                         <tr>
                           <th scope="col">Entité</th>
                           <td>
-                            <Link to={`/entities/${user?.entity?.id}`}>
+                            <Link to={`/entities/view/${user?.entity?.id}`}>
                               {user?.entity?.name}
                             </Link>
                           </td>

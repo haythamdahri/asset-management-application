@@ -14,6 +14,55 @@ class EntityService {
         throw err;
       });
   }
+
+  getEntity(id) {
+    return axios
+      .get(`${API_URL}/${id}`, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
+  deleteEntity(id) {
+    return axios
+      .delete(`${API_URL}/${id}`, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
+  saveEntity(entityRequest) {
+    return axios
+      .post(`${API_URL}/`, entityRequest, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
+  getEntitiesPage(name, pageable) {
+    const params = {
+      name: name !== "" ? name : "",
+      page: pageable.pageNumber,
+      size: pageable.pageSize,
+    };
+    return axios
+      .get(`${API_URL}/page`, { params, headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
 }
 
 export default new EntityService();

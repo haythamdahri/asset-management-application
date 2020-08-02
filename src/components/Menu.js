@@ -127,6 +127,12 @@ export default () => {
                   <p>Localisations</p>
                 </Link>
               </li>
+              <li className="nav-item">
+                <Link to="/entities" className="nav-link">
+                <i className="nav-icon fas fa-building"></i>
+                  <p>Entités</p>
+                </Link>
+              </li>
               <li className="nav-header">
                   Typologies Et Risques
               </li>

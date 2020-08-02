@@ -177,7 +177,7 @@ export default () => {
                     type="submit"
                     className="btn btn-dark btn-sm mt-2 font-weight-bold text-center mx-2"
                   >
-                    <FontAwesomeIcon icon="user" /> Retourner vers la menace
+                    <FontAwesomeIcon icon="backward" /> Retourner vers la menace
                   </Link>
                 </div>
               )}
@@ -198,7 +198,7 @@ export default () => {
                       >
                         <FontAwesomeIcon icon="sync" /> Ressayer
                       </button>{" "}
-                      <Link to={`/groups`}>
+                      <Link to={`/threats`}>
                         <button className="btn btn-light font-weight-bold ml-2">
                           <FontAwesomeIcon icon="users" /> Gestion des menaces
                         </button>
@@ -378,7 +378,7 @@ export default () => {
                           type="submit"
                           className="btn btn-warning font-weight-bold text-center mx-2"
                         >
-                          <FontAwesomeIcon icon="user" /> Retourner vers la
+                          <FontAwesomeIcon icon="backward" /> Retourner vers la
                           menace
                         </Link>
                       )}

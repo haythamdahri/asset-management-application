@@ -62,7 +62,9 @@ import {
   faPlusSquare,
   faDiagnoses,
   faICursor,
-  faServer
+  faServer,
+  faBackward,
+  faBuilding
 } from "@fortawesome/free-solid-svg-icons";
 import 'moment/locale/fr';
 import Moment from 'react-moment';
@@ -127,7 +129,9 @@ library.add(
   faPlusSquare,
   faDiagnoses,
   faICursor,
-  faServer
+  faServer,
+  faBackward,
+  faBuilding
 );
 
 // Set the locale for every react-moment instance to French.

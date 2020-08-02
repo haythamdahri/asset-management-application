@@ -168,7 +168,7 @@ export default () => {
                     type="submit"
                     className="btn btn-dark btn-sm mt-2 font-weight-bold text-center mx-2"
                   >
-                    <FontAwesomeIcon icon="user" /> Retourner vers l'organisme
+                    <FontAwesomeIcon icon="backward" /> Retourner vers l'organisme
                   </Link>
                 </div>
               )}
@@ -344,7 +344,7 @@ export default () => {
                         type="submit"
                         className="btn btn-warning font-weight-bold text-center mx-2"
                       >
-                        <FontAwesomeIcon icon="user" /> Retourner vers l'organisme
+                        <FontAwesomeIcon icon="backward" /> Retourner vers l'organisme
                       </Link>
                     )}
                     <Link
@@ -352,7 +352,7 @@ export default () => {
                       type="submit"
                       className="btn btn-secondary font-weight-bold text-center mx-2"
                     >
-                      <FontAwesomeIcon icon="undo" /> Naviguer vers les organismes
+                      <FontAwesomeIcon icon="building" /> Naviguer vers les organismes
                     </Link>
                   </div>
                 </form>

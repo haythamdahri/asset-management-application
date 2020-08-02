@@ -601,7 +601,7 @@ export default () => {
                           type="submit"
                           className="btn btn-warning font-weight-bold text-center mx-2"
                         >
-                          <FontAwesomeIcon icon="user" /> Retourner vers le
+                          <FontAwesomeIcon icon="backward" /> Retourner vers le
                           processus
                         </Link>
                       )}
@@ -609,7 +609,7 @@ export default () => {
                         to="/processes"
                         className="btn btn-secondary font-weight-bold text-center mx-2"
                       >
-                        <FontAwesomeIcon icon="undo" /> Naviguer vers les
+                        <FontAwesomeIcon icon="microchip" /> Naviguer vers les
                         processes
                       </Link>
                     </div>

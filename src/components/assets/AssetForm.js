@@ -257,7 +257,7 @@ export default () => {
                     type="submit"
                     className="btn btn-dark btn-sm mt-2 font-weight-bold text-center mx-2"
                   >
-                    <FontAwesomeIcon icon="microchip" /> Retourner vers l'actif
+                    <FontAwesomeIcon icon="backward" /> Retourner vers l'actif
                   </Link>
                 </div>
               )}
@@ -809,7 +809,7 @@ export default () => {
                           type="submit"
                           className="btn btn-warning font-weight-bold text-center mx-2"
                         >
-                          <FontAwesomeIcon icon="user" /> Retourner vers l'actif
+                          <FontAwesomeIcon icon="backward" /> Retourner vers l'actif
                         </Link>
                       )}
                       <Link

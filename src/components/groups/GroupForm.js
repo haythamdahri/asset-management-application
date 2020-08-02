@@ -158,7 +158,7 @@ export default () => {
                     type="submit"
                     className="btn btn-dark btn-sm mt-2 font-weight-bold text-center mx-2"
                   >
-                    <FontAwesomeIcon icon="user" /> Retourner vers le groupe
+                    <FontAwesomeIcon icon="backward" /> Retourner vers le groupe
                   </Link>
                 </div>
               )}
@@ -354,7 +354,7 @@ export default () => {
                         type="submit"
                         className="btn btn-warning font-weight-bold text-center mx-2"
                       >
-                        <FontAwesomeIcon icon="user" /> Retourner vers le groupe
+                        <FontAwesomeIcon icon="backward" /> Retourner vers le groupe
                       </Link>
                     )}
                     <Link
@@ -362,7 +362,7 @@ export default () => {
                       type="submit"
                       className="btn btn-secondary font-weight-bold text-center mx-2"
                     >
-                      <FontAwesomeIcon icon="undo" /> Naviguer vers les groupes
+                      <FontAwesomeIcon icon="layer-group" /> Naviguer vers les groupes
                     </Link>
                   </div>
                 </form>

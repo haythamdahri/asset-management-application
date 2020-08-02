@@ -111,6 +111,17 @@ class OrganizationService {
       });
   }
 
+  getCustomOrganizations() {
+    return axios
+      .get(`${API_URL}/custom`, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
 
 }
 
