@@ -42,7 +42,7 @@ export default () => {
     } catch (e) {
       let message = e?.response?.data?.message || null;
       if( message === null) {
-        message = "Une erreur st survenue, veuillez ressayer!";
+        message = "Une erreur est survenue, veuillez ressayer!";
       } 
       // Set error with message
       setMessage(message);

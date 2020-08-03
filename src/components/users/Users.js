@@ -14,12 +14,14 @@ export default () => {
   const [usersPage, setUsersPage] = useState(new Page());
   const [deleting, setDeleting] = useState(false);
   const searchInput = useRef(null);
+  let abortController = new AbortController();
 
   useEffect(() => {
     document.title = "Gestion Utilisateurs";
     fetchUsers();
     return () => {
       setUsersPage(null);
+      abortController.abort();
     };
   }, []);
 
