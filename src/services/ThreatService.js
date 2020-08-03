@@ -21,6 +21,17 @@ class ThreatService {
           });
     }
 
+    getThreatsCounter() {
+        return axios
+          .get(`${API_URL}/counter`, { headers: authHeader() })
+          .then((response) => {
+            return response.data;
+          })
+          .catch((err) => {
+            throw err;
+          });
+    }
+
     saveThreat(threatRequest) {
         return axios
           .post(`${API_URL}/`, threatRequest, { headers: authHeader() })

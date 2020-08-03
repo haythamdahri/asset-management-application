@@ -16,6 +16,17 @@ class RoleService {
       });
   }
 
+  getRolesCounter() {
+    return axios
+      .get(`${API_URL}/counter`, {headers: authHeader()})
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw new Error(err);
+      });
+  }
+
 
 
 }

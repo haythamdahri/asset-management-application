@@ -54,6 +54,7 @@ import LocationView from "../locations/LocationView";
 import Entities from "../entities/Entities";
 import EntityForm from "../entities/EntityForm";
 import EntityView from "../entities/EntityView";
+import Settings from "../settings/Settings";
 
 export default () => {
   return (
@@ -219,6 +220,9 @@ export default () => {
           </UserRoute>
           <UserRoute exact={true} path="/entities/view/:id">
             <EntityView />
+          </UserRoute>
+          <UserRoute exact={true} path="/settings">
+            <Settings />
           </UserRoute>
           <AuthenticatedGuard exact={true} path="/signin">
             <SignIn />

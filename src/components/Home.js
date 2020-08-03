@@ -105,6 +105,20 @@ export default () => {
     fetchGroupsCounter();
     // Fetch Languages
     fetchLanguagesCounter();
+    // Fetch Languages
+    fetchLocationsCounter();
+    // Fetch Risk Analyzes
+    fetchRiskAnalysisCounter();
+    // Fetch Risk Scenarios
+    fetchRiskScenariosCounter();
+    // Fetch Roles
+    fetchRolesCounter();
+    // Fetch Threats
+    fetchThreatsCounter();
+    // Fetch Typologies
+    fetchTypologiesCounter();
+    // Fetch Vulnerabilities
+    fetchVulnerabilitiesCounter();
   }, []);
 
   const fetchAssets = () => {
@@ -121,7 +135,7 @@ export default () => {
           setAssetsData({ counter: 0, isError: true, isLoading: false });
         }
       });
-  }
+  };
 
   const fetchUsersCounter = () => {
     UserService.getUsersCounter()
@@ -137,12 +151,16 @@ export default () => {
           setUsersData({ counter: 0, isError: true, isLoading: false });
         }
       });
-  }
+  };
 
   const fetchProcessesCounter = () => {
     ProcessService.getProcessesCounter()
       .then((counter) => {
-        setProcessesData({ counter: counter, isError: false, isLoading: false });
+        setProcessesData({
+          counter: counter,
+          isError: false,
+          isLoading: false,
+        });
       })
       .catch((err) => {
         const status = err?.response?.status;
@@ -153,23 +171,31 @@ export default () => {
           setProcessesData({ counter: 0, isError: true, isLoading: false });
         }
       });
-  }
+  };
 
   const fetchOrganizationsCounter = () => {
     OrganizationService.getOrganizationsCounter()
       .then((counter) => {
-        setOrganizationsData({ counter: counter, isError: false, isLoading: false });
+        setOrganizationsData({
+          counter: counter,
+          isError: false,
+          isLoading: false,
+        });
       })
       .catch((err) => {
         const status = err?.response?.status;
         if (status === 403) {
           setIsUnAuthorized(true);
-          setOrganizationsData({ counter: 0, isError: false, isLoading: false });
+          setOrganizationsData({
+            counter: 0,
+            isError: false,
+            isLoading: false,
+          });
         } else {
           setOrganizationsData({ counter: 0, isError: true, isLoading: false });
         }
       });
-  }
+  };
 
   const fetchEntitiesCounter = () => {
     EntityService.getEntitiesCounter()
@@ -185,7 +211,7 @@ export default () => {
           setEntitiesData({ counter: 0, isError: true, isLoading: false });
         }
       });
-  }
+  };
 
   const fetchGroupsCounter = () => {
     GroupService.getGroupsCounter()
@@ -201,12 +227,36 @@ export default () => {
           setGroupsData({ counter: 0, isError: true, isLoading: false });
         }
       });
-  }
+  };
+
+  const fetchLocationsCounter = () => {
+    LocationService.getLocationsCounter()
+      .then((counter) => {
+        setLocationsData({
+          counter: counter,
+          isError: false,
+          isLoading: false,
+        });
+      })
+      .catch((err) => {
+        const status = err?.response?.status;
+        if (status === 403) {
+          setIsUnAuthorized(true);
+          setLocationsData({ counter: 0, isError: false, isLoading: false });
+        } else {
+          setLocationsData({ counter: 0, isError: true, isLoading: false });
+        }
+      });
+  };
 
   const fetchLanguagesCounter = () => {
     LanguageService.getLanguagesCounter()
       .then((counter) => {
-        setLanguagesData({ counter: counter, isError: false, isLoading: false });
+        setLanguagesData({
+          counter: counter,
+          isError: false,
+          isLoading: false,
+        });
       })
       .catch((err) => {
         const status = err?.response?.status;
@@ -217,7 +267,135 @@ export default () => {
           setLanguagesData({ counter: 0, isError: true, isLoading: false });
         }
       });
-  }
+  };
+
+  const fetchRiskAnalysisCounter = () => {
+    RiskAnalysisService.getRiskAnalyzesCounter()
+      .then((counter) => {
+        setRiskAnalyszesData({
+          counter: counter,
+          isError: false,
+          isLoading: false,
+        });
+      })
+      .catch((err) => {
+        const status = err?.response?.status;
+        if (status === 403) {
+          setIsUnAuthorized(true);
+          setRiskAnalyszesData({
+            counter: 0,
+            isError: false,
+            isLoading: false,
+          });
+        } else {
+          setRiskAnalyszesData({ counter: 0, isError: true, isLoading: false });
+        }
+      });
+  };
+
+  const fetchRiskScenariosCounter = () => {
+    RiskScenarioService.getRiskScenariosCounter()
+      .then((counter) => {
+        setRiskScenariosData({
+          counter: counter,
+          isError: false,
+          isLoading: false,
+        });
+      })
+      .catch((err) => {
+        const status = err?.response?.status;
+        if (status === 403) {
+          setIsUnAuthorized(true);
+          setRiskScenariosData({
+            counter: 0,
+            isError: false,
+            isLoading: false,
+          });
+        } else {
+          setRiskScenariosData({ counter: 0, isError: true, isLoading: false });
+        }
+      });
+  };
+
+  const fetchRolesCounter = () => {
+    RoleService.getRolesCounter()
+      .then((counter) => {
+        setRolesData({ counter: counter, isError: false, isLoading: false });
+      })
+      .catch((err) => {
+        const status = err?.response?.status;
+        if (status === 403) {
+          setIsUnAuthorized(true);
+          setRolesData({ counter: 0, isError: false, isLoading: false });
+        } else {
+          setRolesData({ counter: 0, isError: true, isLoading: false });
+        }
+      });
+  };
+
+  const fetchThreatsCounter = () => {
+    ThreatService.getThreatsCounter()
+      .then((counter) => {
+        setThreatsData({ counter: counter, isError: false, isLoading: false });
+      })
+      .catch((err) => {
+        const status = err?.response?.status;
+        if (status === 403) {
+          setIsUnAuthorized(true);
+          setThreatsData({ counter: 0, isError: false, isLoading: false });
+        } else {
+          setThreatsData({ counter: 0, isError: true, isLoading: false });
+        }
+      });
+  };
+
+  const fetchTypologiesCounter = () => {
+    TypologyService.getTypologiesCounter()
+      .then((counter) => {
+        setTypologiesData({
+          counter: counter,
+          isError: false,
+          isLoading: false,
+        });
+      })
+      .catch((err) => {
+        const status = err?.response?.status;
+        if (status === 403) {
+          setIsUnAuthorized(true);
+          setTypologiesData({ counter: 0, isError: false, isLoading: false });
+        } else {
+          setTypologiesData({ counter: 0, isError: true, isLoading: false });
+        }
+      });
+  };
+
+  const fetchVulnerabilitiesCounter = () => {
+    VulnerabilityService.getVulnerabilitiesCounter()
+      .then((counter) => {
+        setVulnerabilitiesData({
+          counter: counter,
+          isError: false,
+          isLoading: false,
+        });
+      })
+      .catch((err) => {
+        const status = err?.response?.status;
+        if (status === 403) {
+          setIsUnAuthorized(true);
+          setVulnerabilitiesData({
+            counter: 0,
+            isError: false,
+            isLoading: false,
+          });
+        } else {
+          setVulnerabilitiesData({
+            counter: 0,
+            isError: true,
+            isLoading: false,
+          });
+        }
+      });
+  };
 
   return (
     <div>
@@ -247,7 +425,7 @@ export default () => {
         <section className="content">
           <div className="container-fluid">
             <div className="row">
-              <div className="col-lg-3 col-6">
+              <div className="col-lg-3 col-6 mx-auto">
                 {/* small box */}
                 <div className="small-box bg-info">
                   {assetsData.isLoading && !assetsData.isError && (
@@ -270,7 +448,7 @@ export default () => {
                 </div>
               </div>
               {/* ./col */}
-              <div className="col-lg-3 col-6">
+              <div className="col-lg-3 col-6 mx-auto">
                 {/* small box */}
                 <div className="small-box bg-success">
                   {processesData.isLoading && !usersData.isError && (
@@ -279,21 +457,20 @@ export default () => {
                     </div>
                   )}
                   <div className="inner">
-                    <h3>
-                      {processesData.counter}
-                    </h3>
+                    <h3>{processesData.counter}</h3>
                     <p>Processus</p>
                   </div>
                   <div className="icon">
                     <i className="ion ion-stats-bars" />
                   </div>
                   <Link to="/processes" className="small-box-footer">
-                  Plus d'informations <i className="fas fa-arrow-circle-right" />
+                    Plus d'informations{" "}
+                    <i className="fas fa-arrow-circle-right" />
                   </Link>
                 </div>
               </div>
               {/* ./col */}
-              <div className="col-lg-3 col-6">
+              <div className="col-lg-3 col-6 mx-auto">
                 {/* small box */}
                 <div className="small-box bg-warning">
                   {usersData.isLoading && !usersData.isError && (
@@ -302,19 +479,20 @@ export default () => {
                     </div>
                   )}
                   <div className="inner">
-                  <h3>{usersData.counter}</h3>
+                    <h3>{usersData.counter}</h3>
                     <p>Utilisateurs</p>
                   </div>
                   <div className="icon">
                     <i className="ion ion-person-add" />
                   </div>
                   <Link to="/users" className="small-box-footer">
-                  Plus d'informations <i className="fas fa-arrow-circle-right" />
+                    Plus d'informations{" "}
+                    <i className="fas fa-arrow-circle-right" />
                   </Link>
                 </div>
               </div>
               {/* ./col */}
-              <div className="col-lg-3 col-6">
+              <div className="col-lg-3 col-6 mx-auto">
                 {/* small box */}
                 <div className="small-box bg-danger">
                   {organizationsData.isLoading && !organizationsData.isError && (
@@ -323,20 +501,21 @@ export default () => {
                     </div>
                   )}
                   <div className="inner">
-                  <h3>{organizationsData.counter}</h3>
+                    <h3>{organizationsData.counter}</h3>
                     <p>Organismes</p>
                   </div>
                   <div className="icon">
                     <i className="ion ion-pie-graph" />
                   </div>
                   <Link to="/organizations" className="small-box-footer">
-                    Plus d'informations <i className="fas fa-arrow-circle-right" />
+                    Plus d'informations{" "}
+                    <i className="fas fa-arrow-circle-right" />
                   </Link>
                 </div>
               </div>
               {/* ./col */}
               {/* ./col */}
-              <div className="col-lg-3 col-6">
+              <div className="col-lg-3 col-6 mx-auto">
                 {/* small box */}
                 <div className="small-box bg-primary">
                   {entitiesData.isLoading && !entitiesData.isError && (
@@ -345,20 +524,21 @@ export default () => {
                     </div>
                   )}
                   <div className="inner">
-                  <h3>{entitiesData.counter}</h3>
+                    <h3>{entitiesData.counter}</h3>
                     <p>Entités</p>
                   </div>
                   <div className="icon">
-                    <i class="fas fa-cog"></i>
+                    <i className="fas fa-cog"></i>
                   </div>
                   <Link to="/entities" className="small-box-footer">
-                    Plus d'informations <i className="fas fa-arrow-circle-right" />
+                    Plus d'informations{" "}
+                    <i className="fas fa-arrow-circle-right" />
                   </Link>
                 </div>
               </div>
               {/* ./col */}
               {/* ./col */}
-              <div className="col-lg-3 col-6">
+              <div className="col-lg-3 col-6 mx-auto">
                 {/* small box */}
                 <div className="small-box bg-light">
                   {groupsData.isLoading && !groupsData.isError && (
@@ -367,20 +547,21 @@ export default () => {
                     </div>
                   )}
                   <div className="inner">
-                  <h3>{groupsData.counter}</h3>
+                    <h3>{groupsData.counter}</h3>
                     <p>Groupes</p>
                   </div>
                   <div className="icon">
-                  <i class="fas fa-users"></i>
+                    <i className="fas fa-users"></i>
                   </div>
                   <Link to="/groups" className="small-box-footer">
-                    Plus d'informations <i className="fas fa-arrow-circle-right" />
+                    Plus d'informations{" "}
+                    <i className="fas fa-arrow-circle-right" />
                   </Link>
                 </div>
-              </div>  
+              </div>
               {/* ./col */}
               {/* ./col */}
-              <div className="col-lg-3 col-6">
+              <div className="col-lg-3 col-6 mx-auto">
                 {/* small box */}
                 <div className="small-box bg-success">
                   {languagesData.isLoading && !languagesData.isError && (
@@ -389,15 +570,175 @@ export default () => {
                     </div>
                   )}
                   <div className="inner">
-                  <h3>{groupsData.counter}</h3>
+                    <h3>{languagesData.counter}</h3>
                     <p>Langues</p>
                   </div>
                   <div className="icon">
-                  <i class="fas fa-language"></i>
+                    <i className="fas fa-language"></i>
                   </div>
-                  <b className="small-box-footer">
-                    Groupes
-                  </b>
+                  <b className="small-box-footer">Langues</b>
+                </div>
+              </div>
+              {/* ./col */}
+              {/* ./col */}
+              <div className="col-lg-3 col-6 mx-auto">
+                {/* small box */}
+                <div className="small-box bg-info">
+                  {locationsData.isLoading && !locationsData.isError && (
+                    <div className="overlay">
+                      <i className="fas fa-2x fa-sync-alt fa-spin" />
+                    </div>
+                  )}
+                  <div className="inner">
+                    <h3>{groupsData.counter}</h3>
+                    <p>Localisations</p>
+                  </div>
+                  <div className="icon">
+                    <i className="fas fa-street-view"></i>
+                  </div>
+                  <Link to="/locations" className="small-box-footer">
+                    Plus d'informations{" "}
+                    <i className="fas fa-arrow-circle-right" />
+                  </Link>
+                </div>
+              </div>
+              {/* ./col */}
+              {/* ./col */}
+              <div className="col-lg-3 col-6 mx-auto">
+                {/* small box */}
+                <div className="small-box bg-danger">
+                  {riskAnalyszesData.isLoading && !riskAnalyszesData.isError && (
+                    <div className="overlay">
+                      <i className="fas fa-2x fa-sync-alt fa-spin" />
+                    </div>
+                  )}
+                  <div className="inner">
+                    <h3>{riskAnalyszesData.counter}</h3>
+                    <p>Analyses de risques</p>
+                  </div>
+                  <div className="icon">
+                    <i className="nav-icon fas fa-diagnoses"></i>
+                  </div>
+                  <Link to="/riskanalyzes" className="small-box-footer">
+                    Plus d'informations{" "}
+                    <i className="fas fa-arrow-circle-right" />
+                  </Link>
+                </div>
+              </div>
+              {/* ./col */}
+              {/* ./col */}
+              <div className="col-lg-3 col-6 mx-auto">
+                {/* small box */}
+                <div className="small-box bg-warning">
+                  {riskScenariosData.isLoading && !riskScenariosData.isError && (
+                    <div className="overlay">
+                      <i className="fas fa-2x fa-sync-alt fa-spin" />
+                    </div>
+                  )}
+                  <div className="inner">
+                    <h3>{riskScenariosData.counter}</h3>
+                    <p>Scénarios de risques</p>
+                  </div>
+                  <div className="icon">
+                    <i className="nav-icon fas fa-object-ungroup" />
+                  </div>
+                  <Link to="/riskscenarios" className="small-box-footer">
+                    Plus d'informations{" "}
+                    <i className="fas fa-arrow-circle-right" />
+                  </Link>
+                </div>
+              </div>
+              {/* ./col */}
+
+              {/* ./col */}
+              <div className="col-lg-3 col-6 mx-auto">
+                {/* small box */}
+                <div className="small-box bg-primary">
+                  {rolesData.isLoading && !rolesData.isError && (
+                    <div className="overlay">
+                      <i className="fas fa-2x fa-sync-alt fa-spin" />
+                    </div>
+                  )}
+                  <div className="inner">
+                    <h3>{rolesData.counter}</h3>
+                    <p>Roles</p>
+                  </div>
+                  <div className="icon">
+                    <i class="fas fa-user-tag"></i>
+                  </div>
+                  <b className="small-box-footer">Roles</b>
+                </div>
+              </div>
+              {/* ./col */}
+
+              {/* ./col */}
+              <div className="col-lg-3 col-6 mx-auto">
+                {/* small box */}
+                <div className="small-box bg-light">
+                  {threatsData.isLoading && !threatsData.isError && (
+                    <div className="overlay">
+                      <i className="fas fa-2x fa-sync-alt fa-spin" />
+                    </div>
+                  )}
+                  <div className="inner">
+                    <h3>{threatsData.counter}</h3>
+                    <p>Menaces</p>
+                  </div>
+                  <div className="icon">
+                    <i className="nav-icon fas fa-fingerprint" />
+                  </div>
+                  <Link to="/threats" className="small-box-footer">
+                    Plus d'informations{" "}
+                    <i className="fas fa-arrow-circle-right" />
+                  </Link>
+                </div>
+              </div>
+              {/* ./col */}
+              {/* ./col */}
+              <div className="col-lg-3 col-6 mx-auto">
+                {/* small box */}
+                <div className="small-box bg-primary">
+                  {typologiesData.isLoading && !typologiesData.isError && (
+                    <div className="overlay">
+                      <i className="fas fa-2x fa-sync-alt fa-spin" />
+                    </div>
+                  )}
+                  <div className="inner">
+                    <h3>{typologiesData.counter}</h3>
+                    <p>Typologies des actifs</p>
+                  </div>
+                  <div className="icon">
+                    <i className="nav-icon fas fa-i-cursor" />
+                  </div>
+                  <Link to="/typologies" className="small-box-footer">
+                    Plus d'informations{" "}
+                    <i className="fas fa-arrow-circle-right" />
+                  </Link>
+                </div>
+              </div>
+              {/* ./col */}
+
+              {/* ./col */}
+              <div className="col-lg-3 col-6 mx-auto">
+                {/* small box */}
+                <div className="small-box bg-info">
+                  {vulnerabilitiesData.isLoading &&
+                    !vulnerabilitiesData.isError && (
+                      <div className="overlay">
+                        <i className="fas fa-2x fa-sync-alt fa-spin" />
+                      </div>
+                    )}
+                  <div className="inner">
+                    <h3>{vulnerabilitiesData.counter}</h3>
+                    <p>Vulnérabilités</p>
+                  </div>
+                  <div className="icon">
+                    <i className="nav-icon fas fa-lock-open" />
+                  </div>
+                  <Link to="/vulnerabilities" className="small-box-footer">
+                    Plus d'informations{" "}
+                    <i className="fas fa-arrow-circle-right" />
+                  </Link>
                 </div>
               </div>
               {/* ./col */}

@@ -21,6 +21,17 @@ class RiskScenarioService {
           });
     }
 
+    getRiskScenariosCounter() {
+        return axios
+          .get(`${API_URL}/counter`, { headers: authHeader() })
+          .then((response) => {
+            return response.data;
+          })
+          .catch((err) => {
+            throw err;
+          });
+    }
+
     saveRiskScenario(riskScenariRequest) {
         return axios
           .post(`${API_URL}/`, riskScenariRequest, { headers: authHeader() })

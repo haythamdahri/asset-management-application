@@ -20,6 +20,17 @@ class RiskAnalysisService {
       });
   }
 
+  getRiskAnalyzesCounter() {
+    return axios
+      .get(`${API_URL}/counter`, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
   saveRiskAnalysis(riskAnalysisRequest) {
     return axios
       .post(`${API_URL}/`, riskAnalysisRequest, { headers: authHeader() })
