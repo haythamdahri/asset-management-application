@@ -6,7 +6,6 @@ import Swal from "sweetalert2";
 import CustomPagination from "../../pagination/components/custom-pagination/CustomPagination";
 import CustomPaginationService from "../../pagination/services/CustomPaginationService";
 import { Page } from "../../pagination/Page";
-import Moment from "react-moment";
 
 export default () => {
   const [isLoading, setIsLoading] = useState(true);

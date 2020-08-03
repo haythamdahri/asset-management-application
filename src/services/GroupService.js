@@ -65,6 +65,17 @@ class GroupService {
       });
   }
 
+  getGroupsCounter() {
+    return axios
+      .get(`${API_URL}/counter`, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
 
 
 }

@@ -37,6 +37,17 @@ class EntityService {
       });
   }
 
+  getEntitiesCounter() {
+    return axios
+      .get(`${API_URL}/counter`, { headers: authHeader() })
+      .then((response) => {
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
   deleteEntity(id) {
     return axios
       .delete(`${API_URL}/${id}`, { headers: authHeader() })

@@ -5,6 +5,16 @@ import AssetService from "../services/AssetService";
 import UserService from "../services/UserService";
 import ProcessService from "../services/ProcessService";
 import OrganizationService from "../services/OrganizationService";
+import TypologyService from "../services/TypologyService";
+import RiskAnalysisService from "../services/RiskAnalysisService";
+import EntityService from "../services/EntityService";
+import GroupService from "../services/GroupService";
+import LanguageService from "../services/LanguageService";
+import LocationService from "../services/LocationService";
+import RiskScenarioService from "../services/RiskScenarioService";
+import RoleService from "../services/RoleService";
+import ThreatService from "../services/ThreatService";
+import VulnerabilityService from "../services/VulnerabilityService";
 
 export default () => {
   document.title = "Acceuil";
@@ -28,6 +38,56 @@ export default () => {
     isError: false,
     isLoading: true,
   });
+  const [entitiesData, setEntitiesData] = useState({
+    counter: 0,
+    isError: false,
+    isLoading: true,
+  });
+  const [groupsData, setGroupsData] = useState({
+    counter: 0,
+    isError: false,
+    isLoading: true,
+  });
+  const [languagesData, setLanguagesData] = useState({
+    counter: 0,
+    isError: false,
+    isLoading: true,
+  });
+  const [locationsData, setLocationsData] = useState({
+    counter: 0,
+    isError: false,
+    isLoading: true,
+  });
+  const [riskAnalyszesData, setRiskAnalyszesData] = useState({
+    counter: 0,
+    isError: false,
+    isLoading: true,
+  });
+  const [riskScenariosData, setRiskScenariosData] = useState({
+    counter: 0,
+    isError: false,
+    isLoading: true,
+  });
+  const [rolesData, setRolesData] = useState({
+    counter: 0,
+    isError: false,
+    isLoading: true,
+  });
+  const [threatsData, setThreatsData] = useState({
+    counter: 0,
+    isError: false,
+    isLoading: true,
+  });
+  const [typologiesData, setTypologiesData] = useState({
+    counter: 0,
+    isError: false,
+    isLoading: true,
+  });
+  const [vulnerabilitiesData, setVulnerabilitiesData] = useState({
+    counter: 0,
+    isError: false,
+    isLoading: true,
+  });
   const [isUnauthorized, setIsUnAuthorized] = useState(false);
 
   useEffect(() => {
@@ -39,6 +99,12 @@ export default () => {
     fetchProcessesCounter();
     // Fetch Organizations
     fetchOrganizationsCounter();
+    // Fetch Entities
+    fetchEntitiesCounter();
+    // Fetch Groups
+    fetchGroupsCounter();
+    // Fetch Languages
+    fetchLanguagesCounter();
   }, []);
 
   const fetchAssets = () => {
@@ -101,6 +167,54 @@ export default () => {
           setOrganizationsData({ counter: 0, isError: false, isLoading: false });
         } else {
           setOrganizationsData({ counter: 0, isError: true, isLoading: false });
+        }
+      });
+  }
+
+  const fetchEntitiesCounter = () => {
+    EntityService.getEntitiesCounter()
+      .then((counter) => {
+        setEntitiesData({ counter: counter, isError: false, isLoading: false });
+      })
+      .catch((err) => {
+        const status = err?.response?.status;
+        if (status === 403) {
+          setIsUnAuthorized(true);
+          setEntitiesData({ counter: 0, isError: false, isLoading: false });
+        } else {
+          setEntitiesData({ counter: 0, isError: true, isLoading: false });
+        }
+      });
+  }
+
+  const fetchGroupsCounter = () => {
+    GroupService.getGroupsCounter()
+      .then((counter) => {
+        setGroupsData({ counter: counter, isError: false, isLoading: false });
+      })
+      .catch((err) => {
+        const status = err?.response?.status;
+        if (status === 403) {
+          setIsUnAuthorized(true);
+          setGroupsData({ counter: 0, isError: false, isLoading: false });
+        } else {
+          setGroupsData({ counter: 0, isError: true, isLoading: false });
+        }
+      });
+  }
+
+  const fetchLanguagesCounter = () => {
+    LanguageService.getLanguagesCounter()
+      .then((counter) => {
+        setLanguagesData({ counter: counter, isError: false, isLoading: false });
+      })
+      .catch((err) => {
+        const status = err?.response?.status;
+        if (status === 403) {
+          setIsUnAuthorized(true);
+          setLanguagesData({ counter: 0, isError: false, isLoading: false });
+        } else {
+          setLanguagesData({ counter: 0, isError: true, isLoading: false });
         }
       });
   }
@@ -218,6 +332,72 @@ export default () => {
                   <Link to="/organizations" className="small-box-footer">
                     Plus d'informations <i className="fas fa-arrow-circle-right" />
                   </Link>
+                </div>
+              </div>
+              {/* ./col */}
+              {/* ./col */}
+              <div className="col-lg-3 col-6">
+                {/* small box */}
+                <div className="small-box bg-primary">
+                  {entitiesData.isLoading && !entitiesData.isError && (
+                    <div className="overlay">
+                      <i className="fas fa-2x fa-sync-alt fa-spin" />
+                    </div>
+                  )}
+                  <div className="inner">
+                  <h3>{entitiesData.counter}</h3>
+                    <p>Entités</p>
+                  </div>
+                  <div className="icon">
+                    <i class="fas fa-cog"></i>
+                  </div>
+                  <Link to="/entities" className="small-box-footer">
+                    Plus d'informations <i className="fas fa-arrow-circle-right" />
+                  </Link>
+                </div>
+              </div>
+              {/* ./col */}
+              {/* ./col */}
+              <div className="col-lg-3 col-6">
+                {/* small box */}
+                <div className="small-box bg-light">
+                  {groupsData.isLoading && !groupsData.isError && (
+                    <div className="overlay">
+                      <i className="fas fa-2x fa-sync-alt fa-spin" />
+                    </div>
+                  )}
+                  <div className="inner">
+                  <h3>{groupsData.counter}</h3>
+                    <p>Groupes</p>
+                  </div>
+                  <div className="icon">
+                  <i class="fas fa-users"></i>
+                  </div>
+                  <Link to="/groups" className="small-box-footer">
+                    Plus d'informations <i className="fas fa-arrow-circle-right" />
+                  </Link>
+                </div>
+              </div>  
+              {/* ./col */}
+              {/* ./col */}
+              <div className="col-lg-3 col-6">
+                {/* small box */}
+                <div className="small-box bg-success">
+                  {languagesData.isLoading && !languagesData.isError && (
+                    <div className="overlay">
+                      <i className="fas fa-2x fa-sync-alt fa-spin" />
+                    </div>
+                  )}
+                  <div className="inner">
+                  <h3>{groupsData.counter}</h3>
+                    <p>Langues</p>
+                  </div>
+                  <div className="icon">
+                  <i class="fas fa-language"></i>
+                  </div>
+                  <b className="small-box-footer">
+                    Groupes
+                  </b>
                 </div>
               </div>
               {/* ./col */}

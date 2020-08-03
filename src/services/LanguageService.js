@@ -13,6 +13,16 @@ class LanguageService {
           throw new Error(err);
         });
     }
+
+    getLanguagesCounter() {
+      return Axios.get(`${API_URL}/counter`, { headers: authHeader() })
+        .then((response) => {
+          return response.data;
+        })
+        .catch((err) => {
+          throw new Error(err);
+        });
+    }
 }
 
 export default new LanguageService();
