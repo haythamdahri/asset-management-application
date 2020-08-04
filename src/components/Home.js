@@ -664,7 +664,7 @@ export default () => {
                     <p>Roles</p>
                   </div>
                   <div className="icon">
-                    <i class="fas fa-user-tag"></i>
+                    <i className="fas fa-user-tag"></i>
                   </div>
                   <b className="small-box-footer">Roles</b>
                 </div>

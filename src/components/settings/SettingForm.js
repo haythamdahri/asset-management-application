@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SettingService from "../../services/SettingService";
 import { useForm } from "react-hook-form";
+import Swal from "sweetalert2";
 
 export default () => {
   const { register, handleSubmit, errors } = useForm();
@@ -40,8 +41,24 @@ export default () => {
       });
   }, [retry]);
 
-  const onSubmit = (data) => {
-
+  const onSubmit = async (data) => {
+      setIsSaving(true);
+      try {
+        setSetting(await SettingService.saveSetting(data));
+        setIsSaving(false);
+        Swal.fire(
+          "Operation effectuée!",
+          `Le processus à été enregistré avec succés!`,
+          "success"
+        );
+      } catch(e) {
+        setIsSaving(false);
+        Swal.fire(
+          "Erreur!",
+          `Une erreur est survenue, veuillez ressayer!`,
+          "error"
+        );
+      }
   }
 
   return (
@@ -107,7 +124,10 @@ export default () => {
 
               {/** SETTING DATA */}
               {!isUnAuthorized && !isError && !isLoading && (
-                <>
+                <div
+                  className="col-md-10 mx-auto bg-white shadow rounded"
+                  style={{ borderTop: "2px solid blue" }}
+                >
                   <form
                     onSubmit={handleSubmit(onSubmit)}
                     noValidate
@@ -245,7 +265,7 @@ export default () => {
                     <div className="form-group row">
                       <label
                         className="col-md-3 font-weight-bold"
-                        htmlFor="minOperationnelImpact"
+                        htmlFor="minOperationalImpact"
                       >
                         Impact operationnel minimal:{" "}
                       </label>
@@ -254,18 +274,18 @@ export default () => {
                           disabled={isSaving}
                           placeholder="Impact operationnel minimal"
                           type="number"
-                          id="minOperationnelImpact"
-                          name="minOperationnelImpact"
-                          defaultValue={setting?.operationnelImpacts[0] || ""}
+                          id="minOperationalImpact"
+                          name="minOperationalImpact"
+                          defaultValue={setting?.operationalImpacts[0] || ""}
                           className={`form-control form-control-sm shadow-sm ${
-                            errors.minOperationnelImpact ? "is-invalid" : ""
+                            errors.minOperationalImpact ? "is-invalid" : ""
                           }`}
                           ref={register({
                             required: true,
                           })}
                         />
                         {/** Required name error */}
-                        {errors.minOperationnelImpact && errors.minOperationnelImpact.type === "required" && (
+                        {errors.minOperationalImpact && errors.minOperationalImpact.type === "required" && (
                           <div className="invalid-feedback">
                             Impact operationnel minimal est requis
                           </div>
@@ -630,7 +650,7 @@ export default () => {
                     <div className="form-group row">
                       <label
                         className="col-md-3 font-weight-bold"
-                        htmlFor="minAcceptableRisidualRisk"
+                        htmlFor="minAcceptableResidualRisk"
                       >
                         Risque risiduel minimal acceptable:{" "}
                       </label>
@@ -639,18 +659,18 @@ export default () => {
                           disabled={isSaving}
                           placeholder="Risque risiduel minimal acceptable"
                           type="number"
-                          id="minAcceptableRisidualRisk"
-                          name="minAcceptableRisidualRisk"
+                          id="minAcceptableResidualRisk"
+                          name="minAcceptableResidualRisk"
                           defaultValue={setting?.acceptableResidualRisks[0] || ""}
                           className={`form-control form-control-sm shadow-sm ${
-                            errors.minAcceptableRisidualRisk ? "is-invalid" : ""
+                            errors.minAcceptableResidualRisk ? "is-invalid" : ""
                           }`}
                           ref={register({
                             required: true,
                           })}
                         />
                         {/** Required name error */}
-                        {errors.minAcceptableRisidualRisk && errors.minAcceptableRisidualRisk.type === "required" && (
+                        {errors.minAcceptableResidualRisk && errors.minAcceptableResidualRisk.type === "required" && (
                           <div className="invalid-feedback">
                             Risque risiduel minimal acceptable est requis
                           </div>
@@ -662,7 +682,7 @@ export default () => {
                     <div className="form-group row">
                       <label
                         className="col-md-3 font-weight-bold"
-                        htmlFor="maxAcceptableRisidualRisk"
+                        htmlFor="maxAcceptableResidualRisk"
                       >
                         Risque risiduel maximal acceptable:{" "}
                       </label>
@@ -671,18 +691,18 @@ export default () => {
                           disabled={isSaving}
                           placeholder="Risque risiduel maximal acceptable"
                           type="number"
-                          id="maxAcceptableRisidualRisk"
-                          name="maxAcceptableRisidualRisk"
+                          id="maxAcceptableResidualRisk"
+                          name="maxAcceptableResidualRisk"
                           defaultValue={setting?.acceptableResidualRisks[setting?.acceptableResidualRisks?.length - 1] || ""}
                           className={`form-control form-control-sm shadow-sm ${
-                            errors.maxAcceptableRisidualRisk ? "is-invalid" : ""
+                            errors.maxAcceptableResidualRisk ? "is-invalid" : ""
                           }`}
                           ref={register({
                             required: true,
                           })}
                         />
                         {/** Required name error */}
-                        {errors.maxAcceptableRisidualRisk && errors.maxAcceptableRisidualRisk.type === "required" && (
+                        {errors.maxAcceptableResidualRisk && errors.maxAcceptableResidualRisk.type === "required" && (
                           <div className="invalid-feedback">
                             Risque risiduel maximal acceptable est requis
                           </div>
@@ -986,7 +1006,7 @@ export default () => {
                       )}
                     </div>
                   </form>
-                </>
+                </div>
               )}
             </div>
           </div>
