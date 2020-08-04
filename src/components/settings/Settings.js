@@ -108,37 +108,238 @@ export default () => {
                   </div>
 
                   <div className="card card-default">
-                    <div className="card-header bg-white" style={{borderTop: '2px solid blue'}}>
+                    <div
+                      className="card-header bg-white"
+                      style={{ borderTop: "2px solid blue" }}
+                    >
                       <h3 className="card-title">
                         <i className="fas fa-bullhorn mr-4"></i>
                         Paramétrage courant
                       </h3>
+                      <b className="float-right" style={{ cursor: "pointer" }}>
+                        <Link to="/settings/edit">
+                          <FontAwesomeIcon icon="edit" />
+                        </Link>
+                      </b>
                     </div>
                     <div className="card-body">
                       <div className="callout callout-danger">
                         <h5>Options de probabilité d'analyse de risque</h5>
                         <p>
-                          {setting?.probabilities?.map((probability, key) => 
+                          {setting?.probabilities?.map((probability, key) => (
+                            <>
+                              {probability}
+                              {key === setting?.probabilities?.length - 1
+                                ? ""
+                                : ", "}
+                            </>
+                          ))}
+                        </p>
+                      </div>
+                      <div className="callout callout-info">
+                        <h5>Options d'impact financier d'analyse de risque</h5>
+                        <p>
+                          {setting?.financialImpacts?.map(
+                            (financialImpact, key) => (
                               <>
-                               {probability}{key === setting?.probabilities?.length - 1 ? "" : ", "}
+                                {financialImpact}
+                                {key === setting?.financialImpacts?.length - 1
+                                  ? ""
+                                  : ", "}
                               </>
+                            )
+                          )}
+                        </p>
+                      </div>
+                      <div className="callout callout-warning">
+                        <h5>
+                          Options d'impact operationnel d'analyse de risque
+                        </h5>
+
+                        <p>
+                          {setting?.operationalImpacts?.map(
+                            (operationalImpact, key) => (
+                              <>
+                                {operationalImpact}
+                                {key === setting?.operationalImpacts?.length - 1
+                                  ? ""
+                                  : ", "}
+                              </>
+                            )
+                          )}
+                        </p>
+                      </div>
+                      <div className="callout callout-success">
+                        <h5>
+                          Options d'impact reputationnel d'analyse de risque
+                        </h5>
+
+                        <p>
+                          {setting?.reputationalImpacts?.map(
+                            (reputationalImpact, key) => (
+                              <>
+                                {reputationalImpact}
+                                {key ===
+                                setting?.reputationalImpacts?.length - 1
+                                  ? ""
+                                  : ", "}
+                              </>
+                            )
+                          )}
+                        </p>
+                      </div>
+                      <div className="callout callout-danger">
+                        <h5>
+                          Options d'impact financier cible d'analyse de risque
+                        </h5>
+                        <p>
+                          {setting?.targetFinancialImpacts?.map(
+                            (targetFinancialImpact, key) => (
+                              <>
+                                {targetFinancialImpact}
+                                {key ===
+                                setting?.targetFinancialImpacts?.length - 1
+                                  ? ""
+                                  : ", "}
+                              </>
+                            )
                           )}
                         </p>
                       </div>
                       <div className="callout callout-info">
-                        <h5>I am an info callout!</h5>
-
-                        <p>Follow the steps to continue to payment.</p>
+                        <h5>
+                          Options d'impact operationnel cible d'analyse de
+                          risque
+                        </h5>
+                        <p>
+                          {setting?.targetOperationalImpacts?.map(
+                            (targetOperationalImpact, key) => (
+                              <>
+                                {targetOperationalImpact}
+                                {key ===
+                                setting?.targetOperationalImpacts?.length - 1
+                                  ? ""
+                                  : ", "}
+                              </>
+                            )
+                          )}
+                        </p>
                       </div>
                       <div className="callout callout-warning">
-                        <h5>I am a warning callout!</h5>
+                        <h5>
+                          Options d'impact reputationnel cible d'analyse de
+                          risque
+                        </h5>
 
-                        <p>This is a yellow callout.</p>
+                        <p>
+                          {setting?.targetReputationalImpacts?.map(
+                            (targetReputationalImpact, key) => (
+                              <>
+                                {targetReputationalImpact}
+                                {key ===
+                                setting?.targetReputationalImpacts?.length - 1
+                                  ? ""
+                                  : ", "}
+                              </>
+                            )
+                          )}
+                        </p>
                       </div>
                       <div className="callout callout-success">
-                        <h5>I am a success callout!</h5>
+                        <h5>
+                          Options de probabilité cible d'analyse de risque
+                        </h5>
 
-                        <p>This is a green callout.</p>
+                        <p>
+                          {setting?.targetProbabilities?.map(
+                            (targetProbability, key) => (
+                              <>
+                                {targetProbability}
+                                {key ===
+                                setting?.targetProbabilities?.length - 1
+                                  ? ""
+                                  : ", "}
+                              </>
+                            )
+                          )}
+                        </p>
+                      </div>
+                      <div className="callout callout-danger">
+                        <h5>
+                          Options du risque risiduel cible d'analyse de risque
+                        </h5>
+                        <p>
+                          {setting?.acceptableResidualRisks?.map(
+                            (acceptableResidualRisk, key) => (
+                              <>
+                                {acceptableResidualRisk}
+                                {key ===
+                                setting?.acceptableResidualRisks?.length - 1
+                                  ? ""
+                                  : ", "}
+                              </>
+                            )
+                          )}
+                        </p>
+                      </div>
+
+                      <hr />
+
+                      <div className="callout callout-info">
+                        <h5>Options de confidentialité d'analyse de risque</h5>
+                        <p>
+                          {setting?.confidentialities?.map(
+                            (confidentiality, key) => (
+                              <>
+                                {confidentiality}
+                                {key === setting?.confidentialities?.length - 1
+                                  ? ""
+                                  : ", "}
+                              </>
+                            )
+                          )}
+                        </p>
+                      </div>
+                      <div className="callout callout-warning">
+                        <h5>Options de disponibilité d'analyse de risque</h5>
+
+                        <p>
+                          {setting?.availabilities?.map((availability, key) => (
+                            <>
+                              {availability}
+                              {key === setting?.availabilities?.length - 1
+                                ? ""
+                                : ", "}
+                            </>
+                          ))}
+                        </p>
+                      </div>
+                      <div className="callout callout-success">
+                        <h5>Options d'intégrité d'analyse de risque</h5>
+
+                        <p>
+                          {setting?.integrities?.map((integrity, key) => (
+                            <>
+                              {integrity}
+                              {key === setting?.integrities?.length - 1
+                                ? ""
+                                : ", "}
+                            </>
+                          ))}
+                        </p>
+                      </div>
+                      <div className="callout callout-danger">
+                        <h5>Options de traçabilité d'analyse de risque</h5>
+                        <p>
+                          {setting?.traceabilities?.map((traceability, key) => (
+                            <>
+                              {traceability}
+                              {key === setting?.traceabilities?.length - 1
+                                ? ""
+                                : ", "}
+                            </>
+                          ))}
+                        </p>
                       </div>
                     </div>
                   </div>

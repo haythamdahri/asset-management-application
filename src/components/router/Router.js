@@ -55,6 +55,7 @@ import Entities from "../entities/Entities";
 import EntityForm from "../entities/EntityForm";
 import EntityView from "../entities/EntityView";
 import Settings from "../settings/Settings";
+import SettingForm from "../settings/SettingForm";
 
 export default () => {
   return (
@@ -223,6 +224,9 @@ export default () => {
           </UserRoute>
           <UserRoute exact={true} path="/settings">
             <Settings />
+          </UserRoute>
+          <UserRoute exact={true} path="/settings/edit">
+            <SettingForm />
           </UserRoute>
           <AuthenticatedGuard exact={true} path="/signin">
             <SignIn />
