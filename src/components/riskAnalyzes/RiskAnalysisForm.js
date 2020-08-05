@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import UserService from "../../services/UserService";
 import AssetService from "../../services/AssetService";
 import RiskAnalysisService from "../../services/RiskAnalysisService";
+import SettingService from "../../services/SettingService";
 import { useForm } from "react-hook-form";
 import { useParams, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -25,7 +26,7 @@ export default () => {
     isLoading: true,
     data: {},
   });
-  const impactOptions = [1, 2, 3, 4];
+  const [riskAnalyzesOptions, setRiskAnalyzesOtions] = useState({});
   document.title = "Gestion Des Scénarios De Risques";
 
   // Ids Extraction from URL
@@ -41,6 +42,8 @@ export default () => {
     UserService.canEditRiskAnalysis()
       .then((response) => {
         if (response?.hasRole) {
+          // Fetch Risk Analyzes options
+          fetchRiskAnalyzesOptions();
           fetchAssets();
           if (assetId !== undefined && riskAnalysisId !== undefined) {
             fetchRiskAnalysis();
@@ -67,6 +70,15 @@ export default () => {
         setIsLoading(false);
       });
   }, [reload]);
+
+  const fetchRiskAnalyzesOptions = async () => {
+    try {
+      const riskAnalyzesOptions = await SettingService.getActiveSettingRiskAnalysisOptions();
+      setRiskAnalyzesOtions(riskAnalyzesOptions);
+    } catch (e) {
+      setRiskAnalyzesOtions(null);
+    }
+  }
 
   const fetchRiskAnalysis = async () => {
     try {
@@ -468,7 +480,7 @@ export default () => {
                           id="probability"
                           name="probability"
                         >
-                          {impactOptions?.map((option, key) => (
+                          {riskAnalyzesOptions?.probabilities?.map((option, key) => (
                             <option key={key} value={option}>
                               {option}
                             </option>
@@ -510,7 +522,7 @@ export default () => {
                           id="financialImpact"
                           name="financialImpact"
                         >
-                          {impactOptions?.map((option, key) => (
+                          {riskAnalyzesOptions?.financialImpacts?.map((option, key) => (
                             <option key={key} value={option}>
                               {option}
                             </option>
@@ -553,7 +565,7 @@ export default () => {
                           id="operationalImpact"
                           name="operationalImpact"
                         >
-                          {impactOptions?.map((option, key) => (
+                          {riskAnalyzesOptions?.operationalImpacts?.map((option, key) => (
                             <option key={key} value={option}>
                               {option}
                             </option>
@@ -596,7 +608,7 @@ export default () => {
                           id="reputationalImpact"
                           name="reputationalImpact"
                         >
-                          {impactOptions?.map((option, key) => (
+                          {riskAnalyzesOptions?.reputationalImpacts?.map((option, key) => (
                             <option key={key} value={option}>
                               {option}
                             </option>
@@ -714,7 +726,7 @@ export default () => {
                           id="targetFinancialImpact"
                           name="targetFinancialImpact"
                         >
-                          {impactOptions?.map((option, key) => (
+                          {riskAnalyzesOptions?.targetFinancialImpacts?.map((option, key) => (
                             <option key={key} value={option}>
                               {option}
                             </option>
@@ -757,7 +769,7 @@ export default () => {
                           id="targetOperationalImpact"
                           name="targetOperationalImpact"
                         >
-                          {impactOptions?.map((option, key) => (
+                          {riskAnalyzesOptions?.targetOperationalImpacts?.map((option, key) => (
                             <option key={key} value={option}>
                               {option}
                             </option>
@@ -801,7 +813,7 @@ export default () => {
                           id="targetReputationalImpact"
                           name="targetReputationalImpact"
                         >
-                          {impactOptions?.map((option, key) => (
+                          {riskAnalyzesOptions?.targetReputationalImpacts?.map((option, key) => (
                             <option key={key} value={option}>
                               {option}
                             </option>
@@ -845,7 +857,7 @@ export default () => {
                           id="targetProbability"
                           name="targetProbability"
                         >
-                          {impactOptions?.map((option, key) => (
+                          {riskAnalyzesOptions?.targetProbabilities?.map((option, key) => (
                             <option key={key} value={option}>
                               {option}
                             </option>
@@ -888,7 +900,7 @@ export default () => {
                           id="acceptableResidualRisk"
                           name="acceptableResidualRisk"
                         >
-                          {impactOptions?.map((option, key) => (
+                          {riskAnalyzesOptions?.acceptableResidualRisks?.map((option, key) => (
                             <option key={key} value={option}>
                               {option}
                             </option>
@@ -968,7 +980,7 @@ export default () => {
                           type="submit"
                           className="btn btn-warning font-weight-bold text-center mx-2"
                         >
-                          <FontAwesomeIcon icon="user" /> Retourner vers
+                          <FontAwesomeIcon icon="backward" /> Retourner vers
                           l'analyse de risque
                         </Link>
                       )}

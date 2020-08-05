@@ -36,8 +36,8 @@ export default () => {
     setGroup({});
     // Check user permissions
     UserService.checkUserAdmin()
-      .then(() => {
-        fetchRoles();
+      .then(async () => {
+        await fetchRoles();
         // Get group if id is not new
         if (id !== undefined) {
           fetchGroup();
@@ -102,7 +102,6 @@ export default () => {
   };
 
   const onSubmit = async (data) => {
-    console.log(data);
     setIsSaving(true);
     GroupService.saveGroup({ id, ...data, description })
       .then((group) => {
@@ -266,10 +265,10 @@ export default () => {
                         <select
                           style={{ height: "200px" }}
                           multiple
-                          defaultValue={group?.roles?.map(
+                          defaultChecked={group?.roles?.map(
                             (role, key) => role.id
                           )}
-                          defaultChecked={group?.roles?.map(
+                          defaultValue={group?.roles?.map(
                             (role, key) => role.id
                           )}
                           onClick={(event) => {

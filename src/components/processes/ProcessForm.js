@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import CKEditor from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import Swal from "sweetalert2";
+import SettingService from '../../services/SettingService';
 
 export default () => {
   const { register, handleSubmit, errors } = useForm();
@@ -26,7 +27,7 @@ export default () => {
     isLoading: true,
     data: [],
   });
-  const classificationOptions = [1, 2, 3, 4];
+  const [classificationSetting, setClassificationSetting] = useState({});
 
   // Process Id Extraction from URL
   let { id } = useParams();
@@ -41,6 +42,8 @@ export default () => {
       .then((response) => {
         fetchOrganizations();
         if (response.hasRole) {
+          // Fetch classification settings
+          fetchClassificationSettings();
           // Get process if id is not new
           if (id !== undefined) {
             fetchProcess();
@@ -66,6 +69,15 @@ export default () => {
         setIsLoading(false);
       });
   }, [reload]);
+
+  const fetchClassificationSettings = async () => {
+    try {
+      const classificationOptions = await SettingService.getClassificationSetting();
+      setClassificationSetting(classificationOptions);
+    } catch (e) {
+      setClassificationSetting(null);
+    }
+  };
 
   const fetchOrganizations = async () => {
     try {
@@ -410,12 +422,12 @@ export default () => {
                       </label>
                       <div className="col-md-9">
                         <select
-                          defaultValue={
+                          value={
                             applicationProcess?.classification?.confidentiality
                           }
-                          defaultChecked={
-                            applicationProcess?.classification?.confidentiality
-                          }
+                          onChange={e => {
+                            setApplicationProcess({...applicationProcess, classification: {...applicationProcess?.classification, confidentiality: e.target.value}})
+                          }}
                           className={`form-control form-control-sm shadow-sm ${
                             errors.confidentiality ? "is-invalid" : ""
                           }`}
@@ -426,7 +438,7 @@ export default () => {
                           id="confidentiality"
                           name="confidentiality"
                         >
-                          {classificationOptions.map((option, key) => (
+                          {classificationSetting?.confidentialities?.map((option, key) => (
                             <option key={key} value={option}>
                               {option}
                             </option>
@@ -445,12 +457,12 @@ export default () => {
                       </label>
                       <div className="col-md-9">
                         <select
-                          defaultValue={
+                          value={
                             applicationProcess?.classification?.availability
                           }
-                          defaultChecked={
-                            applicationProcess?.classification?.availability
-                          }
+                          onChange={e => {
+                            setApplicationProcess({...applicationProcess, classification: {...applicationProcess?.classification, availability: e.target.value}})
+                          }}
                           className={`form-control form-control-sm shadow-sm ${
                             errors.availability ? "is-invalid" : ""
                           }`}
@@ -461,7 +473,7 @@ export default () => {
                           id="availability"
                           name="availability"
                         >
-                          {classificationOptions.map((option, key) => (
+                          {classificationSetting?.availabilities?.map((option, key) => (
                             <option key={key} value={option}>
                               {option}
                             </option>
@@ -480,9 +492,12 @@ export default () => {
                       </label>
                       <div className="col-md-9">
                         <select
-                          defaultValue={
+                          value={
                             applicationProcess?.classification?.integrity
                           }
+                          onChange={e => {
+                            setApplicationProcess({...applicationProcess, classification: {...applicationProcess?.classification, integrity: e.target.value}})
+                          }}
                           className={`form-control form-control-sm shadow-sm ${
                             errors.integrity ? "is-invalid" : ""
                           }`}
@@ -493,7 +508,7 @@ export default () => {
                           id="integrity"
                           name="integrity"
                         >
-                          {classificationOptions.map((option, key) => (
+                          {classificationSetting?.integrities?.map((option, key) => (
                             <option key={key} value={option}>
                               {option}
                             </option>
@@ -512,9 +527,12 @@ export default () => {
                       </label>
                       <div className="col-md-9">
                         <select
-                          defaultValue={
+                          value={
                             applicationProcess?.classification?.traceability
                           }
+                          onChange={e => {
+                            setApplicationProcess({...applicationProcess, classification: {...applicationProcess?.classification, traceability: e.target.value}})
+                          }}
                           className={`form-control form-control-sm shadow-sm ${
                             errors.traceability ? "is-invalid" : ""
                           }`}
@@ -525,7 +543,7 @@ export default () => {
                           id="traceability"
                           name="traceability"
                         >
-                          {classificationOptions.map((option, key) => (
+                          {classificationSetting?.traceabilities?.map((option, key) => (
                             <option key={key} value={option}>
                               {option}
                             </option>

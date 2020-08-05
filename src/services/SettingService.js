@@ -15,6 +15,28 @@ class SettingService {
           });
     }
 
+    getClassificationSetting() {
+        return axios
+          .get(`${API_URL}/active/classification`, { headers: authHeader() })
+          .then((response) => {
+            return response.data;
+          })
+          .catch((err) => {
+            throw err;
+          });
+    }
+
+    getActiveSettingRiskAnalysisOptions() {
+        return axios
+          .get(`${API_URL}/active/riskanalyzes`, { headers: authHeader() })
+          .then((response) => {
+            return response.data;
+          })
+          .catch((err) => {
+            throw err;
+          });
+    }
+
     saveSetting(setting) {
         return axios
           .post(`${API_URL}/`, setting, { headers: authHeader() })

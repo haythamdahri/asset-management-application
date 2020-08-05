@@ -61,7 +61,7 @@ export default () => {
       UserService.emitter.emit('USER_UPDATED', user);
       Toast.fire({
         icon: "success",
-        title: `Image has been updated successfully!`,
+        title: `L'image de votre profil à été mise à jour avec succés`,
       });
     } catch (err) {
       Toast.fire({
