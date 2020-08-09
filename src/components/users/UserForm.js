@@ -67,7 +67,7 @@ export default () => {
     setUnauthorized(false);
     setUser({});
     UserService.canEditUser()
-      .then((response) => {
+      .then(async (response) => {
         if (response.hasRole) {
           // Fetch companies
           fetchOrganizations();
@@ -80,7 +80,7 @@ export default () => {
           // Fetch groups
           fetchGroups();
           // Fetch roles
-          fetchRoles();
+          await fetchRoles();
           // Fetch Users if not a new user
           fetchUser();
         } else {

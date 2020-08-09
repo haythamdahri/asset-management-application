@@ -231,8 +231,7 @@ export default () => {
                         <th>Département</th>
                         <th>Localisation</th>
                         <th>Manager</th>
-                        <th>Notes</th>
-                        <th>Groupes</th>
+                        <th>Organisme</th>
                         <th>Connexion activée</th>
                         <th colSpan={3}>Actions</th>
                       </tr>
@@ -316,18 +315,10 @@ export default () => {
                                   : ""}
                               </Link>
                             </td>
-                            <td
-                              dangerouslySetInnerHTML={{
-                                __html: `${user.notes.slice(0, 20)} ${user.notes.length > 20 ? '...' : ''}`,
-                              }}
-                            ></td>
                             <td>
-                              {user.groups?.map((group, key) => (
-                                <Link to={`/groups/view/${group.id}`} key={key}>
-                                  {group.name}
-                                  {key === user.groups.length - 1 ? "" : ","}
+                                <Link to={`/organizations/view/${user?.organization?.id}`}>
+                                  {user?.organization?.name}
                                 </Link>
-                              ))}
                             </td>
                             <td>
                               {user.active ? (

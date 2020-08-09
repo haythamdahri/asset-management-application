@@ -1,11 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import UserService from "../../services/UserService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Link } from "react-router-dom";
+import { Link, useParams, useLocation } from "react-router-dom";
 import Swal from "sweetalert2";
 import { SRLWrapper } from "simple-react-lightbox";
 import ProfilDetails from "./ProfilDetails";
 import ProfileForm from "./ProfileForm";
+
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
 
 export default () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -14,8 +18,10 @@ export default () => {
   const [isUpdatingPicture, setIsUpdatingPicture] = useState(false);
   const [reload, setReload] = useState(false);
   const uploadRef = useRef(null);
+  let query = useQuery();
 
   useEffect(() => {
+    console.log(query.get("settings"));
     document.title = "Profil";
     fetchCurrentUser();
   }, [reload]);
@@ -218,7 +224,7 @@ export default () => {
                       <ul className="nav nav-tabs nav-pills with-arrow lined flex-column flex-sm-row text-center col-12">
                         <li className="nav-item flex-sm-fill" key="LI3">
                           <a
-                            className="nav-link active"
+                            className={`nav-link ${query.get("settings") === null ? 'active' : ''}`}
                             href="#profileDetails"
                             data-toggle="tab"
                           >
@@ -227,7 +233,7 @@ export default () => {
                         </li>
                         <li className="nav-item flex-sm-fill" key="LI4">
                           <a
-                            className="nav-link"
+                            className={`nav-link ${query.get("settings") !== null ? 'active' : ''}`}
                             href="#settings"
                             data-toggle="tab"
                           >
@@ -239,10 +245,10 @@ export default () => {
                     {/* /.card-header */}
                     <div className="card-body">
                       <div className="tab-content">
-                        <div className="tab-pane active" id="profileDetails">
+                        <div className={`tab-pane ${query.get("settings") === null ? 'active' : ''}`} id="profileDetails">
                           <ProfilDetails user={user} />
                         </div>
-                        <div className="tab-pane" id="settings">
+                        <div className={`tab-pane ${query.get("settings") !== null ? 'active' : ''}`} id="settings">
                           {!isLoading && !isUserError && (
                           <ProfileForm user={user} setUser={setUser} />
                           )}
