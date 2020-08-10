@@ -21,10 +21,6 @@ export default () => {
     isLoading: true,
     data: [],
   });
-  const [usersMore, setUsersMore] = useState({
-    expanded: false,
-    itemsCount: 5,
-  });
   const [processesMore, setProcessesMore] = useState({
     expanded: false,
     itemsCount: 5,
@@ -43,7 +39,6 @@ export default () => {
       ref.current = false;
     };
   }, []);
-
   const fetchOrganization = async () => {
     setIsUnAuthorized(false);
     setIsLoading(true);
@@ -62,6 +57,11 @@ export default () => {
         OrganizationService.getOrganizationUsers(organization?.id).then(
           (users) => {
             setOrganizationUsersData({ isLoading: false, data: users });
+            // Associate js files
+            const script = document.createElement("script");
+            script.src = "/js/content.js";
+            script.async = true;
+            document.body.appendChild(script);
           }
         );
         // Fetch organization processes
@@ -248,7 +248,7 @@ export default () => {
                             href="#organizations"
                             data-toggle="tab"
                           >
-                            Organisme
+                            <i className="nav-icon fas fa-building" /> Organisme
                           </a>
                         </li>
                         <li className="nav-item flex-sm-fill">
@@ -257,7 +257,7 @@ export default () => {
                             href="#employees"
                             data-toggle="tab"
                           >
-                            Employés
+                            <i className="nav-icon fas fa-users" /> Employés
                           </a>
                         </li>
                         <li className="nav-item flex-sm-fill">
@@ -266,7 +266,7 @@ export default () => {
                             href="#processes"
                             data-toggle="tab"
                           >
-                            Processus
+                            <i className="nav-icon fas fa-microchip" /> Processus
                           </a>
                         </li>
                       </ul>
@@ -310,62 +310,57 @@ export default () => {
                         {/* /.tab-pane */}
                         <div className="tab-pane" id="employees">
                           <div className="col-12">
-                            <ul
-                              className="list-group list-group-flush font-weight-bold text-secondary text-center"
-                              style={{
-                                borderTop: "solid 2px blue",
-                                letterSpacing: "1px",
-                              }}
-                            >
-                              {!organizationUsersData.isLoading &&
-                                organizationUsersData?.data != null &&
-                                organizationUsersData?.data !== "" &&
-                                organizationUsersData?.data?.map(
-                                  (user, key) => (
-                                    <div key={key}>
-                                      {key < usersMore.itemsCount && (
-                                        <li
-                                          className="list-group-item"
-                                          key={key}
-                                        >
-                                          <Link to={`/users/view/${user?.id}`}>
-                                            {user?.firstName} {user?.lastName}
-                                          </Link>
-                                        </li>
-                                      )}
-                                    </div>
-                                  )
-                                )}
-                              {organizationUsersData?.data?.length > 5 &&
-                                !usersMore.expanded && (
-                                  <Link
-                                    to="#"
-                                    onClick={() =>
-                                      setUsersMore({
-                                        itemsCount:
-                                          organizationUsersData?.data?.length,
-                                        expanded: true,
-                                      })
-                                    }
-                                  >
-                                    Voir plus
-                                  </Link>
-                                )}
-                              {organizationUsersData?.data?.length > 5 &&
-                                usersMore.expanded && (
-                                  <Link
-                                    to="#"
-                                    onClick={() =>
-                                      setUsersMore({
-                                        itemsCount: 5,
-                                        expanded: false,
-                                      })
-                                    }
-                                  >
-                                    Voir moins
-                                  </Link>
-                                )}
-
+                              <div
+                                id="emplyees"
+                                className="dataTables_wrapper dt-bootstrap4"
+                              >
+                                <div className="row mt-4">
+                                  <div className="col-sm-12">
+                                    <table
+                                      id="emplyees"
+                                      className="table table-bordered table-striped dataTable dtr-inline"
+                                      role="grid"
+                                      aria-describedby="emplyees_info"
+                                    >
+                                      <thead align="center">
+                                        <tr role="row">
+                                          <th>Username</th>
+                                          <th>Email</th>
+                                          <th>Nom</th>
+                                          <th>Prénom</th>
+                                          <th>Actions</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody align="center">
+                                        {!organizationUsersData.isLoading &&
+                                          organizationUsersData?.data != null &&
+                                          organizationUsersData?.data !== "" &&
+                                          organizationUsersData?.data?.map(
+                                            (user, key) => (
+                                              <tr key={key}>
+                                                <th scope="col">
+                                                  {user?.username}
+                                                </th>
+                                                <td>{user?.email}</td>
+                                                <td>{user?.lastName}</td>
+                                                <td>{user?.firstName}</td>
+                                                <td>
+                                                  <Link
+                                                    to={`/users/view/${user?.id}`}
+                                                    className="btn btn-outline-primary btn-sm"
+                                                  >
+                                                    <FontAwesomeIcon icon="eye" />{" "}
+                                                    Voir
+                                                  </Link>
+                                                </td>
+                                              </tr>
+                                            )
+                                          )}
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </div>
+                              </div>
                               {!organizationUsersData?.isLoading &&
                                 (organizationUsersData?.data === "" ||
                                   organizationUsersData?.data?.length === 0 ||
@@ -375,7 +370,6 @@ export default () => {
                                     Aucun utilisateur n'a rejoint l'organisme
                                   </li>
                                 )}
-
                               {organizationUsersData?.isLoading && (
                                 <div className="col-12 text-center pt-5 pb-5">
                                   <div className="overlay dark">
@@ -383,7 +377,6 @@ export default () => {
                                   </div>
                                 </div>
                               )}
-                            </ul>
                           </div>
                         </div>
 
@@ -453,8 +446,9 @@ export default () => {
 
                               {!organizationProcessesData?.isLoading &&
                                 (organizationProcessesData?.data === "" ||
-                                organizationProcessesData?.data?.length === 0 ||
-                                organizationProcessesData?.data === null) && (
+                                  organizationProcessesData?.data?.length ===
+                                    0 ||
+                                  organizationProcessesData?.data === null) && (
                                   <li className="list-group-item">
                                     <FontAwesomeIcon icon="exclamation-circle" />{" "}
                                     Aucun processus n'a été associé a cet

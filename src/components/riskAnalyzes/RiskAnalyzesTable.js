@@ -10,7 +10,6 @@ export default ({ asset }) => {
 
   
   const updateRiskAnalysisStatus = async (riskAnalysis, status) => {
-    console.log(riskAnalysis);
     // Perform User delete
     try {
       setIsApproving(true);

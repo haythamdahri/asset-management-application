@@ -115,7 +115,7 @@ export default () => {
                     >
                       <h3 className="card-title">
                         <i className="fas fa-bullhorn mr-4"></i>
-              Paramétrage courant | <b>Dernière mise à jour:</b> <Moment format="YYYY/MM/DD HH:mm:ss">{setting.identificationDate}</Moment>
+                          Paramétrage courant | <b>Dernière mise à jour:</b> <Moment format="YYYY/MM/DD HH:mm:ss">{setting.identificationDate}</Moment>
                       </h3>
                       <b className="float-right" style={{ cursor: "pointer" }}>
                         <Link to="/settings/edit">

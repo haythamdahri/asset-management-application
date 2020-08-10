@@ -6,8 +6,6 @@ import { useForm } from "react-hook-form";
 import { useParams, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Swal from "sweetalert2";
-import CKEditor from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 export default () => {
   const { register, handleSubmit, errors } = useForm();
