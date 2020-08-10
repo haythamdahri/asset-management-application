@@ -173,11 +173,13 @@ class UserService {
       });
   }
 
-  getUsersPage(search, pageable) {
+  getUsersPage(search, pageable, sort) {
     const params = {
       search: search !== "" ? search : "",
       page: pageable.pageNumber,
       size: pageable.pageSize,
+      sort: sort?.field,
+      direction: sort?.direction
     };
     return axios
       .get(`${API_URL}/`, { params, headers: authHeader() })

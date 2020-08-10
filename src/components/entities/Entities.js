@@ -6,6 +6,7 @@ import Swal from "sweetalert2";
 import CustomPagination from "../../pagination/components/custom-pagination/CustomPagination";
 import CustomPaginationService from "../../pagination/services/CustomPaginationService";
 import { Page } from "../../pagination/Page";
+import { Sort } from "../../models/Sort";
 
 export default () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -13,6 +14,7 @@ export default () => {
   const [isUnAuthorized, setIsUnAuthorized] = useState(false);
   const [entitiesPage, setEntitiesPage] = useState(new Page());
   const [isDeleting, setIsDeleting] = useState(false);
+  const [sort, setSort] = useState({ field: "", direction: Sort.DESC });
   const searchInput = useRef(null);
 
   useEffect(() => {
@@ -21,7 +23,7 @@ export default () => {
     return () => {
       setEntitiesPage(null);
     };
-  }, []);
+  }, [sort]);
 
   const fetchEntities = async () => {
     const search = searchInput?.current?.value || "";
@@ -32,7 +34,8 @@ export default () => {
       setEntitiesPage(new Page());
       const response = await EntityService.getEntitiesPage(
         search,
-        entitiesPage?.pageable || new Page()
+        entitiesPage?.pageable || new Page(),
+        sort
       );
       setIsLoading(false);
       setEntitiesPage(response);
@@ -71,7 +74,9 @@ export default () => {
   };
 
   const getPreviousPage = () => {
-    entitiesPage.pageable = CustomPaginationService.getPreviousPage(entitiesPage);
+    entitiesPage.pageable = CustomPaginationService.getPreviousPage(
+      entitiesPage
+    );
     fetchEntities();
   };
 
@@ -85,6 +90,7 @@ export default () => {
 
   const onSearchSubmit = async (event) => {
     event.preventDefault();
+    setSort({field: '', direction: Sort.DESC});
     // Search users
     if (!isUnAuthorized && !isError && !isLoading) {
       getPageInNewSize(20);
@@ -204,7 +210,7 @@ export default () => {
               </div>
 
               {/** DELTING PROGRESS */}
-              {(isDeleting) && (
+              {isDeleting && (
                 <div className="col-12 mt-2 mb-3">
                   <div className="overlay text-center">
                     <i className="fas fa-2x fa-sync-alt fa-spin"></i>
@@ -220,8 +226,48 @@ export default () => {
                   <table className="table table-hover table-bordered ">
                     <thead className="thead-light text-center">
                       <tr>
-                        <th>Nom de l'entité</th>
-                        <th>Organisme</th>
+                        <th
+                          style={{cursor: 'pointer'}}
+                          onClick={(e) =>
+                            setSort({
+                              field: "name",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }
+                        >
+                          {sort?.field === "name" ? (
+                            <FontAwesomeIcon
+                              icon={
+                                sort.direction === Sort.DESC
+                                  ? `sort-alpha-up-alt`
+                                  : `sort-alpha-down-alt`
+                              }
+                            />
+                          ) : (<FontAwesomeIcon icon="sort" />)}{" "}
+                          Nom de l'entité
+                        </th>
+                        <th
+                          style={{cursor: 'pointer'}}
+                          onClick={(e) =>
+                            setSort({
+                              field: "organization",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }>{sort?.field === "organization" ? (
+                            <FontAwesomeIcon
+                              icon={
+                                sort.direction === Sort.DESC
+                                ? `sort-alpha-down-alt`
+                                : `sort-alpha-up-alt`
+                              }
+                            />
+                          ) : (<FontAwesomeIcon icon="sort" />)}{" "}Organisme</th>
                         <th colSpan={3}>Actions</th>
                       </tr>
                     </thead>
@@ -286,7 +332,11 @@ export default () => {
                               </Link>
                             </td>
                             <td>
-                              <Link to={`/organizations/view/${entity?.organization?.id}`}>{entity?.organization?.name}</Link>
+                              <Link
+                                to={`/organizations/view/${entity?.organization?.id}`}
+                              >
+                                {entity?.organization?.name}
+                              </Link>
                             </td>
                             <td>
                               <Link to={`/entities/${entity?.id}/edit`}>

@@ -6,6 +6,7 @@ import Swal from "sweetalert2";
 import CustomPagination from "../../pagination/components/custom-pagination/CustomPagination";
 import CustomPaginationService from "../../pagination/services/CustomPaginationService";
 import { Page } from "../../pagination/Page";
+import { Sort } from "../../models/Sort";
 
 export default () => {
   const [loading, setLoading] = useState(true);
@@ -13,6 +14,7 @@ export default () => {
   const [unauthorized, setUnauthorized] = useState(false);
   const [usersPage, setUsersPage] = useState(new Page());
   const [deleting, setDeleting] = useState(false);
+  const [sort, setSort] = useState({ field: "", direction: Sort.DESC });
   const searchInput = useRef(null);
   let abortController = new AbortController();
 
@@ -23,7 +25,7 @@ export default () => {
       setUsersPage(null);
       abortController.abort();
     };
-  }, []);
+  }, [sort]);
 
   const fetchUsers = async () => {
     const search = searchInput?.current?.value || "";
@@ -34,7 +36,8 @@ export default () => {
       setUsersPage(new Page());
       const response = await UserService.getUsersPage(
         search,
-        usersPage?.pageable || new Page()
+        usersPage?.pageable || new Page(),
+        sort
       );
       setLoading(false);
       setUsersPage(response);
@@ -87,6 +90,7 @@ export default () => {
 
   const onSearchSubmit = async (event) => {
     event.preventDefault();
+    setSort({field: '', direction: Sort.DESC});
     // Search users
     if (!unauthorized && !error && !loading) {
       getPageInNewSize(20);
@@ -223,16 +227,196 @@ export default () => {
                   <table className="table table-hover table-bordered ">
                     <thead className="thead-light text-center">
                       <tr>
-                        <th>Nom</th>
-                        <th>Titre</th>
-                        <th>Email</th>
-                        <th>Téléphone</th>
-                        <th>Username</th>
-                        <th>Département</th>
-                        <th>Localisation</th>
-                        <th>Manager</th>
-                        <th>Organisme</th>
-                        <th>Connexion activée</th>
+                        <th
+                          style={{cursor: 'pointer'}}
+                          onClick={(e) =>
+                            setSort({
+                              field: "firstName",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }>{sort?.field === "firstName" ? (
+                            <FontAwesomeIcon
+                            icon={
+                              sort.direction === Sort.DESC
+                                ? `sort-alpha-down-alt`
+                                : `sort-alpha-up-alt`
+                            }
+                            />
+                          ) : (<FontAwesomeIcon icon="sort" />)}{" "}Nom</th>
+                        <th
+                          style={{cursor: 'pointer'}}
+                          onClick={(e) =>
+                            setSort({
+                              field: "title",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }>{sort?.field === "title" ? (
+                            <FontAwesomeIcon
+                            icon={
+                              sort.direction === Sort.DESC
+                                ? `sort-alpha-down-alt`
+                                : `sort-alpha-up-alt`
+                            }
+                            />
+                          ) : (<FontAwesomeIcon icon="sort" />)}{" "}Titre</th>
+                        <th
+                          style={{cursor: 'pointer'}}
+                          onClick={(e) =>
+                            setSort({
+                              field: "email",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }>{sort?.field === "email" ? (
+                            <FontAwesomeIcon
+                            icon={
+                              sort.direction === Sort.DESC
+                                ? `sort-alpha-down-alt`
+                                : `sort-alpha-up-alt`
+                            }
+                            />
+                          ) : (<FontAwesomeIcon icon="sort" />)}{" "}Email</th>
+                        <th
+                          style={{cursor: 'pointer'}}
+                          onClick={(e) =>
+                            setSort({
+                              field: "phone",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }>{sort?.field === "phone" ? (
+                            <FontAwesomeIcon
+                            icon={
+                              sort.direction === Sort.DESC
+                                ? `sort-alpha-down-alt`
+                                : `sort-alpha-up-alt`
+                            }
+                            />
+                          ) : (<FontAwesomeIcon icon="sort" />)}{" "}Téléphone</th>
+                        <th
+                          style={{cursor: 'pointer'}}
+                          onClick={(e) =>
+                            setSort({
+                              field: "username",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }>{sort?.field === "username" ? (
+                            <FontAwesomeIcon
+                            icon={
+                              sort.direction === Sort.DESC
+                                ? `sort-alpha-down-alt`
+                                : `sort-alpha-up-alt`
+                            }
+                            />
+                          ) : (<FontAwesomeIcon icon="sort" />)}{" "}Username</th>
+                        <th
+                          style={{cursor: 'pointer'}}
+                          onClick={(e) =>
+                            setSort({
+                              field: "entity",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }>{sort?.field === "entity" ? (
+                            <FontAwesomeIcon
+                            icon={
+                              sort.direction === Sort.DESC
+                                ? `sort-alpha-down-alt`
+                                : `sort-alpha-up-alt`
+                            }
+                            />
+                          ) : (<FontAwesomeIcon icon="sort" />)}{" "}Département</th>
+                        <th
+                          style={{cursor: 'pointer'}}
+                          onClick={(e) =>
+                            setSort({
+                              field: "location",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }>{sort?.field === "location" ? (
+                            <FontAwesomeIcon
+                            icon={
+                              sort.direction === Sort.DESC
+                                ? `sort-alpha-down-alt`
+                                : `sort-alpha-up-alt`
+                            }
+                            />
+                          ) : (<FontAwesomeIcon icon="sort" />)}{" "}Localisation</th>
+                        <th
+                          style={{cursor: 'pointer'}}
+                          onClick={(e) =>
+                            setSort({
+                              field: "manager",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }>{sort?.field === "manager" ? (
+                            <FontAwesomeIcon
+                            icon={
+                              sort.direction === Sort.DESC
+                                ? `sort-alpha-down-alt`
+                                : `sort-alpha-up-alt`
+                            }
+                            />
+                          ) : (<FontAwesomeIcon icon="sort" />)}{" "}Manager</th>
+                        <th
+                          style={{cursor: 'pointer'}}
+                          onClick={(e) =>
+                            setSort({
+                              field: "organization",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }>{sort?.field === "organization" ? (
+                            <FontAwesomeIcon
+                            icon={
+                              sort.direction === Sort.DESC
+                                ? `sort-alpha-down-alt`
+                                : `sort-alpha-up-alt`
+                            }
+                            />
+                          ) : (<FontAwesomeIcon icon="sort" />)}{" "}Organisme</th>
+                        <th
+                          style={{cursor: 'pointer'}}
+                          onClick={(e) =>
+                            setSort({
+                              field: "active",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }>{sort?.field === "active" ? (
+                            <FontAwesomeIcon
+                            icon={
+                              sort.direction === Sort.DESC
+                                ? `sort-alpha-down-alt`
+                                : `sort-alpha-up-alt`
+                            }
+                            />
+                          ) : (<FontAwesomeIcon icon="sort" />)}{" "}Connexion activée</th>
                         <th colSpan={3}>Actions</th>
                       </tr>
                     </thead>
