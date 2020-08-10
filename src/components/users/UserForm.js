@@ -54,7 +54,7 @@ export default () => {
     loading: false,
     data: [],
   });
-
+  var passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{9,}$/;
   const [file, setFile] = useState(new File([], ""));
   // User Id Extraction from URL
   let { id } = useParams();
@@ -109,7 +109,7 @@ export default () => {
     try {
       const organizations = await OrganizationService.getOrganizations();
       setOrganizationsData({ loading: false, data: organizations });
-      if( id === undefined ) {
+      if (id === undefined) {
         fetchOrganizationEntities(organizations[0]?.id);
       }
     } catch (e) {
@@ -138,8 +138,10 @@ export default () => {
   const fetchOrganizationEntities = async (organizationId) => {
     try {
       setEntitiesData({ loading: true });
-      const entities = await EntityService.getOrganizationEntities(organizationId);
-      console.log(entities)
+      const entities = await EntityService.getOrganizationEntities(
+        organizationId
+      );
+      console.log(entities);
       setEntitiesData({ loading: false, data: entities });
     } catch (e) {
       setEntitiesData({ loading: false, data: [] });
@@ -228,10 +230,12 @@ export default () => {
   const onSubmit = async (data) => {
     // Verify if data has file in case of update
     if (
-      (data.updateImage !== null &&
-        data.updateImage === true &&
-        (file?.size === 0 || file === undefined || file === null)) ||
-      (!user.hasOwnProperty("id") && file?.size === 0)
+      data.updateImage !== null &&
+      data.updateImage === true &&
+      (file?.size === 0 ||
+        file === undefined ||
+        file === null ||
+        file?.size === 0)
     ) {
       Swal.fire(
         "L'image d'utilisateur est invalide!",
@@ -502,31 +506,58 @@ export default () => {
                         id="password"
                         name="password"
                         autoComplete="false"
-                        defaultValue={user.password || ""}
                         className={`form-control form-control-sm shadow-sm ${
                           errors.password ? "is-invalid" : ""
                         }`}
                         ref={register({
-                          required: false,
+                          pattern: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{9,}$/i,
+                          minLength: 9,
                         })}
                         onChange={(e) => {
                           const value = e.target.value;
                           // this will clear error by only pass the name of field
                           if (
                             value === getValues("passwordConfirm")?.toString()
-                          )
-                            return clearErrors("passwordConfirm");
-                          // set an error with type and message
-                          setError("passwordConfirm", {
-                            type: "notMatch",
-                            message: "Les mots de passe ne correspondent pas!",
-                          });
+                          ) {
+                            clearErrors("passwordConfirm");
+                          } else {
+                            // set an error with type and message
+                            setError("passwordConfirm", {
+                              type: "notMatch",
+                              message:
+                                "Les mots de passe ne correspondent pas!",
+                            });
+                          }
+                          // Check pattern
+                          if (
+                            passwordPattern.test(value) === false ||
+                            value.length < 9
+                          ) {
+                            setError("password", {
+                              type: "pattern",
+                              message: "Mot de passe faible!",
+                            });
+                          } else {
+                            clearErrors("password");
+                          }
                         }}
                       />
                       {/** Required password error */}
                       {errors.password && (
                         <div className="invalid-feedback">
-                          {errors.password.message}
+                          {errors.password.type === "pattern" ? (
+                            <>
+                              Mot de passe faible, veuillez respecter le format
+                              suivant: <br />
+                              - Lettres miniscules <br />
+                              - Lettres majiscules <br />
+                              - Chiffres <br />
+                              - Caractère spéciaux <br />- Avoir une longueur
+                              minimale de 9 charactères <br />
+                            </>
+                          ) : (
+                            errors.password.message
+                          )}
                         </div>
                       )}
                     </div>
@@ -548,7 +579,6 @@ export default () => {
                         id="passwordConfirm"
                         name="passwordConfirm"
                         autoComplete="false"
-                        defaultValue={user.passwordConfirm || ""}
                         className={`form-control form-control-sm shadow-sm ${
                           errors.passwordConfirm ? "is-invalid" : ""
                         }`}
@@ -559,7 +589,6 @@ export default () => {
                           const value = e.target.value;
                           // this will clear error by only pass the name of field
                           if (getValues("password")?.toString() === value) {
-                            clearErrors("password");
                             return clearErrors("passwordConfirm");
                           }
                           // set an error with type and message
@@ -571,10 +600,10 @@ export default () => {
                       />
                       {/** Required price error */}
                       {errors.passwordConfirm && (
-                          <div className="invalid-feedback">
-                            {errors.passwordConfirm.message}
-                          </div>
-                        )}
+                        <div className="invalid-feedback">
+                          {errors.passwordConfirm.message}
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -631,71 +660,81 @@ export default () => {
                   </div>
 
                   {/** Organization */}
-                  <div className="form-group row">
-                    <label
-                      className="col-md-3 font-weight-bold"
-                      htmlFor="organization"
-                    >
-                      Organisme:{" "}
-                    </label>
-                    <div className="col-md-9">
-                      <select
-                        defaultValue={user?.organization?.id}
-                        defaultChecked={user?.organization?.id}
-                        onChange={(event) => {
-                          fetchOrganizationEntities(event.target.value);
-                        }}
-                        className={`form-control form-control-sm shadow-sm ${
-                          errors.company ? "is-invalid" : ""
-                        }`}
-                        disabled={saving || organizationsData?.loading}
-                        ref={register({
-                          required: true,
-                        })}
-                        id="organization"
-                        name="organization"
+                  {id !== undefined && (
+                    <div className="form-group row">
+                      <label
+                        className="col-md-3 font-weight-bold"
+                        htmlFor="organization"
                       >
-                        {organizationsData?.data?.map((organization, key) => (
-                          <option key={key} value={organization.id}>
-                            {organization?.name}
-                          </option>
-                        ))}
-                      </select>
+                        Organisme:{" "}
+                      </label>
+                      <div className="col-md-9">
+                        <select
+                          defaultValue={user?.organization?.id}
+                          defaultChecked={user?.organization?.id}
+                          onChange={(event) => {
+                            fetchOrganizationEntities(event.target.value);
+                          }}
+                          className={`form-control form-control-sm shadow-sm ${
+                            errors.company ? "is-invalid" : ""
+                          }`}
+                          disabled={saving || organizationsData?.loading}
+                          ref={register({
+                            required: true,
+                          })}
+                          id="organization"
+                          name="organization"
+                        >
+                          {organizationsData?.data?.map((organization, key) => (
+                            <option key={key} value={organization.id}>
+                              {organization?.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   {/** ENTITY */}
-                  <div className="form-group row">
-                    <label
-                      className="col-md-3 font-weight-bold"
-                      htmlFor="entity"
-                    >
-                      Entité:{" "}
-                    </label>
-                    <div className="col-md-9">
-                      <select
-                        value={user?.entity?.id}
-                        onChange={e => {
-                          setUser({...user, entity: entitiesData?.data?.filter(entity => entity?.id === e.target.value)[0]})
-                        }}
-                        className={`form-control form-control-sm shadow-sm ${
-                          errors.department ? "is-invalid" : ""
-                        }`}
-                        disabled={saving || entitiesData?.loading}
-                        ref={register({
-                          required: true,
-                        })}
-                        id="entity"
-                        name="entity"
+                  {id !== undefined && (
+                    <div className="form-group row">
+                      <label
+                        className="col-md-3 font-weight-bold"
+                        htmlFor="entity"
                       >
-                        {entitiesData?.data?.map((entity, key) => (
-                          <option key={key} value={entity?.id}>
-                            {entity?.name}
-                          </option>
-                        ))}
-                      </select>
+                        Entité:{" "}
+                      </label>
+                      <div className="col-md-9">
+                        <select
+                          value={user?.entity?.id}
+                          onChange={(e) => {
+                            setUser({
+                              ...user,
+                              entity: entitiesData?.data?.filter(
+                                (entity) => entity?.id === e.target.value
+                              )[0],
+                            });
+                          }}
+                          className={`form-control form-control-sm shadow-sm ${
+                            errors.department ? "is-invalid" : ""
+                          }`}
+                          disabled={saving || entitiesData?.loading}
+                          ref={register({
+                            required: false,
+                          })}
+                          id="entity"
+                          name="entity"
+                        >
+                          <option value=""></option>
+                          {entitiesData?.data?.map((entity, key) => (
+                            <option key={key} value={entity?.id}>
+                              {entity?.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   {/** LANGUAGE */}
                   <div className="form-group row">
@@ -1061,34 +1100,36 @@ export default () => {
                   </div>
 
                   {/** COUNTRY */}
-                  <div className="form-group row">
-                    <label
-                      className="col-md-3 font-weight-bold"
-                      htmlFor="country"
-                    >
-                      Pays:{" "}
-                    </label>
-                    <div className="col-md-9">
-                      <select
-                        defaultValue={user?.country}
-                        className={`form-control form-control-sm shadow-sm ${
-                          errors.location ? "is-invalid" : ""
-                        }`}
-                        disabled={saving}
-                        ref={register({
-                          required: true,
-                        })}
-                        id="country"
-                        name="country"
+                  {id !== undefined && (
+                    <div className="form-group row">
+                      <label
+                        className="col-md-3 font-weight-bold"
+                        htmlFor="country"
                       >
-                        {Object.keys(countries).map((key, index) => (
-                          <option key={index} value={countries[key].name}>
-                            {countries[key].name}
-                          </option>
-                        ))}
-                      </select>
+                        Pays:{" "}
+                      </label>
+                      <div className="col-md-9">
+                        <select
+                          defaultValue={user?.country}
+                          className={`form-control form-control-sm shadow-sm ${
+                            errors.location ? "is-invalid" : ""
+                          }`}
+                          disabled={saving}
+                          ref={register({
+                            required: true,
+                          })}
+                          id="country"
+                          name="country"
+                        >
+                          {Object.keys(countries).map((key, index) => (
+                            <option key={index} value={countries[key].name}>
+                              {countries[key].name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   {/** ZIP */}
                   <div className="form-group row">

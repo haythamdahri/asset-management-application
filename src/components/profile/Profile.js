@@ -21,7 +21,6 @@ export default () => {
   let query = useQuery();
 
   useEffect(() => {
-    console.log(query.get("settings"));
     document.title = "Profil";
     fetchCurrentUser();
   }, [reload]);

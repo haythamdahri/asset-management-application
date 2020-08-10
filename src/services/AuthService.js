@@ -21,6 +21,19 @@ class AuthService {
       });
   }
 
+  refreshUserDetails(userDetails) {
+    let userToken = JSON.parse(
+      localStorage.getItem(STORAGE_USER) || "{}"
+    );
+    userToken.roles = [];
+    if( userDetails?.roles !== null ) {
+      userDetails.roles.map((role, key) => 
+        userToken.roles = [...userToken.roles, {authority: role.roleName}]
+      )
+    }
+    localStorage.setItem(STORAGE_USER, JSON.stringify(userToken));
+  }
+
   signout(history = null) {
     localStorage.removeItem(STORAGE_USER);
     if (history != null) {
@@ -43,7 +56,7 @@ class AuthService {
   }
 
   // Check if user has role
-  async hasRole(roleName) {
+  hasRole(roleName) {
     let userToken = JSON.parse(
       localStorage.getItem(STORAGE_USER) || "{}"
     );

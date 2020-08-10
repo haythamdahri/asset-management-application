@@ -14,6 +14,10 @@ export default () => {
   const [error, setError] = useState(false);
   const [unauthorized, setUnauthorized] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [rolesMore, setRolesMore] = useState({
+    expanded: false,
+    itemsCount: 5,
+  });
   let history = useHistory();
 
   // User Id Extraction from URL
@@ -189,7 +193,13 @@ export default () => {
                       <thead align="center">
                         <tr>
                           <th scope="col">Organisme</th>
-                          <td><Link to={`/organizations/view/${user?.organization?.id}`} >{user?.organization?.name}</Link></td>
+                          <td>
+                            <Link
+                              to={`/organizations/view/${user?.organization?.id}`}
+                            >
+                              {user?.organization?.name}
+                            </Link>
+                          </td>
                         </tr>
                       </thead>
                       <tbody align="center">
@@ -237,6 +247,10 @@ export default () => {
                           </td>
                         </tr>
                         <tr>
+                          <th scope="col">Pays</th>
+                          <td>{user?.country}</td>
+                        </tr>
+                        <tr>
                           <th scope="col">Entité</th>
                           <td>
                             <Link to={`/entities/view/${user?.entity?.id}`}>
@@ -247,7 +261,7 @@ export default () => {
                         <tr>
                           <th scope="col">Crée le</th>
                           <td>
-                            <Moment format="YYYY/MM/DD HH:MM:SS">
+                            <Moment format="YYYY/MM/DD HH:mm:ss">
                               {user?.creationDate}
                             </Moment>
                           </td>
@@ -255,6 +269,53 @@ export default () => {
                         <tr>
                           <th scope="col">Connexion activée</th>
                           <td>{user?.active ? "Oui" : "Non"}</td>
+                        </tr>
+                        <tr>
+                          <th scope="col">Roles</th>
+                          <td>
+                            {user?.roles?.map((role, key) => (
+                              <div className="font-weight-bold" key={key}>
+                                {key < rolesMore.itemsCount && (
+                                  <li className="list-group-item" key={key}>
+                                    {role?.roleName}
+                                  </li>
+                                )}
+                              </div>
+                            ))}
+                            {user?.roles?.length > 5 && !rolesMore.expanded && (
+                              <Link
+                                to="#"
+                                onClick={() =>
+                                  setRolesMore({
+                                    itemsCount: user?.roles?.length,
+                                    expanded: true,
+                                  })
+                                }
+                              >
+                                Voir plus
+                              </Link>
+                            )}
+                            {user?.roles?.length > 5 && rolesMore.expanded && (
+                              <Link
+                                to="#"
+                                onClick={() =>
+                                  setRolesMore({
+                                    itemsCount: 5,
+                                    expanded: false,
+                                  })
+                                }
+                              >
+                                Voir moins
+                              </Link>
+                            )}
+                            {(user?.roles === null ||
+                              user?.roles?.length === 0) && (
+                              <li className="list-group-item">
+                                <FontAwesomeIcon icon="exclamation-circle" />{" "}
+                                Aucun role assigné
+                              </li>
+                            )}
+                          </td>
                         </tr>
                         <tr>
                           <th scope="col">Notes</th>

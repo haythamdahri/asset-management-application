@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import UserService from "../services/UserService";
+import AuthService from "../services/AuthService";
+import RoleType from "../models/RoleType";
 
 export default () => {
   const [user, setUser] = useState({});
@@ -8,7 +10,7 @@ export default () => {
   const abortController = new AbortController();
 
   useEffect(() => {
-    UserService.emitter.on('USER_UPDATED', (user) => {
+    UserService.emitter.on("USER_UPDATED", (user) => {
       setUser(user);
     });
     fetchUser();
@@ -82,93 +84,154 @@ export default () => {
             >
               {/* Add icons to the links using the .nav-icon class
          with font-awesome or any other icon font library */}
-              <li className="nav-item">
-                <Link to="/users" className="nav-link">
-                  <i className="nav-icon fas fa-users" />
-                  <p>Utilisateurs</p>
-                </Link>
-              </li>
-              <li className="nav-header">
-                  Application
-              </li>
-              <li className="nav-item">
-                <Link to="/groups" className="nav-link">
-                  <i className="nav-icon fas fa-layer-group" />
-                  <p>Groupes</p>
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/organizations" className="nav-link">
-                  <i className="nav-icon fas fa-building" />
-                  <p>Organismes</p>
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/processes" className="nav-link">
-                  <i className="nav-icon fas fa-microchip" />
-                  <p>Processus</p>
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/assets" className="nav-link">
-                <i className="nav-icon fas fa-server" />
-                  <p>Actifs</p>
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/riskanalyzes" className="nav-link">
-                <i className="nav-icon fas fa-diagnoses" />
-                  <p>Analyse des risques</p>
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/locations" className="nav-link">
-                <i className="nav-icon fas fa-map-marker-alt"></i>
-                  <p>Localisations</p>
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/entities" className="nav-link">
-                <i className="nav-icon fas fa-building"></i>
-                  <p>Entités</p>
-                </Link>
-              </li>
-              <li className="nav-header">
-                  Typologies Et Risques
-              </li>
-              <li className="nav-item">
-                <Link to="/typologies" className="nav-link">
-                <i className="nav-icon fas fa-i-cursor" />
-                  <p>Typologies des actifs</p>
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/threats" className="nav-link">
-                <i className="nav-icon fas fa-fingerprint" />
-                  <p>Menaces</p>
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/vulnerabilities" className="nav-link">
-                <i className="nav-icon fas fa-lock-open" />
-                  <p>Vulnérabilités</p>
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/riskscenarios" className="nav-link">
-                <i className="nav-icon fas fa-object-ungroup" />
-                  <p>Scénarios des risques</p>
-                </Link>
-              </li>
-              <li className="nav-header">
-                  Paramétrage
-              </li>
-              <li className="nav-item">
-                <Link to="/settings" className="nav-link">
-                <i className="nav-icon fas fa-cogs" />
-                  <p>Paramétres d'application</p>
-                </Link>
-              </li>
+              {(AuthService.hasRole(RoleType.ROLE_USERS_VIEW) ||
+                AuthService.hasRole(RoleType.ROLE_ADMIN) ||
+                AuthService.hasRole(RoleType.ROLE_SUPER_USER)) && (
+                <li className="nav-item">
+                  <Link to="/users" className="nav-link">
+                    <i className="nav-icon fas fa-users" />
+                    <p>Utilisateurs</p>
+                  </Link>
+                </li>
+              )}
+              {!(
+                !AuthService.hasRole(RoleType.ROLE_ORGANIZATIONS_VIEW) &&
+                !AuthService.hasRole(RoleType.ROLE_PROCESSES_VIEW) &&
+                !AuthService.hasRole(RoleType.ROLE_ASSETS_VIEW) &&
+                !AuthService.hasRole(RoleType.ROLE_RISKANALYZES_VIEW) &&
+                !AuthService.hasRole(RoleType.ROLE_LOCATIONS_VIEW) &&
+                !AuthService.hasRole(RoleType.ROLE_ENTITIES_VIEW) &&
+                !AuthService.hasRole(RoleType.ROLE_ADMIN) &&
+                !AuthService.hasRole(RoleType.ROLE_SUPER_USER)
+              ) && <li className="nav-header">Application</li>}
+              {(AuthService.hasRole(RoleType.ROLE_ADMIN) ||
+                AuthService.hasRole(RoleType.ROLE_SUPER_USER)) && (
+                <li className="nav-item">
+                  <Link to="/groups" className="nav-link">
+                    <i className="nav-icon fas fa-layer-group" />
+                    <p>Groupes</p>
+                  </Link>
+                </li>
+              )}
+              {(AuthService.hasRole(RoleType.ROLE_ORGANIZATIONS_VIEW) ||
+                AuthService.hasRole(RoleType.ROLE_ADMIN) ||
+                AuthService.hasRole(RoleType.ROLE_SUPER_USER)) && (
+                <li className="nav-item">
+                  <Link to="/organizations" className="nav-link">
+                    <i className="nav-icon fas fa-building" />
+                    <p>Organismes</p>
+                  </Link>
+                </li>
+              )}
+              {(AuthService.hasRole(RoleType.ROLE_PROCESSES_VIEW) ||
+                AuthService.hasRole(RoleType.ROLE_ADMIN) ||
+                AuthService.hasRole(RoleType.ROLE_SUPER_USER)) && (
+                <li className="nav-item">
+                  <Link to="/processes" className="nav-link">
+                    <i className="nav-icon fas fa-microchip" />
+                    <p>Processus</p>
+                  </Link>
+                </li>
+              )}
+              {(AuthService.hasRole(RoleType.ROLE_ASSETS_VIEW) ||
+                AuthService.hasRole(RoleType.ROLE_ADMIN) ||
+                AuthService.hasRole(RoleType.ROLE_SUPER_USER)) && (
+                <li className="nav-item">
+                  <Link to="/assets" className="nav-link">
+                    <i className="nav-icon fas fa-server" />
+                    <p>Actifs</p>
+                  </Link>
+                </li>
+              )}
+              {(AuthService.hasRole(RoleType.ROLE_RISKANALYZES_VIEW) ||
+                AuthService.hasRole(RoleType.ROLE_ADMIN) ||
+                AuthService.hasRole(RoleType.ROLE_SUPER_USER)) && (
+                <li className="nav-item">
+                  <Link to="/riskanalyzes" className="nav-link">
+                    <i className="nav-icon fas fa-diagnoses" />
+                    <p>Analyse des risques</p>
+                  </Link>
+                </li>
+              )}
+              {(AuthService.hasRole(RoleType.ROLE_LOCATIONS_VIEW) ||
+                AuthService.hasRole(RoleType.ROLE_ADMIN) ||
+                AuthService.hasRole(RoleType.ROLE_SUPER_USER)) && (
+                <li className="nav-item">
+                  <Link to="/locations" className="nav-link">
+                    <i className="nav-icon fas fa-map-marker-alt"></i>
+                    <p>Localisations</p>
+                  </Link>
+                </li>
+              )}
+              {(AuthService.hasRole(RoleType.ROLE_ENTITIES_VIEW) ||
+                AuthService.hasRole(RoleType.ROLE_ADMIN) ||
+                AuthService.hasRole(RoleType.ROLE_SUPER_USER)) && (
+                <li className="nav-item">
+                  <Link to="/entities" className="nav-link">
+                    <i className="nav-icon fas fa-building"></i>
+                    <p>Entités</p>
+                  </Link>
+                </li>
+              )}
+              {!(
+                !AuthService.hasRole(RoleType.ROLE_TYPOLOGIES_VIEW) &&
+                !AuthService.hasRole(RoleType.ROLE_THREATS_VIEW) &&
+                !AuthService.hasRole(RoleType.ROLE_VULNERABILITIES_VIEW) &&
+                !AuthService.hasRole(RoleType.ROLE_ADMIN) &&
+                !AuthService.hasRole(RoleType.ROLE_SUPER_USER)
+              ) && <li className="nav-header">Typologies Et Risques</li>}
+              {(AuthService.hasRole(RoleType.ROLE_TYPOLOGIES_VIEW) ||
+                AuthService.hasRole(RoleType.ROLE_ADMIN) ||
+                AuthService.hasRole(RoleType.ROLE_SUPER_USER)) && (
+                <li className="nav-item">
+                  <Link to="/typologies" className="nav-link">
+                    <i className="nav-icon fas fa-i-cursor" />
+                    <p>Typologies des actifs</p>
+                  </Link>
+                </li>
+              )}
+              {(AuthService.hasRole(RoleType.ROLE_THREATS_VIEW) ||
+                AuthService.hasRole(RoleType.ROLE_ADMIN) ||
+                AuthService.hasRole(RoleType.ROLE_SUPER_USER)) && (
+                <li className="nav-item">
+                  <Link to="/threats" className="nav-link">
+                    <i className="nav-icon fas fa-fingerprint" />
+                    <p>Menaces</p>
+                  </Link>
+                </li>
+              )}
+              {(AuthService.hasRole(RoleType.ROLE_VULNERABILITIES_VIEW) ||
+                AuthService.hasRole(RoleType.ROLE_ADMIN) ||
+                AuthService.hasRole(RoleType.ROLE_SUPER_USER)) && (
+                <li className="nav-item">
+                  <Link to="/vulnerabilities" className="nav-link">
+                    <i className="nav-icon fas fa-lock-open" />
+                    <p>Vulnérabilités</p>
+                  </Link>
+                </li>
+              )}
+              {(AuthService.hasRole(RoleType.ROLE_RISKSCENARIOS_VIEW) ||
+                AuthService.hasRole(RoleType.ROLE_ADMIN) ||
+                AuthService.hasRole(RoleType.ROLE_SUPER_USER)) && (
+                <li className="nav-item">
+                  <Link to="/riskscenarios" className="nav-link">
+                    <i className="nav-icon fas fa-object-ungroup" />
+                    <p>Scénarios des risques</p>
+                  </Link>
+                </li>
+              )}
+              {(AuthService.hasRole(RoleType.ROLE_ADMIN) ||
+                AuthService.hasRole(RoleType.ROLE_SUPER_USER)) && (
+                <>
+                  <li className="nav-header">Paramétrage</li>
+                  <li className="nav-item">
+                    <Link to="/settings" className="nav-link">
+                      <i className="nav-icon fas fa-cogs" />
+                      <p>Paramétres d'application</p>
+                    </Link>
+                  </li>
+                </>
+              )}
             </ul>
           </nav>
           {/* /.sidebar-menu */}

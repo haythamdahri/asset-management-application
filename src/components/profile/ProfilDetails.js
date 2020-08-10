@@ -163,7 +163,7 @@ export default ({ user, setUser }) => {
               )}
               {(user?.roles === null || user?.roles?.length === 0) && (
                 <li className="list-group-item">
-                  <FontAwesomeIcon icon="exclamation-circle" /> Aucun assigné
+                  <FontAwesomeIcon icon="exclamation-circle" /> Aucun role assigné
                 </li>
               )}
             </ul>

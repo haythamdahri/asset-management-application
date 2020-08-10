@@ -2,6 +2,7 @@ import axios from "axios";
 import authHeader from "./AuthHeader";
 import { ENABLE, DISABLE } from "./ConstantsService";
 import EventEmitter from 'eventemitter3';
+import AuthService from './AuthService';
 
 
 const API_URL = `${process.env.REACT_APP_API_URL}/api/v1/users`;
@@ -141,6 +142,8 @@ class UserService {
     return axios
       .get(`${API_URL}/profile`, { headers: authHeader() })
       .then((response) => {
+        // Refresh local storage user data
+        AuthService.refreshUserDetails(response.data);
         return response.data;
       })
       .catch((err) => {
@@ -295,7 +298,7 @@ class UserService {
         throw err;
       });
   }
-
+  
   async canEditEntity() {
     return axios
       .get(`${API_URL}/roles/checking/entities`, { headers: authHeader() })
