@@ -123,7 +123,7 @@ export default () => {
             "L'organisme à été supprimé avec succés!",
             "success"
           );
-          history.push("/groups");
+          history.push("/organizations");
         } catch (err) {
           Swal.fire(
             "Erreur!",
@@ -266,7 +266,8 @@ export default () => {
                             href="#processes"
                             data-toggle="tab"
                           >
-                            <i className="nav-icon fas fa-microchip" /> Processus
+                            <i className="nav-icon fas fa-microchip" />{" "}
+                            Processus
                           </a>
                         </li>
                       </ul>
@@ -310,6 +311,73 @@ export default () => {
                         {/* /.tab-pane */}
                         <div className="tab-pane" id="employees">
                           <div className="col-12">
+                            <div
+                              id="emplyees"
+                              className="dataTables_wrapper dt-bootstrap4"
+                            >
+                              <div className="row mt-4">
+                                <div className="col-sm-12">
+                                  <table
+                                    id="emplyees"
+                                    className="table table-bordered table-striped dataTable dtr-inline"
+                                    role="grid"
+                                    aria-describedby="emplyees_info"
+                                  >
+                                    <thead align="center">
+                                      <tr role="row">
+                                        <th>Username</th>
+                                        <th>Email</th>
+                                        <th>Nom</th>
+                                        <th>Prénom</th>
+                                        <th>Actions</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody align="center">
+                                      {!organizationUsersData.isLoading &&
+                                        organizationUsersData?.data != null &&
+                                        organizationUsersData?.data !== "" &&
+                                        organizationUsersData?.data?.map(
+                                          (user, key) => (
+                                            <tr key={key}>
+                                              <th scope="col">
+                                                {user?.username}
+                                              </th>
+                                              <td>{user?.email}</td>
+                                              <td>{user?.lastName}</td>
+                                              <td>{user?.firstName}</td>
+                                              <td>
+                                                <Link
+                                                  to={`/users/view/${user?.id}`}
+                                                  className="btn btn-outline-primary btn-sm"
+                                                >
+                                                  <FontAwesomeIcon icon="eye" />{" "}
+                                                  Voir
+                                                </Link>
+                                              </td>
+                                            </tr>
+                                          )
+                                        )}
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+                            </div>
+                            {organizationUsersData?.isLoading && (
+                              <div className="col-12 text-center pt-5 pb-5">
+                                <div className="overlay dark">
+                                  <i className="fas fa-2x fa-sync-alt fa-spin"></i>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* /.tab-content */}
+
+                        {/* /.tab-pane */}
+                        <div className="tab-pane" id="processes">
+                          <div className="col-12">
+                            <div className="col-12">
                               <div
                                 id="emplyees"
                                 className="dataTables_wrapper dt-bootstrap4"
@@ -324,30 +392,26 @@ export default () => {
                                     >
                                       <thead align="center">
                                         <tr role="row">
-                                          <th>Username</th>
-                                          <th>Email</th>
-                                          <th>Nom</th>
-                                          <th>Prénom</th>
+                                          <th>Processus</th>
                                           <th>Actions</th>
                                         </tr>
                                       </thead>
                                       <tbody align="center">
-                                        {!organizationUsersData.isLoading &&
-                                          organizationUsersData?.data != null &&
-                                          organizationUsersData?.data !== "" &&
-                                          organizationUsersData?.data?.map(
-                                            (user, key) => (
+                                        {!organizationProcessesData.isLoading &&
+                                          organizationProcessesData?.data !=
+                                            null &&
+                                          organizationProcessesData?.data !==
+                                            "" &&
+                                          organizationProcessesData?.data?.map(
+                                            (applicationProcess, key) => (
                                               <tr key={key}>
                                                 <th scope="col">
-                                                  {user?.username}
+                                                  {applicationProcess?.name}
                                                 </th>
-                                                <td>{user?.email}</td>
-                                                <td>{user?.lastName}</td>
-                                                <td>{user?.firstName}</td>
                                                 <td>
                                                   <Link
-                                                    to={`/users/view/${user?.id}`}
                                                     className="btn btn-outline-primary btn-sm"
+                                                    to={`/processes/view/${applicationProcess?.id}`}
                                                   >
                                                     <FontAwesomeIcon icon="eye" />{" "}
                                                     Voir
@@ -361,109 +425,15 @@ export default () => {
                                   </div>
                                 </div>
                               </div>
-                              {!organizationUsersData?.isLoading &&
-                                (organizationUsersData?.data === "" ||
-                                  organizationUsersData?.data?.length === 0 ||
-                                  organizationUsersData?.data === null) && (
-                                  <li className="list-group-item">
-                                    <FontAwesomeIcon icon="exclamation-circle" />{" "}
-                                    Aucun utilisateur n'a rejoint l'organisme
-                                  </li>
-                                )}
-                              {organizationUsersData?.isLoading && (
-                                <div className="col-12 text-center pt-5 pb-5">
-                                  <div className="overlay dark">
-                                    <i className="fas fa-2x fa-sync-alt fa-spin"></i>
-                                  </div>
+                            </div>
+
+                            {organizationProcessesData?.isLoading && (
+                              <div className="col-12 text-center pt-5 pb-5">
+                                <div className="overlay dark">
+                                  <i className="fas fa-2x fa-sync-alt fa-spin"></i>
                                 </div>
-                              )}
-                          </div>
-                        </div>
-
-                        {/* /.tab-content */}
-
-                        {/* /.tab-pane */}
-                        <div className="tab-pane" id="processes">
-                          <div className="col-12">
-                            <ul
-                              className="list-group list-group-flush font-weight-bold text-secondary text-center"
-                              style={{
-                                borderTop: "solid 2px blue",
-                                letterSpacing: "1px",
-                              }}
-                            >
-                              {!organizationProcessesData.isLoading &&
-                                organizationProcessesData?.data != null &&
-                                organizationProcessesData?.data !== "" &&
-                                organizationProcessesData?.data?.map(
-                                  (process, key) => (
-                                    <div key={key}>
-                                      {key < processesMore.itemsCount && (
-                                        <li
-                                          className="list-group-item"
-                                          key={key}
-                                        >
-                                          <Link
-                                            to={`/processes/view/${process?.id}`}
-                                          >
-                                            {process?.name}
-                                          </Link>
-                                        </li>
-                                      )}
-                                    </div>
-                                  )
-                                )}
-                              {organizationProcessesData?.data?.length > 5 &&
-                                !processesMore.expanded && (
-                                  <Link
-                                    to="#"
-                                    onClick={() =>
-                                      setProcessesMore({
-                                        itemsCount:
-                                          organizationProcessesData?.data
-                                            ?.length,
-                                        expanded: true,
-                                      })
-                                    }
-                                  >
-                                    Voir plus
-                                  </Link>
-                                )}
-                              {organizationProcessesData?.data?.length > 5 &&
-                                processesMore.expanded && (
-                                  <Link
-                                    to="#"
-                                    onClick={() =>
-                                      setProcessesMore({
-                                        itemsCount: 5,
-                                        expanded: false,
-                                      })
-                                    }
-                                  >
-                                    Voir moins
-                                  </Link>
-                                )}
-
-                              {!organizationProcessesData?.isLoading &&
-                                (organizationProcessesData?.data === "" ||
-                                  organizationProcessesData?.data?.length ===
-                                    0 ||
-                                  organizationProcessesData?.data === null) && (
-                                  <li className="list-group-item">
-                                    <FontAwesomeIcon icon="exclamation-circle" />{" "}
-                                    Aucun processus n'a été associé a cet
-                                    organisme
-                                  </li>
-                                )}
-
-                              {organizationProcessesData?.isLoading && (
-                                <div className="col-12 text-center pt-5 pb-5">
-                                  <div className="overlay dark">
-                                    <i className="fas fa-2x fa-sync-alt fa-spin"></i>
-                                  </div>
-                                </div>
-                              )}
-                            </ul>
+                              </div>
+                            )}
                           </div>
                         </div>
 
