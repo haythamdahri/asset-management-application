@@ -8,6 +8,7 @@ import CustomPagination from "../../pagination/components/custom-pagination/Cust
 import CustomPaginationService from "../../pagination/services/CustomPaginationService";
 import { Page } from "../../pagination/Page";
 import Moment from "react-moment";
+import { Sort } from "../../models/Sort";
 
 export default () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -17,16 +18,20 @@ export default () => {
   const [assets, setAssets] = useState([]);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
+  const [sort, setSort] = useState({ field: "", direction: Sort.DESC });
   const searchInput = useRef(null);
 
   useEffect(() => {
     document.title = "Gestion Des Analyses Des Risques";
-    fetchRiskAnalyzesPage();
     fetchAssets();
     return () => {
       setRiskAnalyzesPage(null);
     };
   }, []);
+
+  useEffect(() => {
+    fetchRiskAnalyzesPage();
+  }, [sort])
 
   const fetchAssets = async () => {
     try {
@@ -43,7 +48,8 @@ export default () => {
       setRiskAnalyzesPage(new Page());
       const response = await RiskAnalysisService.getRiskAnalysisPage(
         search,
-        riskAnalyzesPage?.pageable || new Page()
+        riskAnalyzesPage?.pageable || new Page(),
+        sort
       );
       setIsLoading(false);
       setRiskAnalyzesPage(response);
@@ -100,6 +106,7 @@ export default () => {
 
   const onSearchSubmit = async (event) => {
     event.preventDefault();
+    setSort({field: '', direction: Sort.DESC});
     // Search users
     if (!isUnAuthorized && !isError && !isLoading) {
       getPageInNewSize(20);
@@ -284,14 +291,174 @@ export default () => {
                   <table className="table table-hover table-bordered ">
                     <thead className="thead-light text-center">
                       <tr>
-                        <th>Actif</th>
-                        <th>Probabilité</th>
-                        <th>Impact financier</th>
-                        <th>Impact operationnel</th>
-                        <th>Impact réputationnel</th>
-                        <th>Impact</th>
-                        <th>Statut</th>
-                        <th>Date d'identification</th>
+                        <th
+                          style={{cursor: 'pointer'}}
+                          onClick={(e) =>
+                            setSort({
+                              field: "asset",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }
+                        >
+                          {sort?.field === "asset" ? (
+                            <FontAwesomeIcon
+                              icon={
+                                sort.direction === Sort.DESC
+                                  ? `sort-alpha-up-alt`
+                                  : `sort-alpha-down-alt`
+                              }
+                            />
+                          ) : (<FontAwesomeIcon icon="sort" />)}{" "}Actif</th>
+                        <th
+                          style={{cursor: 'pointer'}}
+                          onClick={(e) =>
+                            setSort({
+                              field: "probability",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }
+                        >
+                          {sort?.field === "probability" ? (
+                            <FontAwesomeIcon
+                              icon={
+                                sort.direction === Sort.DESC
+                                  ? `sort-alpha-up-alt`
+                                  : `sort-alpha-down-alt`
+                              }
+                            />
+                          ) : (<FontAwesomeIcon icon="sort" />)}{" "}Probabilité</th>
+                        <th
+                          style={{cursor: 'pointer'}}
+                          onClick={(e) =>
+                            setSort({
+                              field: "financialImpact",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }
+                        >
+                          {sort?.field === "financialImpact" ? (
+                            <FontAwesomeIcon
+                              icon={
+                                sort.direction === Sort.DESC
+                                  ? `sort-alpha-up-alt`
+                                  : `sort-alpha-down-alt`
+                              }
+                            />
+                          ) : (<FontAwesomeIcon icon="sort" />)}{" "}Impact financier</th>
+                        <th
+                          style={{cursor: 'pointer'}}
+                          onClick={(e) =>
+                            setSort({
+                              field: "operationalImpact",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }
+                        >
+                          {sort?.field === "operationalImpact" ? (
+                            <FontAwesomeIcon
+                              icon={
+                                sort.direction === Sort.DESC
+                                  ? `sort-alpha-up-alt`
+                                  : `sort-alpha-down-alt`
+                              }
+                            />
+                          ) : (<FontAwesomeIcon icon="sort" />)}{" "}Impact operationnel</th>
+                        <th
+                          style={{cursor: 'pointer'}}
+                          onClick={(e) =>
+                            setSort({
+                              field: "reputationalImpact",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }
+                        >
+                          {sort?.field === "reputationalImpact" ? (
+                            <FontAwesomeIcon
+                              icon={
+                                sort.direction === Sort.DESC
+                                  ? `sort-alpha-up-alt`
+                                  : `sort-alpha-down-alt`
+                              }
+                            />
+                          ) : (<FontAwesomeIcon icon="sort" />)}{" "}Impact réputationnel</th>
+                        <th
+                          style={{cursor: 'pointer'}}
+                          onClick={(e) =>
+                            setSort({
+                              field: "impact",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }
+                        >
+                          {sort?.field === "impact" ? (
+                            <FontAwesomeIcon
+                              icon={
+                                sort.direction === Sort.DESC
+                                  ? `sort-alpha-up-alt`
+                                  : `sort-alpha-down-alt`
+                              }
+                            />
+                          ) : (<FontAwesomeIcon icon="sort" />)}{" "}Impact</th>
+                        <th
+                          style={{cursor: 'pointer'}}
+                          onClick={(e) =>
+                            setSort({
+                              field: "status",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }
+                        >
+                          {sort?.field === "status" ? (
+                            <FontAwesomeIcon
+                              icon={
+                                sort.direction === Sort.DESC
+                                  ? `sort-alpha-up-alt`
+                                  : `sort-alpha-down-alt`
+                              }
+                            />
+                          ) : (<FontAwesomeIcon icon="sort" />)}{" "}Statut</th>
+                        <th
+                          style={{cursor: 'pointer'}}
+                          onClick={(e) =>
+                            setSort({
+                              field: "identificationDate",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }
+                        >
+                          {sort?.field === "identificationDate" ? (
+                            <FontAwesomeIcon
+                              icon={
+                                sort.direction === Sort.DESC
+                                  ? `sort-alpha-up-alt`
+                                  : `sort-alpha-down-alt`
+                              }
+                            />
+                          ) : (<FontAwesomeIcon icon="sort" />)}{" "}Date d'identification</th>
                         <th colSpan={4}>Actions</th>
                       </tr>
                     </thead>

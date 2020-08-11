@@ -4,11 +4,13 @@ import authHeader from "./AuthHeader";
 const API_URL = `${process.env.REACT_APP_API_URL}/api/v1/riskanalyzes`;
 
 class RiskAnalysisService {
-  getRiskAnalysisPage(assetId, pageable) {
+  getRiskAnalysisPage(assetId, pageable, sort) {
     const params = {
       assetId: assetId !== "" ? assetId : "",
       page: pageable.pageNumber,
       size: pageable.pageSize,
+      sort: sort?.field,
+      direction: sort?.direction
     };
     return axios
       .get(`${API_URL}/page`, { params, headers: authHeader() })

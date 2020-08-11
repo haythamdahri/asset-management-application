@@ -6,6 +6,7 @@ import Swal from "sweetalert2";
 import CustomPagination from "../../pagination/components/custom-pagination/CustomPagination";
 import CustomPaginationService from "../../pagination/services/CustomPaginationService";
 import { Page } from "../../pagination/Page";
+import { Sort } from "../../models/Sort";
 
 export default () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -14,6 +15,7 @@ export default () => {
   const [processesPage, setProcessesPage] = useState(new Page());
   const [isDeleting, setIsDeleting] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
+  const [sort, setSort] = useState({ field: "", direction: Sort.DESC });
   const searchInput = useRef(null);
 
   useEffect(() => {
@@ -22,7 +24,7 @@ export default () => {
     return () => {
       setProcessesPage(null);
     };
-  }, []);
+  }, [sort]);
 
   const fetchProcesses = async () => {
     const search = searchInput?.current?.value || "";
@@ -33,7 +35,8 @@ export default () => {
       setProcessesPage(new Page());
       const response = await ProcessService.getProcessesPage(
         search,
-        processesPage?.pageable || new Page()
+        processesPage?.pageable || new Page(),
+        sort
       );
       setIsLoading(false);
       setProcessesPage(response);
@@ -88,6 +91,7 @@ export default () => {
 
   const onSearchSubmit = async (event) => {
     event.preventDefault();
+    setSort({field: '', direction: Sort.DESC});
     // Search users
     if (!isUnAuthorized && !isError && !isLoading) {
       getPageInNewSize(20);
@@ -248,11 +252,111 @@ export default () => {
                   <table className="table table-hover table-bordered ">
                     <thead className="thead-light text-center">
                       <tr>
-                        <th>Nom du processus</th>
-                        <th>Description</th>
-                        <th>Organisme</th>
-                        <th>Statut</th>
-                        <th>Processus Superieur</th>
+                        <th
+                          style={{cursor: 'pointer'}}
+                          onClick={(e) =>
+                            setSort({
+                              field: "name",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }
+                        >
+                          {sort?.field === "name" ? (
+                            <FontAwesomeIcon
+                              icon={
+                                sort.direction === Sort.DESC
+                                  ? `sort-alpha-up-alt`
+                                  : `sort-alpha-down-alt`
+                              }
+                            />
+                          ) : (<FontAwesomeIcon icon="sort" />)}{" "}Nom du processus</th>
+                        <th
+                          style={{cursor: 'pointer'}}
+                          onClick={(e) =>
+                            setSort({
+                              field: "description",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }
+                        >
+                          {sort?.field === "description" ? (
+                            <FontAwesomeIcon
+                              icon={
+                                sort.direction === Sort.DESC
+                                  ? `sort-alpha-up-alt`
+                                  : `sort-alpha-down-alt`
+                              }
+                            />
+                          ) : (<FontAwesomeIcon icon="sort" />)}{" "}Description</th>
+                        <th
+                          style={{cursor: 'pointer'}}
+                          onClick={(e) =>
+                            setSort({
+                              field: "organization",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }
+                        >
+                          {sort?.field === "organization" ? (
+                            <FontAwesomeIcon
+                              icon={
+                                sort.direction === Sort.DESC
+                                  ? `sort-alpha-up-alt`
+                                  : `sort-alpha-down-alt`
+                              }
+                            />
+                          ) : (<FontAwesomeIcon icon="sort" />)}{" "}Organisme</th>
+                        <th
+                          style={{cursor: 'pointer'}}
+                          onClick={(e) =>
+                            setSort({
+                              field: "status",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }
+                        >
+                          {sort?.field === "status" ? (
+                            <FontAwesomeIcon
+                              icon={
+                                sort.direction === Sort.DESC
+                                  ? `sort-alpha-up-alt`
+                                  : `sort-alpha-down-alt`
+                              }
+                            />
+                          ) : (<FontAwesomeIcon icon="sort" />)}{" "}Statut</th>
+                        <th
+                          style={{cursor: 'pointer'}}
+                          onClick={(e) =>
+                            setSort({
+                              field: "parentProcess",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }
+                        >
+                          {sort?.field === "parentProcess" ? (
+                            <FontAwesomeIcon
+                              icon={
+                                sort.direction === Sort.DESC
+                                  ? `sort-alpha-up-alt`
+                                  : `sort-alpha-down-alt`
+                              }
+                            />
+                          ) : (<FontAwesomeIcon icon="sort" />)}{" "}Processus Superieur</th>
                         <th colSpan={4}>Actions</th>
                       </tr>
                     </thead>

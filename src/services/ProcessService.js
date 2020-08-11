@@ -82,11 +82,13 @@ class ProcessService {
       });
   }
 
-  getProcessesPage(search, pageable) {
+  getProcessesPage(search, pageable, sort) {
     const params = {
       name: search !== "" ? search : "",
       page: pageable?.pageNumber,
       size: pageable?.pageSize,
+      sort: sort?.field,
+      direction: sort?.direction
     };
     return axios
       .get(`${API_URL}/`, { params, headers: authHeader() })

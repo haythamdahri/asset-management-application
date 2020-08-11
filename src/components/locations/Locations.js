@@ -6,6 +6,7 @@ import Swal from "sweetalert2";
 import CustomPagination from "../../pagination/components/custom-pagination/CustomPagination";
 import CustomPaginationService from "../../pagination/services/CustomPaginationService";
 import { Page } from "../../pagination/Page";
+import { Sort } from "../../models/Sort";
 
 export default () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -13,6 +14,7 @@ export default () => {
   const [isUnAuthorized, setIsUnAuthorized] = useState(false);
   const [locationsPage, setLocationsPage] = useState(new Page());
   const [isDeleting, setIsDeleting] = useState(false);
+  const [sort, setSort] = useState({ field: "", direction: Sort.DESC });
   const searchInput = useRef(null);
 
   useEffect(() => {
@@ -21,7 +23,7 @@ export default () => {
     return () => {
       setLocationsPage(null);
     };
-  }, []);
+  }, [sort]);
 
   const fetchLocations = async () => {
     const search = searchInput?.current?.value || "";
@@ -32,7 +34,8 @@ export default () => {
       setLocationsPage(new Page());
       const response = await LocationService.getLocationsPage(
         search,
-        locationsPage?.pageable || new Page()
+        locationsPage?.pageable || new Page(),
+        sort
       );
       setIsLoading(false);
       setLocationsPage(response);
@@ -85,6 +88,7 @@ export default () => {
 
   const onSearchSubmit = async (event) => {
     event.preventDefault();
+    setSort({field: '', direction: Sort.DESC});
     // Search locations
     if (!isUnAuthorized && !isError && !isLoading) {
       getPageInNewSize(20);
@@ -221,10 +225,90 @@ export default () => {
                   <table className="table table-hover table-bordered ">
                     <thead className="thead-light text-center">
                       <tr>
-                        <th>Nom de la localisation</th>
-                        <th>Région</th>
-                        <th>Ville</th>
-                        <th>Code postal</th>
+                        <th
+                          style={{cursor: 'pointer'}}
+                          onClick={(e) =>
+                            setSort({
+                              field: "name",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }
+                        >
+                          {sort?.field === "name" ? (
+                            <FontAwesomeIcon
+                              icon={
+                                sort.direction === Sort.DESC
+                                  ? `sort-alpha-up-alt`
+                                  : `sort-alpha-down-alt`
+                              }
+                            />
+                          ) : (<FontAwesomeIcon icon="sort" />)}{" "}Nom de la localisation</th>
+                        <th
+                          style={{cursor: 'pointer'}}
+                          onClick={(e) =>
+                            setSort({
+                              field: "state",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }
+                        >
+                          {sort?.field === "state" ? (
+                            <FontAwesomeIcon
+                              icon={
+                                sort.direction === Sort.DESC
+                                  ? `sort-alpha-up-alt`
+                                  : `sort-alpha-down-alt`
+                              }
+                            />
+                          ) : (<FontAwesomeIcon icon="sort" />)}{" "}Région</th>
+                        <th
+                          style={{cursor: 'pointer'}}
+                          onClick={(e) =>
+                            setSort({
+                              field: "city",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }
+                        >
+                          {sort?.field === "city" ? (
+                            <FontAwesomeIcon
+                              icon={
+                                sort.direction === Sort.DESC
+                                  ? `sort-alpha-up-alt`
+                                  : `sort-alpha-down-alt`
+                              }
+                            />
+                          ) : (<FontAwesomeIcon icon="sort" />)}{" "}Ville</th>
+                        <th
+                          style={{cursor: 'pointer'}}
+                          onClick={(e) =>
+                            setSort({
+                              field: "zip",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }
+                        >
+                          {sort?.field === "zip" ? (
+                            <FontAwesomeIcon
+                              icon={
+                                sort.direction === Sort.DESC
+                                  ? `sort-alpha-up-alt`
+                                  : `sort-alpha-down-alt`
+                              }
+                            />
+                          ) : (<FontAwesomeIcon icon="sort" />)}{" "}Code postal</th>
                         <th colSpan={3}>Actions</th>
                       </tr>
                     </thead>

@@ -49,11 +49,13 @@ class LocationService {
       });
   }
 
-  getLocationsPage(search, pageable) {
+  getLocationsPage(search, pageable, sort) {
     const params = {
       search: search !== "" ? search : "",
       page: pageable?.pageNumber,
       size: pageable?.pageSize,
+      sort: sort?.field,
+      direction: sort?.direction
     };
     return axios
       .get(`${API_URL}/page`, { params, headers: authHeader() })
