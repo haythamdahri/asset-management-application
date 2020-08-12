@@ -8,6 +8,7 @@ import CustomPagination from "../../pagination/components/custom-pagination/Cust
 import CustomPaginationService from "../../pagination/services/CustomPaginationService";
 import { Page } from "../../pagination/Page";
 import Moment from "react-moment";
+import { Sort } from "../../models/Sort";
 
 export default () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -16,6 +17,7 @@ export default () => {
   const [threatsPage, setThreatsPage] = useState(new Page());
   const [isDeleting, setIsDeleting] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
+  const [sort, setSort] = useState({ field: "", direction: Sort.DESC });
   const searchInput = useRef(null);
 
   useEffect(() => {
@@ -24,7 +26,7 @@ export default () => {
     return () => {
       setThreatsPage(null);
     };
-  }, []);
+  }, [sort]);
 
   const fetchThreats = async () => {
     const search = searchInput?.current?.value || "";
@@ -35,7 +37,8 @@ export default () => {
       setThreatsPage(new Page());
       const response = await ThreatService.getThreatsPage(
         search,
-        threatsPage?.pageable || new Page()
+        threatsPage?.pageable || new Page(),
+        sort
       );
       setIsLoading(false);
       setThreatsPage(response);
@@ -88,6 +91,7 @@ export default () => {
 
   const onSearchSubmit = async (event) => {
     event.preventDefault();
+    setSort({field: '', direction: Sort.DESC});
     // Search users
     if (!isUnAuthorized && !isError && !isLoading) {
       getPageInNewSize(20);
@@ -256,11 +260,111 @@ export default () => {
                   <table className="table table-hover table-bordered ">
                     <thead className="thead-light text-center">
                       <tr>
-                        <th>Nom de la menace</th>
-                        <th>Description</th>
-                        <th>Typologie</th>
-                        <th>Statut</th>
-                        <th>Date d'identification</th>
+                        <th
+                          style={{cursor: 'pointer'}}
+                          onClick={(e) =>
+                            setSort({
+                              field: "name",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }
+                        >
+                          {sort?.field === "name" ? (
+                            <FontAwesomeIcon
+                              icon={
+                                sort.direction === Sort.DESC
+                                ? `sort-alpha-down-alt`
+                                : `sort-alpha-up-alt`
+                              }
+                            />
+                          ) : (<FontAwesomeIcon icon="sort" />)}{" "}Nom de la menace</th>
+                        <th
+                          style={{cursor: 'pointer'}}
+                          onClick={(e) =>
+                            setSort({
+                              field: "description",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }
+                        >
+                          {sort?.field === "description" ? (
+                            <FontAwesomeIcon
+                              icon={
+                                sort.direction === Sort.DESC
+                                ? `sort-alpha-down-alt`
+                                : `sort-alpha-up-alt`
+                              }
+                            />
+                          ) : (<FontAwesomeIcon icon="sort" />)}{" "}Description</th>
+                        <th
+                          style={{cursor: 'pointer'}}
+                          onClick={(e) =>
+                            setSort({
+                              field: "typology",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }
+                        >
+                          {sort?.field === "typology" ? (
+                            <FontAwesomeIcon
+                              icon={
+                                sort.direction === Sort.DESC
+                                ? `sort-alpha-down-alt`
+                                : `sort-alpha-up-alt`
+                              }
+                            />
+                          ) : (<FontAwesomeIcon icon="sort" />)}{" "}Typologie</th>
+                        <th
+                          style={{cursor: 'pointer'}}
+                          onClick={(e) =>
+                            setSort({
+                              field: "status",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }
+                        >
+                          {sort?.field === "status" ? (
+                            <FontAwesomeIcon
+                              icon={
+                                sort.direction === Sort.DESC
+                                ? `sort-alpha-down-alt`
+                                : `sort-alpha-up-alt`
+                              }
+                            />
+                          ) : (<FontAwesomeIcon icon="sort" />)}{" "}Statut</th>
+                        <th
+                          style={{cursor: 'pointer'}}
+                          onClick={(e) =>
+                            setSort({
+                              field: "identificationDate",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }
+                        >
+                          {sort?.field === "identificationDate" ? (
+                            <FontAwesomeIcon
+                              icon={
+                                sort.direction === Sort.DESC
+                                ? `sort-alpha-down-alt`
+                                : `sort-alpha-up-alt`
+                              }
+                            />
+                          ) : (<FontAwesomeIcon icon="sort" />)}{" "}Date d'identification</th>
                         <th colSpan={4}>Actions</th>
                       </tr>
                     </thead>

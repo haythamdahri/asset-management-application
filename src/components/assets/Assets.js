@@ -270,8 +270,8 @@ export default () => {
                             <FontAwesomeIcon
                               icon={
                                 sort.direction === Sort.DESC
-                                  ? `sort-alpha-up-alt`
-                                  : `sort-alpha-down-alt`
+                                ? `sort-alpha-down-alt`
+                                : `sort-alpha-up-alt`
                               }
                             />
                           ) : (<FontAwesomeIcon icon="sort" />)}{" "}Nom d'actif</th>
@@ -291,8 +291,8 @@ export default () => {
                             <FontAwesomeIcon
                               icon={
                                 sort.direction === Sort.DESC
-                                  ? `sort-alpha-up-alt`
-                                  : `sort-alpha-down-alt`
+                                ? `sort-alpha-down-alt`
+                                : `sort-alpha-up-alt`
                               }
                             />
                           ) : (<FontAwesomeIcon icon="sort" />)}{" "}Description</th>
@@ -312,8 +312,8 @@ export default () => {
                             <FontAwesomeIcon
                               icon={
                                 sort.direction === Sort.DESC
-                                  ? `sort-alpha-up-alt`
-                                  : `sort-alpha-down-alt`
+                                ? `sort-alpha-up-alt`
+                                : `sort-alpha-down-alt`
                               }
                             />
                           ) : (<FontAwesomeIcon icon="sort" />)}{" "}Propriétaire</th>
@@ -333,8 +333,8 @@ export default () => {
                             <FontAwesomeIcon
                               icon={
                                 sort.direction === Sort.DESC
-                                  ? `sort-alpha-up-alt`
-                                  : `sort-alpha-down-alt`
+                                ? `sort-alpha-up-alt`
+                                : `sort-alpha-down-alt`
                               }
                             />
                           ) : (<FontAwesomeIcon icon="sort" />)}{" "}Statut</th>
@@ -354,8 +354,8 @@ export default () => {
                             <FontAwesomeIcon
                               icon={
                                 sort.direction === Sort.DESC
-                                  ? `sort-alpha-up-alt`
-                                  : `sort-alpha-down-alt`
+                                ? `sort-alpha-up-alt`
+                                : `sort-alpha-down-alt`
                               }
                             />
                           ) : (<FontAwesomeIcon icon="sort" />)}{" "}Localisation</th>
@@ -375,8 +375,8 @@ export default () => {
                             <FontAwesomeIcon
                               icon={
                                 sort.direction === Sort.DESC
-                                  ? `sort-alpha-up-alt`
-                                  : `sort-alpha-down-alt`
+                                ? `sort-alpha-up-alt`
+                                : `sort-alpha-down-alt`
                               }
                             />
                           ) : (<FontAwesomeIcon icon="sort" />)}{" "}Processus</th>
@@ -396,8 +396,8 @@ export default () => {
                             <FontAwesomeIcon
                               icon={
                                 sort.direction === Sort.DESC
-                                  ? `sort-alpha-up-alt`
-                                  : `sort-alpha-down-alt`
+                                ? `sort-alpha-down-alt`
+                                : `sort-alpha-up-alt`
                               }
                             />
                           ) : (<FontAwesomeIcon icon="sort" />)}{" "}Date d'identification</th>

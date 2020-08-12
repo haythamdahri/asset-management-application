@@ -5,11 +5,13 @@ const API_URL = `${process.env.REACT_APP_API_URL}/api/v1/threats`;
 
 class ThreatService {
 
-    getThreatsPage(name, pageable) {
+    getThreatsPage(name, pageable, sort) {
         const params = {
           name: name !== "" ? name : "",
           page: pageable.pageNumber,
           size: pageable.pageSize,
+          sort: sort?.field,
+          direction: sort?.direction
         };
         return axios
           .get(`${API_URL}/page`, { params, headers: authHeader() })

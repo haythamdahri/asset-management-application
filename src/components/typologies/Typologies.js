@@ -6,6 +6,7 @@ import Swal from "sweetalert2";
 import CustomPagination from "../../pagination/components/custom-pagination/CustomPagination";
 import CustomPaginationService from "../../pagination/services/CustomPaginationService";
 import { Page } from "../../pagination/Page";
+import { Sort } from "../../models/Sort";
 
 export default () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -13,6 +14,7 @@ export default () => {
   const [isUnAuthorized, setIsUnAuthorized] = useState(false);
   const [typologiesPage, setTypologiesPage] = useState(new Page());
   const [isDeleting, setIsDeleting] = useState(false);
+  const [sort, setSort] = useState({ field: "", direction: Sort.DESC });
   const searchInput = useRef(null);
 
   useEffect(() => {
@@ -21,7 +23,7 @@ export default () => {
     return () => {
       setTypologiesPage(null);
     };
-  }, []);
+  }, [sort]);
 
   const fetchTypologies = async () => {
     const name = searchInput?.current?.value || "";
@@ -32,7 +34,8 @@ export default () => {
       setTypologiesPage(new Page());
       const response = await TypologyService.getTypologiesPage(
         name,
-        typologiesPage?.pageable || new Page()
+        typologiesPage?.pageable || new Page(),
+        sort
       );
       setIsLoading(false);
       setTypologiesPage(response);
@@ -66,12 +69,16 @@ export default () => {
   };
 
   const getNextPage = () => {
-    typologiesPage.pageable = CustomPaginationService.getNextPage(setTypologiesPage);
+    typologiesPage.pageable = CustomPaginationService.getNextPage(
+      setTypologiesPage
+    );
     fetchTypologies();
   };
 
   const getPreviousPage = () => {
-    typologiesPage.pageable = CustomPaginationService.getPreviousPage(setTypologiesPage);
+    typologiesPage.pageable = CustomPaginationService.getPreviousPage(
+      setTypologiesPage
+    );
     fetchTypologies();
   };
 
@@ -85,6 +92,7 @@ export default () => {
 
   const onSearchSubmit = async (event) => {
     event.preventDefault();
+    setSort({ field: "", direction: Sort.DESC });
     // Search users
     if (!isUnAuthorized && !isError && !isLoading) {
       getPageInNewSize(20);
@@ -149,7 +157,9 @@ export default () => {
                       <FontAwesomeIcon icon="home" /> Acceuil
                     </Link>
                   </li>
-                  <li className="breadcrumb-item active">Typologies des actifs</li>
+                  <li className="breadcrumb-item active">
+                    Typologies des actifs
+                  </li>
                 </ol>
               </div>
             </div>
@@ -199,13 +209,16 @@ export default () => {
               </div>
 
               <div className="col-12 mb-3 text-center">
-                <Link to="/typologies/create" className="btn btn-primary btn-sm">
+                <Link
+                  to="/typologies/create"
+                  className="btn btn-primary btn-sm"
+                >
                   <FontAwesomeIcon icon="plus-circle" /> Ajouter une typologie
                 </Link>
               </div>
 
               {/** DELTING PROGRESS */}
-              {(isDeleting ) && (
+              {isDeleting && (
                 <div className="col-12 mt-2 mb-3">
                   <div className="overlay text-center">
                     <i className="fas fa-2x fa-sync-alt fa-spin"></i>
@@ -221,8 +234,56 @@ export default () => {
                   <table className="table table-hover table-bordered ">
                     <thead className="thead-light text-center">
                       <tr>
-                        <th>Nom de la typologie</th>
-                        <th>Description</th>
+                        <th
+                          style={{ cursor: "pointer" }}
+                          onClick={(e) =>
+                            setSort({
+                              field: "name",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }
+                        >
+                          {sort?.field === "name" ? (
+                            <FontAwesomeIcon
+                              icon={
+                                sort.direction === Sort.DESC
+                                  ? `sort-alpha-down-alt`
+                                  : `sort-alpha-up-alt`
+                              }
+                            />
+                          ) : (
+                            <FontAwesomeIcon icon="sort" />
+                          )}{" "}
+                          Nom de la typologie
+                        </th>
+                        <th
+                          style={{ cursor: "pointer" }}
+                          onClick={(e) =>
+                            setSort({
+                              field: "description",
+                              direction:
+                                sort.direction === Sort.DESC
+                                  ? Sort.ASC
+                                  : Sort.DESC,
+                            })
+                          }
+                        >
+                          {sort?.field === "description" ? (
+                            <FontAwesomeIcon
+                              icon={
+                                sort.direction === Sort.DESC
+                                  ? `sort-alpha-down-alt`
+                                  : `sort-alpha-up-alt`
+                              }
+                            />
+                          ) : (
+                            <FontAwesomeIcon icon="sort" />
+                          )}{" "}
+                          Description
+                        </th>
                         <th colSpan={3}>Actions</th>
                       </tr>
                     </thead>
@@ -292,11 +353,13 @@ export default () => {
                                   0,
                                   20
                                 )} ${
-                                  typology?.description?.length > 20 ? "..." : ""
+                                  typology?.description?.length > 20
+                                    ? "..."
+                                    : ""
                                 }`,
                               }}
                             ></td>
-                             <td>
+                            <td>
                               <Link to={`/typologies/${typology?.id}/edit`}>
                                 <button className="btn btn-primary btn-sm">
                                   <FontAwesomeIcon icon="edit" color="white" />
@@ -305,7 +368,9 @@ export default () => {
                             </td>
                             <td>
                               <button
-                                onClick={(event) => deleteTypology(typology?.id)}
+                                onClick={(event) =>
+                                  deleteTypology(typology?.id)
+                                }
                                 className={`btn btn-danger btn-sm ${
                                   isDeleting ? "disabled" : ""
                                 }`}

@@ -241,6 +241,7 @@ export default () => {
                             className="form-control"
                             disabled={isUnAuthorized || isLoading ? true : ""}
                           >
+                            <option></option>
                             {assets !== null &&
                               assets !== undefined &&
                               assets?.map((asset, key) => (
@@ -433,8 +434,8 @@ export default () => {
                             <FontAwesomeIcon
                               icon={
                                 sort.direction === Sort.DESC
-                                  ? `sort-alpha-up-alt`
-                                  : `sort-alpha-down-alt`
+                                  ? `sort-alpha-down-alt`
+                                  : `sort-alpha-up-alt`
                               }
                             />
                           ) : (<FontAwesomeIcon icon="sort" />)}{" "}Statut</th>

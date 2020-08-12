@@ -268,8 +268,8 @@ export default () => {
                             <FontAwesomeIcon
                               icon={
                                 sort.direction === Sort.DESC
-                                  ? `sort-alpha-up-alt`
-                                  : `sort-alpha-down-alt`
+                                ? `sort-alpha-down-alt`
+                                : `sort-alpha-up-alt`
                               }
                             />
                           ) : (<FontAwesomeIcon icon="sort" />)}{" "}Nom du processus</th>
@@ -289,8 +289,8 @@ export default () => {
                             <FontAwesomeIcon
                               icon={
                                 sort.direction === Sort.DESC
-                                  ? `sort-alpha-up-alt`
-                                  : `sort-alpha-down-alt`
+                                ? `sort-alpha-down-alt`
+                                : `sort-alpha-up-alt`
                               }
                             />
                           ) : (<FontAwesomeIcon icon="sort" />)}{" "}Description</th>
@@ -310,8 +310,8 @@ export default () => {
                             <FontAwesomeIcon
                               icon={
                                 sort.direction === Sort.DESC
-                                  ? `sort-alpha-up-alt`
-                                  : `sort-alpha-down-alt`
+                                ? `sort-alpha-down-alt`
+                                : `sort-alpha-up-alt`
                               }
                             />
                           ) : (<FontAwesomeIcon icon="sort" />)}{" "}Organisme</th>
@@ -331,8 +331,8 @@ export default () => {
                             <FontAwesomeIcon
                               icon={
                                 sort.direction === Sort.DESC
-                                  ? `sort-alpha-up-alt`
-                                  : `sort-alpha-down-alt`
+                                ? `sort-alpha-down-alt`
+                                : `sort-alpha-up-alt`
                               }
                             />
                           ) : (<FontAwesomeIcon icon="sort" />)}{" "}Statut</th>
@@ -352,8 +352,8 @@ export default () => {
                             <FontAwesomeIcon
                               icon={
                                 sort.direction === Sort.DESC
-                                  ? `sort-alpha-up-alt`
-                                  : `sort-alpha-down-alt`
+                                ? `sort-alpha-down-alt`
+                                : `sort-alpha-up-alt`
                               }
                             />
                           ) : (<FontAwesomeIcon icon="sort" />)}{" "}Processus Superieur</th>

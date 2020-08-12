@@ -241,8 +241,8 @@ export default () => {
                             <FontAwesomeIcon
                               icon={
                                 sort.direction === Sort.DESC
-                                  ? `sort-alpha-up-alt`
-                                  : `sort-alpha-down-alt`
+                                ? `sort-alpha-down-alt`
+                                : `sort-alpha-up-alt`
                               }
                             />
                           ) : (<FontAwesomeIcon icon="sort" />)}{" "}Nom de la localisation</th>
@@ -262,8 +262,8 @@ export default () => {
                             <FontAwesomeIcon
                               icon={
                                 sort.direction === Sort.DESC
-                                  ? `sort-alpha-up-alt`
-                                  : `sort-alpha-down-alt`
+                                ? `sort-alpha-up-alt`
+                                : `sort-alpha-down-alt`
                               }
                             />
                           ) : (<FontAwesomeIcon icon="sort" />)}{" "}Région</th>
@@ -283,8 +283,8 @@ export default () => {
                             <FontAwesomeIcon
                               icon={
                                 sort.direction === Sort.DESC
-                                  ? `sort-alpha-up-alt`
-                                  : `sort-alpha-down-alt`
+                                ? `sort-alpha-down-alt`
+                                : `sort-alpha-up-alt`
                               }
                             />
                           ) : (<FontAwesomeIcon icon="sort" />)}{" "}Ville</th>
@@ -304,8 +304,8 @@ export default () => {
                             <FontAwesomeIcon
                               icon={
                                 sort.direction === Sort.DESC
-                                  ? `sort-alpha-up-alt`
-                                  : `sort-alpha-down-alt`
+                                ? `sort-alpha-down-alt`
+                                : `sort-alpha-up-alt`
                               }
                             />
                           ) : (<FontAwesomeIcon icon="sort" />)}{" "}Code postal</th>
