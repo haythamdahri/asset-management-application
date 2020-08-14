@@ -7,12 +7,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 export default ({ user, setUser }) => {
   
   useEffect(() => {
-    // Associate js files
-    const script = document.createElement("script");
-    script.src = "/js/content.js";
-    script.async = true;
-    document.body.appendChild(script);
-  }, [])
+    if( user?.hasOwnProperty("id") ) {
+      // Associate js files
+      const script = document.createElement("script");
+      script.src = "/js/content.js";
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  }, [user])
 
   return (
     <div className="col-12" key={user?.id}>

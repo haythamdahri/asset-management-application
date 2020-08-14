@@ -18,7 +18,8 @@ export default () => {
   const [loginAttempts, setLoginAttempts] = useState(0);
   const [isValidHumanCheck, setIsValidHumanCheck] = useState(false);
   const [isExpiredCaptcha, setIsExpiredCaptcha] = useState(false);
-  let captchaRef = useRef(null);
+  const [isCheckingCaptcha, setIsCheckingCaptcha] = useState(false);
+  let captchaRef;
   let abortController = new AbortController();
 
   useEffect(() => {
@@ -32,6 +33,12 @@ export default () => {
     };
   }, []);
 
+  const setCaptchaRef = (ref) => {
+    if (ref) {
+      return captchaRef = ref;
+    }
+ };
+
   const fetchCaptchaSetting = async () => {
     try {
       const captchaMaxAttempts = await SettingService.getCaptchaAttemptsSetting();
@@ -40,7 +47,7 @@ export default () => {
   };
 
   const onCaptchaChange = async (humanKey) => {
-    if( humanKey === null ) {
+    if (humanKey === null) {
       setIsExpiredCaptcha(true);
       return;
     } else {
@@ -48,14 +55,21 @@ export default () => {
     }
     // Check human key
     try {
+      setIsCheckingCaptcha(true);
       const captchaResponse = await CaptchaService.verifyCaptcha(humanKey);
       setIsValidHumanCheck(captchaResponse?.success);
-      if( captchaResponse?.success ) {
+      if (captchaResponse?.success) {
         setMessage("");
         setError(false);
+      } else {
+        setIsValidHumanCheck(false);
+        captchaRef.reset();
       }
+      setIsCheckingCaptcha(false);
     } catch (e) {
       setIsValidHumanCheck(false);
+      setIsCheckingCaptcha(false);
+      captchaRef.reset();
     }
   };
 
@@ -66,13 +80,13 @@ export default () => {
     setMessage("");
     setError(false);
     // Check if loginAttempts greater than max allowed attemps
-    if( loginAttempts >= captchaMaxAttempts && !isValidHumanCheck ) {
+    if (loginAttempts >= captchaMaxAttempts && !isValidHumanCheck) {
       // Set error with message
       setMessage("Veuillez verifier le captcha!");
       setError(true);
       setLoading(false);
       return;
-    } else if( loginAttempts >= captchaMaxAttempts && isExpiredCaptcha ) {
+    } else if (loginAttempts >= captchaMaxAttempts && isExpiredCaptcha) {
       // Set error with message
       setMessage("Le captcha est expiré!");
       setError(true);
@@ -181,8 +195,9 @@ export default () => {
                         <div className="form-group">
                           <ReCAPTCHA
                             style={{ display: "inline-block" }}
-                            sitekey="6Lfit74ZAAAAALJMmqIj1gI5h-CS0-dKhKwildCr"
+                            sitekey={process.env.REACT_APP_V2_CAPTCHA_SITE_KEY}
                             onChange={onCaptchaChange}
+                            ref={(r) => setCaptchaRef(r)}
                           />
                           {/** Required password error */}
                           <div className="invalid-feedback">
@@ -191,8 +206,16 @@ export default () => {
                         </div>
                       )}
 
+                      {isCheckingCaptcha && (
+                        <div className="d-flex justify-content-center">
+                          <div className="spinner-border text-primary spinner-border-sm" role="status">
+                            <span className="sr-only">Loading...</span>
+                          </div>
+                        </div>
+                      )}
+
                       <button
-                        disabled={loading}
+                        disabled={loading || isCheckingCaptcha}
                         type="submit"
                         className="btn btn-primary btn-block mt-4"
                       >
@@ -211,12 +234,13 @@ export default () => {
                             Se connecter
                           </>
                         )}
+                        {}
                       </button>
                       <div className="mt-4 text-center">
-                        <a href="register.html">
+                        <Link to="#">
                           Contacter votre administrateur si vous facez des
                           problèmes
-                        </a>
+                        </Link>
                       </div>
                     </form>
                   </div>

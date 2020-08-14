@@ -262,8 +262,8 @@ export default () => {
                             <FontAwesomeIcon
                               icon={
                                 sort.direction === Sort.DESC
-                                ? `sort-alpha-up-alt`
-                                : `sort-alpha-down-alt`
+                                ? `sort-alpha-down-alt`
+                                : `sort-alpha-up-alt`
                               }
                             />
                           ) : (<FontAwesomeIcon icon="sort" />)}{" "}Région</th>

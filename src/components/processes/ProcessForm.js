@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import CKEditor from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import Swal from "sweetalert2";
-import SettingService from '../../services/SettingService';
+import SettingService from "../../services/SettingService";
 
 export default () => {
   const { register, handleSubmit, errors } = useForm();
@@ -83,6 +83,11 @@ export default () => {
     try {
       const organizations = await OrganizationService.getOrganizations();
       setOrganizationsData({ loading: false, data: organizations });
+      if (id === undefined) {
+        // Fetch organization processes
+        console.log(organizations[0]?.id);
+        fetchOrganizationProcesses(organizations[0]?.id, applicationProcess);
+      }
     } catch (e) {
       setOrganizationsData({ loading: false, data: [] });
     }
@@ -110,7 +115,10 @@ export default () => {
       const applicationProcess = await ProcessService.getProcess(id);
       setApplicationProcess(applicationProcess);
       // Fetch processes by the retrieved one organization
-      fetchOrganizationProcesses(applicationProcess?.organization?.id, applicationProcess);
+      fetchOrganizationProcesses(
+        applicationProcess?.organization?.id,
+        applicationProcess
+      );
       setIsLoading(false);
       setIsUnauthorized(false);
       setIsProcessError(false);
@@ -142,7 +150,6 @@ export default () => {
   };
 
   const onSubmit = (data) => {
-    console.log(data);
     setIsSaving(true);
     const processRequest = {
       ...data,
@@ -371,11 +378,12 @@ export default () => {
                           ))}
                         </select>
                         {/** Required name error */}
-                        {errors.organization && errors.organization.type === "required" && (
-                          <div className="invalid-feedback">
-                            L'organisme du processus est requis
-                          </div>
-                        )}
+                        {errors.organization &&
+                          errors.organization.type === "required" && (
+                            <div className="invalid-feedback">
+                              L'organisme du processus est requis
+                            </div>
+                          )}
                       </div>
                     </div>
 
@@ -389,15 +397,16 @@ export default () => {
                       </label>
                       <div className="col-md-9">
                         <select
-                          value={
-                            applicationProcess?.parentProcess?.id
-                          }
+                          value={applicationProcess?.parentProcess?.id}
                           onChange={(e) => {
-                            setApplicationProcess({...applicationProcess, parentProcess: processesData?.data?.filter(p => p?.id === e.target.value)[0]})
+                            setApplicationProcess({
+                              ...applicationProcess,
+                              parentProcess: processesData?.data?.filter(
+                                (p) => p?.id === e.target.value
+                              )[0],
+                            });
                           }}
-                          defaultChecked={
-                            applicationProcess?.parentProcess?.id
-                          }
+                          defaultChecked={applicationProcess?.parentProcess?.id}
                           className={`form-control form-control-sm shadow-sm ${
                             errors.parentProcess ? "is-invalid" : ""
                           }`}
@@ -431,8 +440,14 @@ export default () => {
                           value={
                             applicationProcess?.classification?.confidentiality
                           }
-                          onChange={e => {
-                            setApplicationProcess({...applicationProcess, classification: {...applicationProcess?.classification, confidentiality: e.target.value}})
+                          onChange={(e) => {
+                            setApplicationProcess({
+                              ...applicationProcess,
+                              classification: {
+                                ...applicationProcess?.classification,
+                                confidentiality: e.target.value,
+                              },
+                            });
                           }}
                           className={`form-control form-control-sm shadow-sm ${
                             errors.confidentiality ? "is-invalid" : ""
@@ -444,18 +459,21 @@ export default () => {
                           id="confidentiality"
                           name="confidentiality"
                         >
-                          {classificationSetting?.confidentialities?.map((option, key) => (
-                            <option key={key} value={option}>
-                              {option}
-                            </option>
-                          ))}
+                          {classificationSetting?.confidentialities?.map(
+                            (option, key) => (
+                              <option key={key} value={option}>
+                                {option}
+                              </option>
+                            )
+                          )}
                         </select>
                         {/** Required name error */}
-                        {errors.confidentiality && errors.confidentiality.type === "required" && (
-                          <div className="invalid-feedback">
-                            La confidentialité du processus est requise
-                          </div>
-                        )}
+                        {errors.confidentiality &&
+                          errors.confidentiality.type === "required" && (
+                            <div className="invalid-feedback">
+                              La confidentialité du processus est requise
+                            </div>
+                          )}
                       </div>
                     </div>
 
@@ -472,8 +490,14 @@ export default () => {
                           value={
                             applicationProcess?.classification?.availability
                           }
-                          onChange={e => {
-                            setApplicationProcess({...applicationProcess, classification: {...applicationProcess?.classification, availability: e.target.value}})
+                          onChange={(e) => {
+                            setApplicationProcess({
+                              ...applicationProcess,
+                              classification: {
+                                ...applicationProcess?.classification,
+                                availability: e.target.value,
+                              },
+                            });
                           }}
                           className={`form-control form-control-sm shadow-sm ${
                             errors.availability ? "is-invalid" : ""
@@ -485,18 +509,21 @@ export default () => {
                           id="availability"
                           name="availability"
                         >
-                          {classificationSetting?.availabilities?.map((option, key) => (
-                            <option key={key} value={option}>
-                              {option}
-                            </option>
-                          ))}
+                          {classificationSetting?.availabilities?.map(
+                            (option, key) => (
+                              <option key={key} value={option}>
+                                {option}
+                              </option>
+                            )
+                          )}
                         </select>
                         {/** Required name error */}
-                        {errors.availability && errors.availability.type === "required" && (
-                          <div className="invalid-feedback">
-                            La disponibilité du processus est requise
-                          </div>
-                        )}
+                        {errors.availability &&
+                          errors.availability.type === "required" && (
+                            <div className="invalid-feedback">
+                              La disponibilité du processus est requise
+                            </div>
+                          )}
                       </div>
                     </div>
 
@@ -510,11 +537,15 @@ export default () => {
                       </label>
                       <div className="col-md-9">
                         <select
-                          value={
-                            applicationProcess?.classification?.integrity
-                          }
-                          onChange={e => {
-                            setApplicationProcess({...applicationProcess, classification: {...applicationProcess?.classification, integrity: e.target.value}})
+                          value={applicationProcess?.classification?.integrity}
+                          onChange={(e) => {
+                            setApplicationProcess({
+                              ...applicationProcess,
+                              classification: {
+                                ...applicationProcess?.classification,
+                                integrity: e.target.value,
+                              },
+                            });
                           }}
                           className={`form-control form-control-sm shadow-sm ${
                             errors.integrity ? "is-invalid" : ""
@@ -526,18 +557,21 @@ export default () => {
                           id="integrity"
                           name="integrity"
                         >
-                          {classificationSetting?.integrities?.map((option, key) => (
-                            <option key={key} value={option}>
-                              {option}
-                            </option>
-                          ))}
+                          {classificationSetting?.integrities?.map(
+                            (option, key) => (
+                              <option key={key} value={option}>
+                                {option}
+                              </option>
+                            )
+                          )}
                         </select>
                         {/** Required name error */}
-                        {errors.integrity && errors.integrity.type === "required" && (
-                          <div className="invalid-feedback">
-                            L'intégrité du processus est requise
-                          </div>
-                        )}
+                        {errors.integrity &&
+                          errors.integrity.type === "required" && (
+                            <div className="invalid-feedback">
+                              L'intégrité du processus est requise
+                            </div>
+                          )}
                       </div>
                     </div>
 
@@ -554,8 +588,14 @@ export default () => {
                           value={
                             applicationProcess?.classification?.traceability
                           }
-                          onChange={e => {
-                            setApplicationProcess({...applicationProcess, classification: {...applicationProcess?.classification, traceability: e.target.value}})
+                          onChange={(e) => {
+                            setApplicationProcess({
+                              ...applicationProcess,
+                              classification: {
+                                ...applicationProcess?.classification,
+                                traceability: e.target.value,
+                              },
+                            });
                           }}
                           className={`form-control form-control-sm shadow-sm ${
                             errors.traceability ? "is-invalid" : ""
@@ -567,18 +607,21 @@ export default () => {
                           id="traceability"
                           name="traceability"
                         >
-                          {classificationSetting?.traceabilities?.map((option, key) => (
-                            <option key={key} value={option}>
-                              {option}
-                            </option>
-                          ))}
+                          {classificationSetting?.traceabilities?.map(
+                            (option, key) => (
+                              <option key={key} value={option}>
+                                {option}
+                              </option>
+                            )
+                          )}
                         </select>
                         {/** Required name error */}
-                        {errors.traceability && errors.traceability.type === "required" && (
-                          <div className="invalid-feedback">
-                            La traçabilité du processus est requise
-                          </div>
-                        )}
+                        {errors.traceability &&
+                          errors.traceability.type === "required" && (
+                            <div className="invalid-feedback">
+                              La traçabilité du processus est requise
+                            </div>
+                          )}
                       </div>
                     </div>
 
