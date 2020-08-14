@@ -227,7 +227,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="name"
                       >
-                        Nom:{" "}
+                        Nom: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <input
@@ -259,7 +259,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="organization"
                       >
-                        Organisme:
+                        Organisme: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <select
@@ -278,7 +278,7 @@ export default () => {
                           }`}
                           disabled={isSaving || organizationsData?.isLoading}
                           ref={register({
-                            required: false,
+                            required: true,
                           })}
                           id="organization"
                           name="organization"
@@ -289,6 +289,12 @@ export default () => {
                             </option>
                           ))}
                         </select>
+                        {/** Required organization error */}
+                        {errors.organization && errors.organization.type === "required" && (
+                          <div className="invalid-feedback">
+                            L'organisme de l'entité est requis
+                          </div>
+                        )}
                       </div>
                     </div>
 

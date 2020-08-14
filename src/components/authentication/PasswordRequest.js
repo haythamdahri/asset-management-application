@@ -84,7 +84,7 @@ export default () => {
                     )}
                     <form onSubmit={handleSubmit(onSubmit)} noValidate>
                       <div className="form-group">
-                        <label htmlFor="email">Email</label>
+                        <label htmlFor="email">Email <b className="text-danger">*</b>{" "}</label>
                         <input
                           placeholder="Email"
                           name="email"

@@ -275,7 +275,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="asset"
                       >
-                        Actif:{" "}
+                        Actif: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <select
@@ -457,7 +457,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="probability"
                       >
-                        Probabilité:{" "}
+                        Probabilité: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <select
@@ -502,7 +502,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="financialImpact"
                       >
-                        Impact financier:{" "}
+                        Impact financier: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <select
@@ -545,7 +545,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="operationalImpact"
                       >
-                        Impact operationnel:{" "}
+                        Impact operationnel: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <select
@@ -588,7 +588,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="reputationalImpact"
                       >
-                        Impact réputationnel:{" "}
+                        Impact réputationnel: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <select
@@ -631,7 +631,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="riskTreatmentStrategyType"
                       >
-                        Stratégie de traitement des risques:{" "}
+                        Stratégie de traitement des risques: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <select
@@ -706,7 +706,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="targetFinancialImpact"
                       >
-                        Impact financier cible:{" "}
+                        Impact financier cible: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <select
@@ -749,7 +749,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="targetOperationalImpact"
                       >
-                        Impact operationnel cible:{" "}
+                        Impact operationnel cible: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <select
@@ -793,7 +793,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="targetReputationalImpact"
                       >
-                        Impact réputationnel cible:{" "}
+                        Impact réputationnel cible: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <select
@@ -837,7 +837,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="targetProbability"
                       >
-                        Probabilité Cible:{" "}
+                        Probabilité Cible: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <select
@@ -880,7 +880,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="targetProbability"
                       >
-                        Risque Résiduel Acceptable:{" "}
+                        Risque Résiduel Acceptable: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <select

@@ -208,7 +208,7 @@ export default () => {
                   {/** NAME */}
                   <div className="form-group row">
                     <label className="col-md-3 font-weight-bold" htmlFor="name">
-                      Nom:{" "}
+                      Nom: <b className="text-danger">*</b>{" "}
                     </label>
                     <div className="col-md-9">
                       <input

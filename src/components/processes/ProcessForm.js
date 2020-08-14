@@ -264,7 +264,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="name"
                       >
-                        Nom:{" "}
+                        Nom: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <input
@@ -335,7 +335,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="organization"
                       >
-                        Organisme:{" "}
+                        Organisme: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <select
@@ -370,6 +370,12 @@ export default () => {
                             </option>
                           ))}
                         </select>
+                        {/** Required name error */}
+                        {errors.organization && errors.organization.type === "required" && (
+                          <div className="invalid-feedback">
+                            L'organisme du processus est requis
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -418,7 +424,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="confidentiality"
                       >
-                        Confidentialité:{" "}
+                        Confidentialité: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <select
@@ -444,6 +450,12 @@ export default () => {
                             </option>
                           ))}
                         </select>
+                        {/** Required name error */}
+                        {errors.confidentiality && errors.confidentiality.type === "required" && (
+                          <div className="invalid-feedback">
+                            La confidentialité du processus est requise
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -453,7 +465,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="availability"
                       >
-                        Disponibilité:{" "}
+                        Disponibilité: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <select
@@ -479,6 +491,12 @@ export default () => {
                             </option>
                           ))}
                         </select>
+                        {/** Required name error */}
+                        {errors.availability && errors.availability.type === "required" && (
+                          <div className="invalid-feedback">
+                            La disponibilité du processus est requise
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -488,7 +506,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="integrity"
                       >
-                        Intégrité:{" "}
+                        Intégrité: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <select
@@ -514,6 +532,12 @@ export default () => {
                             </option>
                           ))}
                         </select>
+                        {/** Required name error */}
+                        {errors.integrity && errors.integrity.type === "required" && (
+                          <div className="invalid-feedback">
+                            L'intégrité du processus est requise
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -523,7 +547,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="confidentiality"
                       >
-                        Traçabilité:{" "}
+                        Traçabilité: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <select
@@ -549,6 +573,12 @@ export default () => {
                             </option>
                           ))}
                         </select>
+                        {/** Required name error */}
+                        {errors.traceability && errors.traceability.type === "required" && (
+                          <div className="invalid-feedback">
+                            La traçabilité du processus est requise
+                          </div>
+                        )}
                       </div>
                     </div>
 

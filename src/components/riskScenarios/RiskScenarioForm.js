@@ -233,7 +233,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="name"
                       >
-                        Nom:{" "}
+                        Nom: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <input
@@ -284,7 +284,7 @@ export default () => {
                       className="col-md-3 font-weight-bold"
                       htmlFor="roles"
                     >
-                      Typologie:
+                      Typologie: <b className="text-danger">*</b>
                     </label>
                     <div className="col-md-9">
                       {!typologiesData.isLoading && (
@@ -304,7 +304,7 @@ export default () => {
                           }`}
                           disabled={isSaving || typologiesData?.isLoading}
                           ref={register({
-                            required: false,
+                            required: true,
                           })}
                           id="typology"
                           name="typology"
@@ -315,6 +315,12 @@ export default () => {
                             </option>
                           ))}
                         </select>
+                      )}
+                      {/** Required name error */}
+                      {errors.typology && errors.typology.type === "required" && (
+                        <div className="invalid-feedback">
+                          La typologie est requise
+                        </div>
                       )}
                     </div>
                   </div>

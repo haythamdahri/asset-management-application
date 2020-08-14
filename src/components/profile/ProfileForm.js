@@ -141,7 +141,7 @@ export default ({ user, setUser }) => {
           {/** LASTNAME */}
           <div className="form-group row">
             <label className="col-md-3 font-weight-bold" htmlFor="lastName">
-              Nom:{" "}
+              Nom: <b className="text-danger">*</b>{" "}
             </label>
             <div className="col-md-9">
               <input
@@ -168,7 +168,7 @@ export default ({ user, setUser }) => {
           {/** FIRSTNAME */}
           <div className="form-group row">
             <label className="col-md-3 font-weight-bold" htmlFor="firstName">
-              Prénom:{" "}
+              Prénom: <b className="text-danger">*</b>{" "}
             </label>
             <div className="col-md-9">
               <input
@@ -195,7 +195,7 @@ export default ({ user, setUser }) => {
           {/** USERNAME */}
           <div className="form-group row">
             <label className="col-md-3 font-weight-bold" htmlFor="username">
-              Username:{" "}
+              Username: <b className="text-danger">*</b>{" "}
             </label>
             <div className="col-md-9">
               <input
@@ -328,7 +328,7 @@ export default ({ user, setUser }) => {
           {/** LANGUAGE */}
           <div className="form-group row">
             <label className="col-md-3 font-weight-bold" htmlFor="language">
-              Langue:{" "}
+              Langue: <b className="text-danger">*</b>{" "}
             </label>
             <div className="col-md-9">
               <select
@@ -366,7 +366,7 @@ export default ({ user, setUser }) => {
               className="col-md-3 font-weight-bold"
               htmlFor="employeeNumber"
             >
-              Titre:{" "}
+              Titre: <b className="text-danger">*</b>{" "}
             </label>
             <div className="col-9">
               <input
@@ -393,7 +393,7 @@ export default ({ user, setUser }) => {
           {/** LOCATION */}
           <div className="form-group row">
             <label className="col-md-3 font-weight-bold" htmlFor="location">
-              Localisation:{" "}
+              Localisation: <b className="text-danger">*</b>{" "}
             </label>
             <div className="col-md-9">
               <select
@@ -476,7 +476,7 @@ export default ({ user, setUser }) => {
           {/** ADDRESS */}
           <div className="form-group row">
             <label className="col-md-3 font-weight-bold" htmlFor="address">
-              Adresse:{" "}
+              Adresse: <b className="text-danger">*</b>{" "}
             </label>
             <div className="col-md-9">
               <input
@@ -503,7 +503,7 @@ export default ({ user, setUser }) => {
           {/** CITY */}
           <div className="form-group row">
             <label className="col-md-3 font-weight-bold" htmlFor="city">
-              Ville:{" "}
+              Ville: <b className="text-danger">*</b>{" "}
             </label>
             <div className="col-md-9">
               <input
@@ -530,7 +530,7 @@ export default ({ user, setUser }) => {
           {/** STATE */}
           <div className="form-group row">
             <label className="col-md-3 font-weight-bold" htmlFor="state">
-              Région:{" "}
+              Région: <b className="text-danger">*</b>{" "}
             </label>
             <div className="col-md-9">
               <input
@@ -549,7 +549,7 @@ export default ({ user, setUser }) => {
               />
               {/** Required Stock error */}
               {errors.state && errors.state.type === "required" && (
-                <div className="invalid-feedback">Région est requis</div>
+                <div className="invalid-feedback">Région est requise</div>
               )}
             </div>
           </div>
@@ -557,7 +557,7 @@ export default ({ user, setUser }) => {
           {/** COUNTRY */}
           <div className="form-group row">
             <label className="col-md-3 font-weight-bold" htmlFor="country">
-              Pays:{" "}
+              Pays: <b className="text-danger">*</b>{" "}
             </label>
             <div className="col-md-9">
               <select
@@ -584,7 +584,7 @@ export default ({ user, setUser }) => {
           {/** ZIP */}
           <div className="form-group row">
             <label className="col-md-3 font-weight-bold" htmlFor="zip">
-              Code postal:{" "}
+              Code postal: <b className="text-danger">*</b>{" "}
             </label>
             <div className="col-md-9">
               <input

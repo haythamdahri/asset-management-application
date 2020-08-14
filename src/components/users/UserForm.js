@@ -399,7 +399,7 @@ export default () => {
                       className="col-md-3 font-weight-bold"
                       htmlFor="lastName"
                     >
-                      Nom:{" "}
+                      Nom: <b className="text-danger">*</b>{" "}
                     </label>
                     <div className="col-md-9">
                       <input
@@ -430,7 +430,7 @@ export default () => {
                       className="col-md-3 font-weight-bold"
                       htmlFor="firstName"
                     >
-                      Prénom:{" "}
+                      Prénom: <b className="text-danger">*</b>{" "}
                     </label>
                     <div className="col-md-9">
                       <input
@@ -463,7 +463,7 @@ export default () => {
                       className="col-md-3 font-weight-bold"
                       htmlFor="username"
                     >
-                      Username:{" "}
+                      Username: <b className="text-danger">*</b>{" "}
                     </label>
                     <div className="col-md-9">
                       <input
@@ -496,7 +496,7 @@ export default () => {
                       className="col-md-3 font-weight-bold"
                       htmlFor="password"
                     >
-                      Mot de passe:{" "}
+                      Mot de passe: {!user?.hasOwnProperty('id') && <b className="text-danger">*</b>} {" "}
                     </label>
                     <div className="col-md-9">
                       <input
@@ -569,7 +569,7 @@ export default () => {
                       className="col-md-3 font-weight-bold"
                       htmlFor="passwordConfirm"
                     >
-                      Confirmation mot de passe:{" "}
+                      Confirmation mot de passe: {!user?.hasOwnProperty('id') && <b className="text-danger">*</b>}{" "}
                     </label>
                     <div className="col-md-9">
                       <input
@@ -635,7 +635,7 @@ export default () => {
                       className="col-md-3 font-weight-bold"
                       htmlFor="email"
                     >
-                      Email:{" "}
+                      Email: <b className="text-danger">*</b>{" "}
                     </label>
                     <div className="col-9">
                       <input
@@ -666,7 +666,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="organization"
                       >
-                        Organisme:{" "}
+                        Organisme: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <select
@@ -702,7 +702,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="entity"
                       >
-                        Entité:{" "}
+                        Entité: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <select
@@ -742,7 +742,7 @@ export default () => {
                       className="col-md-3 font-weight-bold"
                       htmlFor="language"
                     >
-                      Langue:{" "}
+                      Langue: <b className="text-danger">*</b>{" "}
                     </label>
                     <div className="col-md-9">
                       <select
@@ -780,7 +780,7 @@ export default () => {
                       className="col-md-3 font-weight-bold"
                       htmlFor="employeeNumber"
                     >
-                      Numéro d'employé:{" "}
+                      Numéro d'employé: <b className="text-danger">*</b>{" "}
                     </label>
                     <div className="col-9">
                       <input
@@ -813,7 +813,7 @@ export default () => {
                       className="col-md-3 font-weight-bold"
                       htmlFor="employeeNumber"
                     >
-                      Titre:{" "}
+                      Titre: <b className="text-danger">*</b>{" "}
                     </label>
                     <div className="col-9">
                       <input
@@ -843,7 +843,7 @@ export default () => {
                       className="col-md-3 font-weight-bold"
                       htmlFor="jobTitle"
                     >
-                      Poste:{" "}
+                      Poste: <b className="text-danger">*</b>{" "}
                     </label>
                     <div className="col-9">
                       <input
@@ -894,7 +894,7 @@ export default () => {
                         }`}
                         disabled={saving || usersData?.loading}
                         ref={register({
-                          required: true,
+                          required: false,
                         })}
                         id="manager"
                         name="manager"
@@ -920,7 +920,7 @@ export default () => {
                       className="col-md-3 font-weight-bold"
                       htmlFor="location"
                     >
-                      Localisation:{" "}
+                      Localisation: <b className="text-danger">*</b>{" "}
                     </label>
                     <div className="col-md-9">
                       <select
@@ -958,7 +958,7 @@ export default () => {
                       className="col-md-3 font-weight-bold"
                       htmlFor="phone"
                     >
-                      Téléphone:{" "}
+                      Téléphone: <b className="text-danger">*</b>{" "}
                     </label>
                     <div className="col-md-9">
                       <input
@@ -1014,7 +1014,7 @@ export default () => {
                       className="col-md-3 font-weight-bold"
                       htmlFor="address"
                     >
-                      Adresse:{" "}
+                      Adresse: <b className="text-danger">*</b>{" "}
                     </label>
                     <div className="col-md-9">
                       <input
@@ -1043,7 +1043,7 @@ export default () => {
                   {/** CITY */}
                   <div className="form-group row">
                     <label className="col-md-3 font-weight-bold" htmlFor="city">
-                      Ville:{" "}
+                      Ville: <b className="text-danger">*</b>{" "}
                     </label>
                     <div className="col-md-9">
                       <input
@@ -1073,7 +1073,7 @@ export default () => {
                       className="col-md-3 font-weight-bold"
                       htmlFor="state"
                     >
-                      Région:{" "}
+                      Région: <b className="text-danger">*</b>{" "}
                     </label>
                     <div className="col-md-9">
                       <input
@@ -1106,7 +1106,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="country"
                       >
-                        Pays:{" "}
+                        Pays: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <select
@@ -1134,7 +1134,7 @@ export default () => {
                   {/** ZIP */}
                   <div className="form-group row">
                     <label className="col-md-3 font-weight-bold" htmlFor="zip">
-                      Code postal:{" "}
+                      Code postal: <b className="text-danger">*</b>{" "}
                     </label>
                     <div className="col-md-9">
                       <input

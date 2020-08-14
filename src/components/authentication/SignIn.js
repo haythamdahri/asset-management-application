@@ -68,7 +68,7 @@ export default () => {
                     )}
                     <form onSubmit={handleSubmit(onSubmit)} noValidate>
                       <div className="form-group">
-                        <label htmlFor="email">Email</label>
+                        <label htmlFor="email">Email <b className="text-danger">*</b>{" "}</label>
                         <input
                         placeholder="Email"
                           name="email"
@@ -96,7 +96,7 @@ export default () => {
                       </div>
                       <div className="form-group">
                         <label htmlFor="password">
-                          Mot de passe
+                          Mot de passe <b className="text-danger">*</b>{" "}
                           <Link to="/reset-password" className="float-right">
                             Mot de passe oublié?
                           </Link>

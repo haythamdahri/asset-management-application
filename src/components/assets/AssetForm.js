@@ -316,7 +316,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="name"
                       >
-                        Nom:{" "}
+                        Nom: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <input
@@ -348,7 +348,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="description"
                       >
-                        Descirption:{" "}
+                        Descirption: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <CKEditor
@@ -366,7 +366,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="validatedCustomFile"
                       >
-                        Image:{" "}
+                        Image: {" "}
                       </label>
                       <div className="custom-file col-md-9">
                         <input
@@ -435,7 +435,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="process"
                       >
-                        Processus:{" "}
+                        Processus: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <select
@@ -481,7 +481,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="organization"
                       >
-                        Propriétaire:{" "}
+                        Propriétaire: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <select
@@ -520,7 +520,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="typology"
                       >
-                        Typologie:{" "}
+                        Typologie: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <select
@@ -558,7 +558,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="location"
                       >
-                        Localisation:{" "}
+                        Localisation: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <select
@@ -596,7 +596,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="confidentiality"
                       >
-                        Confidentialité:{" "}
+                        Confidentialité: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <select
@@ -637,7 +637,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="availability"
                       >
-                        Disponibilité:{" "}
+                        Disponibilité: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <select
@@ -675,7 +675,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="integrity"
                       >
-                        Intégrité:{" "}
+                        Intégrité: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <select
@@ -713,7 +713,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="confidentiality"
                       >
-                        Traçabilité:{" "}
+                        Traçabilité: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <select
@@ -754,7 +754,7 @@ export default () => {
                         id="classificationStatus"
                         name="classificationStatus"
                         ref={register({
-                          required: true,
+                          required: false,
                         })}
                         onChange={(e) => {
                           if (asset?.classification) {

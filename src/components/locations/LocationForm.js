@@ -235,7 +235,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="name"
                       >
-                        Nom:{" "}
+                        Nom: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <input
@@ -267,7 +267,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="address1"
                       >
-                        Adresse 1:{" "}
+                        Adresse 1: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <textarea
@@ -299,7 +299,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="address2"
                       >
-                        Adresse 2:{" "}
+                        Adresse 2: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <textarea
@@ -331,7 +331,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="city"
                       >
-                        Ville:{" "}
+                        Ville: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <input
@@ -363,7 +363,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="state"
                       >
-                        Région:{" "}
+                        Région: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <input
@@ -395,7 +395,7 @@ export default () => {
                       className="col-md-3 font-weight-bold"
                       htmlFor="country"
                     >
-                      Pays:{" "}
+                      Pays: <b className="text-danger">*</b>{" "}
                     </label>
                     <div className="col-md-9">
                       <select
@@ -425,7 +425,7 @@ export default () => {
                   {/** ZIP */}
                   <div className="form-group row">
                     <label className="col-md-3 font-weight-bold" htmlFor="zip">
-                      Code postal:{" "}
+                      Code postal: <b className="text-danger">*</b>{" "}
                     </label>
                     <div className="col-md-9">
                       <input
@@ -457,7 +457,7 @@ export default () => {
                       className="col-md-3 font-weight-bold"
                       htmlFor="validatedCustomFile"
                     >
-                      Image:{" "}
+                      Image: <b className="text-danger">*</b>{" "}
                     </label>
                     <div className="custom-file col-md-9">
                       <input

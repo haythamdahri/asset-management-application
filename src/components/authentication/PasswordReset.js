@@ -142,7 +142,7 @@ export default () => {
                       <form onSubmit={handleSubmit(onSubmit)} noValidate>
                         {/** PASSWORD */}
                         <div className="form-group">
-                          <label htmlFor="password">Mot de passe</label>
+                          <label htmlFor="password">Mot de passe <b className="text-danger">*</b>{" "}</label>
                           <input
                             placeholder="Mot de passe"
                             name="password"
@@ -196,7 +196,7 @@ export default () => {
                         {/** PASSWORD CONFIRMATION */}
                         <div className="form-group">
                           <label htmlFor="passwordConfirm">
-                            Confirmation mot de passe
+                            Confirmation mot de passe <b className="text-danger">*</b>{" "}
                           </label>
                           <input
                             placeholder="Confirmation mot de passe"
