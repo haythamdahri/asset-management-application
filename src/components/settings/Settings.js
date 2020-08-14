@@ -342,6 +342,14 @@ export default () => {
                           ))}
                         </p>
                       </div>
+                      <div className="callout callout-danger">
+                        <h5>Attentatives maximales sans captcha</h5>
+                        <p>
+                            <label >
+                              {setting?.maxAttemptsWithoutCaptcha}
+                            </label>
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </>

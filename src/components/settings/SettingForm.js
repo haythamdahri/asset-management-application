@@ -139,7 +139,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="minProbability"
                       >
-                        Probabilité minimale:{" "}
+                        Probabilité minimale: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <input
@@ -171,7 +171,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="maxProbability"
                       >
-                        Probabilité maximale:{" "}
+                        Probabilité maximale: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <input
@@ -203,7 +203,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="minFinancialImpact"
                       >
-                        Impact financier minimal:{" "}
+                        Impact financier minimal: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <input
@@ -235,7 +235,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="maxFinancialImpact"
                       >
-                        Impact financier maximal:{" "}
+                        Impact financier maximal: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <input
@@ -267,7 +267,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="minOperationalImpact"
                       >
-                        Impact operationnel minimal:{" "}
+                        Impact operationnel minimal: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <input
@@ -299,7 +299,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="maxOperationalImpact"
                       >
-                        Impact operationnel maximal:{" "}
+                        Impact operationnel maximal: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <input
@@ -331,7 +331,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="minReputationalImpact"
                       >
-                        Impact reputationnel minimal:{" "}
+                        Impact reputationnel minimal: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <input
@@ -363,7 +363,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="maxReputationalImpact"
                       >
-                        Impact reputationnel maximal:{" "}
+                        Impact reputationnel maximal: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <input
@@ -395,7 +395,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="minTargetFinancialImpact"
                       >
-                        Impact financier minimal cible:{" "}
+                        Impact financier minimal cible: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <input
@@ -427,7 +427,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="maxTargetFinancialImpact"
                       >
-                        Impact financier maximal cible:{" "}
+                        Impact financier maximal cible: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <input
@@ -459,7 +459,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="minTargetOperationalImpact"
                       >
-                        Impact operationnel minimal cible:{" "}
+                        Impact operationnel minimal cible: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <input
@@ -491,7 +491,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="maxTargetOperationalImpact"
                       >
-                        Impact operationnel maximal cible:{" "}
+                        Impact operationnel maximal cible: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <input
@@ -523,7 +523,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="minTargetReputationalImpact"
                       >
-                        Impact reputationnel minimal cible:{" "}
+                        Impact reputationnel minimal cible: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <input
@@ -555,7 +555,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="maxTargetReputationalImpact"
                       >
-                        Impact reputationnel maximal cible:{" "}
+                        Impact reputationnel maximal cible: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <input
@@ -587,7 +587,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="minTargetProbability"
                       >
-                        Prabilibté minimale cible:{" "}
+                        Prabilibté minimale cible: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <input
@@ -620,7 +620,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="maxTargetProbability"
                       >
-                        Prabilibté maximale cible:{" "}
+                        Prabilibté maximale cible: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <input
@@ -652,7 +652,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="minAcceptableResidualRisk"
                       >
-                        Risque risiduel minimal acceptable:{" "}
+                        Risque risiduel minimal acceptable: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <input
@@ -684,7 +684,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="maxAcceptableResidualRisk"
                       >
-                        Risque risiduel maximal acceptable:{" "}
+                        Risque risiduel maximal acceptable: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <input
@@ -718,7 +718,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="minConfidentiality"
                       >
-                        Confidentialité minimale:{" "}
+                        Confidentialité minimale: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <input
@@ -750,7 +750,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="maxConfidentiality"
                       >
-                        Confidentialité maximale:{" "}
+                        Confidentialité maximale: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <input
@@ -782,7 +782,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="minAvailability"
                       >
-                        Disponibilité minimale:{" "}
+                        Disponibilité minimale: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <input
@@ -814,7 +814,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="maxAvailability"
                       >
-                        Disponibilité maximale:{" "}
+                        Disponibilité maximale: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <input
@@ -846,7 +846,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="minIntegrity"
                       >
-                        Intégrité minimale:{" "}
+                        Intégrité minimale: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <input
@@ -878,7 +878,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="maxIntegrity"
                       >
-                        Intégrité maximale:{" "}
+                        Intégrité maximale: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <input
@@ -910,7 +910,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="minTraceability"
                       >
-                        Traçabilité minimale:{" "}
+                        Traçabilité minimale: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <input
@@ -942,7 +942,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="maxTraceability"
                       >
-                        Traçabilité maximale:{" "}
+                        Traçabilité maximale: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <input
@@ -963,6 +963,38 @@ export default () => {
                         {errors.maxTraceability && errors.maxTraceability.type === "required" && (
                           <div className="invalid-feedback">
                             Traçabilité maximale est requise
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/** MIN CAPTCHA ATTEMPTS */}
+                    <div className="form-group row">
+                      <label
+                        className="col-md-3 font-weight-bold"
+                        htmlFor="minCaptchaAttemts"
+                      >
+                        Attentatives maximales sans captcha: <b className="text-danger">*</b>{" "}
+                      </label>
+                      <div className="col-md-9">
+                        <input
+                          disabled={isSaving}
+                          placeholder="Attentative maximale sans captcha"
+                          type="number"
+                          id="maxAttemptsWithoutCaptcha"
+                          name="maxAttemptsWithoutCaptcha"
+                          defaultValue={ setting?.maxAttemptsWithoutCaptcha || ""}
+                          className={`form-control form-control-sm shadow-sm ${
+                            errors.maxAttemptsWithoutCaptcha ? "is-invalid" : ""
+                          }`}
+                          ref={register({
+                            required: true,
+                          })}
+                        />
+                        {/** Required name error */}
+                        {errors.maxAttemptsWithoutCaptcha && errors.maxAttemptsWithoutCaptcha.type === "required" && (
+                          <div className="invalid-feedback">
+                            Champ Attentatives maximale sans captcha est requis
                           </div>
                         )}
                       </div>
@@ -1001,7 +1033,7 @@ export default () => {
                           type="submit"
                           className="btn btn-warning font-weight-bold text-center mx-2"
                         >
-                          <FontAwesomeIcon icon="backward" /> Anuller
+                          <FontAwesomeIcon icon="backward" /> Retourner
                         </Link>
                       )}
                     </div>
