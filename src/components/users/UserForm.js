@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import UserService from "../../services/UserService";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useHistory } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
@@ -58,6 +58,7 @@ export default () => {
   const [file, setFile] = useState(new File([], ""));
   // User Id Extraction from URL
   let { id } = useParams();
+  const history = useHistory();
   let abortController = new AbortController();
   document.title = "Gestion Utilisateurs";
 
@@ -66,39 +67,57 @@ export default () => {
     setUserError(false);
     setUnauthorized(false);
     setUser({});
-    UserService.canEditUser()
-      .then(async (response) => {
-        if (response.hasRole) {
-          // Fetch companies
-          fetchOrganizations();
-          // Fetch lagnauges
-          fetchLanguages();
-          // Fetch users
-          fetchUsers();
-          // Fetch locations
-          fetchLocations();
-          // Fetch groups
-          fetchGroups();
-          // Fetch roles
-          await fetchRoles();
-          // Fetch Users if not a new user
-          fetchUser();
+    // Check if an entity at least exists in database
+    EntityService.getEntitiesCounter()
+      .then((counter) => {
+        if (counter > 0) {
+          UserService.canEditUser()
+            .then(async (response) => {
+              if (response.hasRole) {
+                // Fetch companies
+                fetchOrganizations();
+                // Fetch lagnauges
+                fetchLanguages();
+                // Fetch users
+                fetchUsers();
+                // Fetch locations
+                fetchLocations();
+                // Fetch groups
+                fetchGroups();
+                // Fetch roles
+                await fetchRoles();
+                // Fetch Users if not a new user
+                fetchUser();
+              } else {
+                setLoading(false);
+                setUserError(false);
+                setUnauthorized(true);
+              }
+            })
+            .catch((err) => {
+              const status = err?.response?.data?.status;
+              if (status === 403) {
+                setUnauthorized(true);
+                setUserError(false);
+              } else {
+                setUnauthorized(false);
+                setUserError(true);
+              }
+              setLoading(false);
+            });
         } else {
-          setLoading(false);
-          setUserError(false);
-          setUnauthorized(true);
+          throw new Error();
         }
       })
       .catch((err) => {
-        const status = err?.response?.data?.status;
-        if (status === 403) {
-          setUnauthorized(true);
-          setUserError(false);
-        } else {
-          setUnauthorized(false);
-          setUserError(true);
-        }
-        setLoading(false);
+        // Error message
+        Swal.fire(
+          "Aucune entité n'a été encore créee!",
+          "Veuillez créer une entité!",
+          "error"
+        );
+        // Redirect to back
+        history.goBack();
       });
     return () => {
       abortController.abort();
@@ -496,7 +515,10 @@ export default () => {
                       className="col-md-3 font-weight-bold"
                       htmlFor="password"
                     >
-                      Mot de passe: {!user?.hasOwnProperty('id') && <b className="text-danger">*</b>} {" "}
+                      Mot de passe:{" "}
+                      {!user?.hasOwnProperty("id") && (
+                        <b className="text-danger">*</b>
+                      )}{" "}
                     </label>
                     <div className="col-md-9">
                       <input
@@ -569,7 +591,10 @@ export default () => {
                       className="col-md-3 font-weight-bold"
                       htmlFor="passwordConfirm"
                     >
-                      Confirmation mot de passe: {!user?.hasOwnProperty('id') && <b className="text-danger">*</b>}{" "}
+                      Confirmation mot de passe:{" "}
+                      {!user?.hasOwnProperty("id") && (
+                        <b className="text-danger">*</b>
+                      )}{" "}
                     </label>
                     <div className="col-md-9">
                       <input

@@ -37,6 +37,17 @@ class SettingService {
           });
     }
 
+    getCaptchaAttemptsSetting() {
+        return axios
+          .get(`${API_URL}/active/captcha`, { headers: authHeader() })
+          .then((response) => {
+            return response.data;
+          })
+          .catch((err) => {
+            throw err;
+          });
+    }
+
     saveSetting(setting) {
         return axios
           .post(`${API_URL}/`, setting, { headers: authHeader() })
