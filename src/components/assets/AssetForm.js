@@ -54,7 +54,6 @@ export default () => {
       .then(async (response) => {
         fetchTypologies();
         fetchLocations();
-        await fetchProcesses();
         if (response.hasRole) {
           // Get process if id is not new
           if (id !== undefined) {
@@ -62,6 +61,7 @@ export default () => {
           } else {
             setIsLoading(false);
             setAsset({});
+            fetchProcesses();
           }
         } else {
           setIsLoading(false);
@@ -119,6 +119,7 @@ export default () => {
       const organizationId = processes?.filter((p) => p?.id === processId)[0]
         ?.organization?.id;
       if (id !== undefined) {
+        console.log("HERE")
         if (organizationId !== undefined) {
           fetchRelatedUsers(organizationId);
         }
@@ -137,10 +138,10 @@ export default () => {
       if (asset.hasOwnProperty("id")) {
         setAsset(asset);
         setDescription(asset?.description);
+        fetchProcesses(asset?.process?.id);
       } else {
         setAsset(null);
       }
-      fetchProcesses(asset?.process?.id);
       setIsLoading(false);
       setIsUnauthorized(false);
       setIsAssetError(false);
@@ -428,10 +429,10 @@ export default () => {
                       className="col-md-3 font-weight-bold"
                       htmlFor="process"
                     >
-                      Processus: {" "}
-                      <b className="text-danger">*</b>{" "}
+                      Processus: <b className="text-danger">*</b>{" "}
                     </label>
                     <div className="col-md-9">
+                      <div className="input-group">
                       <select
                         value={
                           asset.hasOwnProperty("id")
@@ -441,7 +442,7 @@ export default () => {
                         className={`form-control form-control-sm shadow-sm ${
                           errors.process ? "is-invalid" : ""
                         }`}
-                        disabled={isSaving || processesData?.isLoading}
+                        disabled={isSaving || processesData?.isLoading || usersData?.isLoading}
                         ref={register({
                           required: true,
                         })}
@@ -488,16 +489,27 @@ export default () => {
                         {processesData?.data &&
                           processesData?.data?.map((p, key) => (
                             <option key={key} value={p?.id}>
-                              {p?.name} {p?.id}
+                              {p?.name}
                             </option>
                           ))}
                       </select>
+                        {usersData?.isLoading && (
+                          <span className="input-group-addon ml-2">
+                            <div
+                              className="spinner-border spinner-border-sm text-primary"
+                              role="status"
+                            >
+                              <span className="sr-only">Loading...</span>
+                            </div>
+                          </span>
+                        )}
                       {/** Required name error */}
                       {errors.process && errors.process.type === "required" && (
                         <div className="invalid-feedback">
                           Processus est requis
                         </div>
                       )}
+                    </div>
                     </div>
                   </div>
 
@@ -510,36 +522,48 @@ export default () => {
                       Propriétaire: <b className="text-danger">*</b>{" "}
                     </label>
                     <div className="col-md-9">
-                      <select
-                        value={asset?.owner?.id}
-                        onChange={(e) => {
-                          setAsset({
-                            ...asset,
-                            owner: { ...asset.owner, id: e.target.value },
-                          });
-                        }}
-                        className={`form-control form-control-sm shadow-sm ${
-                          errors.owner ? "is-invalid" : ""
-                        }`}
-                        disabled={isSaving || usersData?.isLoading}
-                        ref={register({
-                          required: true,
-                        })}
-                        id="owner"
-                        name="owner"
-                      >
-                        {usersData?.data?.map((user, key) => (
-                          <option key={key} value={user?.id}>
-                            {user?.firstName} {user?.lastName}
-                          </option>
-                        ))}
-                      </select>
-                      {/** Required name error */}
-                      {errors.owner && errors.owner.type === "required" && (
-                        <div className="invalid-feedback">
-                          Propriétaire est requis
-                        </div>
-                      )}
+                      <div className="input-group">
+                        <select
+                          value={asset?.owner?.id}
+                          onChange={(e) => {
+                            setAsset({
+                              ...asset,
+                              owner: { ...asset.owner, id: e.target.value },
+                            });
+                          }}
+                          className={`form-control form-control-sm shadow-sm ${
+                            errors.owner ? "is-invalid" : ""
+                          }`}
+                          disabled={isSaving || usersData?.isLoading}
+                          ref={register({
+                            required: true,
+                          })}
+                          id="owner"
+                          name="owner"
+                        >
+                          {usersData?.data?.map((user, key) => (
+                            <option key={key} value={user?.id}>
+                              {user?.firstName} {user?.lastName}
+                            </option>
+                          ))}
+                        </select>
+                        {/** Required name error */}
+                        {errors.owner && errors.owner.type === "required" && (
+                          <div className="invalid-feedback">
+                            Propriétaire est requis
+                          </div>
+                        )}
+                        {usersData?.isLoading && (
+                          <span className="input-group-addon ml-2">
+                            <div
+                              className="spinner-border spinner-border-sm text-primary"
+                              role="status"
+                            >
+                              <span className="sr-only">Loading...</span>
+                            </div>
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
 

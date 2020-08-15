@@ -14,7 +14,10 @@ export default () => {
   const [isError, setIsError] = useState(false);
   const [isUnAuthorized, setIsUnAuthorized] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [processAssets, setProcessAssets] = useState({isLoading: true, data: []});
+  const [processAssetsData, setProcessAssetsData] = useState({
+    isLoading: true,
+    data: [],
+  });
   let history = useHistory();
   const aborderController = new AbortController();
 
@@ -29,6 +32,17 @@ export default () => {
       ref.current = false;
     };
   }, [id]);
+
+  const fetchProcessAssets = async () => {
+    try {
+      const assets = await ProcessService.getProcessAssets(id);
+      console.log(assets);
+      setProcessAssetsData({ isLoading: false, data: assets });
+    } catch (err) {
+      console.log(err);
+      setProcessAssetsData({ isLoading: false, data: [] });
+    }
+  };
 
   const fetchProcess = async () => {
     setIsUnAuthorized(false);
@@ -48,6 +62,7 @@ export default () => {
         setIsError(false);
         setIsUnAuthorized(false);
         // Fetch Process Assets
+        fetchProcessAssets();
         // Associate js files
         const script = document.createElement("script");
         script.src = "/js/content.js";
@@ -505,64 +520,43 @@ export default () => {
 
                         {/** Assets */}
                         <div className="tab-pane" id="asssets">
-                          <div className="col-12">
-                            <ul
-                              className="list-group list-group-flush font-weight-bold text-secondary text-center"
+                          <div className="col-12"
                               style={{
-                                borderTop: "solid 2px blue",
-                                letterSpacing: "1px",
-                              }}
-                            >
-                              {!isLoading &&
-                                applicationProcess?.assets?.length > 0 && (
-                                  <div className="row">
-                                    <div className="col-sm-12">
-                                      <table
-                                        id="permissions"
-                                        className="table table-bordered table-striped dataTable dtr-inline"
-                                        role="grid"
-                                        aria-describedby="permissions_info"
-                                      >
-                                        <thead align="center">
-                                          <tr role="row">
-                                            <th>Role</th>
-                                            <th>Actions</th>
+                                borderTop: "solid 2px blue"
+                              }}>
+                                <div className="col-sm-12 mt-2">
+                                  <table
+                                    id="permissions"
+                                    className="table table-bordered table-striped dataTable dtr-inline"
+                                    role="grid"
+                                    aria-describedby="permissions_info"
+                                  >
+                                    <thead align="center">
+                                      <tr role="row">
+                                        <th>Actif</th>
+                                        <th>Actions</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody align="center">
+                                      {!processAssetsData?.isLoading && processAssetsData?.data?.map(
+                                        (asset, key) => (
+                                          <tr key={key}>
+                                            <th scope="col">{asset?.name}</th>
+                                            <td>
+                                              <Link
+                                                to={`/assets/view/${asset?.id}`}
+                                                className="btn btn-outline-primary btn-sm"
+                                              >
+                                                <FontAwesomeIcon icon="eye" />{" "}
+                                                Voir
+                                              </Link>
+                                            </td>
                                           </tr>
-                                        </thead>
-                                        <tbody align="center">
-                                          {applicationProcess?.assets?.map(
-                                            (asset, key) => (
-                                              <tr key={key}>
-                                                <th scope="col">
-                                                  {asset?.name}
-                                                </th>
-                                                <td>
-                                                  <Link
-                                                    to={`/assets/view/${asset?.id}`}
-                                                    className="btn btn-outline-primary btn-sm"
-                                                  >
-                                                    <FontAwesomeIcon icon="eye" />{" "}
-                                                    Voir
-                                                  </Link>
-                                                </td>
-                                              </tr>
-                                            )
-                                          )}
-                                        </tbody>
-                                      </table>
-                                    </div>
-                                  </div>
-                                )}
-
-                              {!isLoading &&
-                                (applicationProcess?.assets?.length === 0 ||
-                                  applicationProcess?.assets === null) && (
-                                  <li className="list-group-item">
-                                    <FontAwesomeIcon icon="exclamation-circle" />{" "}
-                                    Aucun actif n'a été associé a ce processus
-                                  </li>
-                                )}
-                            </ul>
+                                        )
+                                      )}
+                                    </tbody>
+                                  </table>
+                                </div>
                           </div>
                         </div>
                         {/* /.tab-content */}

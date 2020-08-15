@@ -82,6 +82,18 @@ class ProcessService {
       });
   }
 
+  getProcessAssets(id) {
+    return axios
+      .get(`${API_URL}/${id}/assets`,{ headers: authHeader() })
+      .then((response) => {
+        console.log(response);
+        return response.data;
+      })
+      .catch((err) => {
+        throw err;
+      });
+  }
+
   getProcessesPage(search, pageable, sort) {
     const params = {
       name: search !== "" ? search : "",

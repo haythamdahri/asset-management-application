@@ -63,17 +63,17 @@ export default () => {
               </span>
               <div className="dropdown-divider" />
               <Link to="#" className="dropdown-item">
-                <i className="fas fa-envelope mr-2" /> 4 new messages
+                <i className="fas fa-envelope mr-2" /> 4 nouveaux messages
                 <span className="float-right text-muted text-sm">3 mins</span>
               </Link>
               <div className="dropdown-divider" />
               <Link to="#" className="dropdown-item">
-                <i className="fas fa-users mr-2" /> 8 friend requests
+                <i className="fas fa-users mr-2" /> 8 emails
                 <span className="float-right text-muted text-sm">12 heures</span>
               </Link>
               <div className="dropdown-divider" />
               <Link to="#" className="dropdown-item">
-                <i className="fas fa-file mr-2" /> 3 new reports
+                <i className="fas fa-file mr-2" /> 3 rapports
                 <span className="float-right text-muted text-sm">2 jours</span>
               </Link>
               <div className="dropdown-divider" />
