@@ -12,4 +12,7 @@ $(function () {
     },
     destroy: true
   });
+
+  // Enable Popover
+  $('[data-toggle="popover"]').popover();
 });

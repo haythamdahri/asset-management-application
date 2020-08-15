@@ -167,8 +167,8 @@ export default ({ user, setUser }) => {
                           <tr key={key}>
                             <th scope="col">{role?.roleName}</th>
                             <td>
-                              <button className="btn btn-outline-success btn-sm">
-                                <FontAwesomeIcon icon="street-view" /> Voir
+                              <button data-toggle="popover" title="Role" data-placement="left" data-trigger="focus" data-content={role?.description || role?.roleName} className="btn btn-outline-success btn-sm">
+                                <FontAwesomeIcon icon="eye" /> Voir
                               </button>
                             </td>
                           </tr>

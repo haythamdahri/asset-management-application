@@ -12,10 +12,6 @@ export default () => {
   const [error, setError] = useState(false);
   const [unauthorized, setUnauthorized] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [rolesMore, setRolesMore] = useState({
-    expanded: false,
-    itemsCount: 5,
-  });
   let history = useHistory();
 
   // User Id Extraction from URL
@@ -47,6 +43,11 @@ export default () => {
         setLoading(false);
         setError(false);
         setUnauthorized(false);
+        // Associate js files
+        const script = document.createElement("script");
+        script.src = "/js/content.js";
+        script.async = true;
+        document.body.appendChild(script);
       }
     } catch (e) {
       const status = e?.response?.status || null;
@@ -172,7 +173,7 @@ export default () => {
                   style={{ borderTop: "blue solid 2px" }}
                 >
                   <div className="table table-responsive float-left">
-                    <table className="table table-striped">
+                    <table className="table">
                       <thead align="center">
                         <tr>
                           <th scope="col">Nom</th>
@@ -180,7 +181,7 @@ export default () => {
                         </tr>
                       </thead>
                       <tbody align="center">
-                        <tr>
+                        <tr className="bg-light">
                           <th scope="col">Description</th>
                           <td>
                             {group?.description &&
@@ -201,58 +202,42 @@ export default () => {
                         <tr>
                           <th scope="col">Roles</th>
                           <td>
-                            <ul
-                              className="list-group list-group-flush w-75 font-weight-bold text-secondary"
-                              style={{
-                                borderTop: "solid 2px blue",
-                                letterSpacing: "1px",
-                              }}
-                            >
-                              {group?.roles?.map((role, key) => (
-                                <div key={key}>
-                                  {key < rolesMore.itemsCount && (
-                                    <li className="list-group-item" key={key}>
-                                      {role.roleName}
-                                    </li>
-                                  )}
-                                </div>
-                              ))}
-
-                              {group?.roles?.length > 5 && !rolesMore.expanded && (
-                                <Link
-                                  to="#"
-                                  onClick={() =>
-                                    setRolesMore({
-                                      itemsCount: group?.roles?.length,
-                                      expanded: true,
-                                    })
-                                  }
-                                >
-                                  Voir plus
-                                </Link>
-                              )}
-                              {group?.roles?.length > 5 && rolesMore.expanded && (
-                                <Link
-                                  to="#"
-                                  onClick={() =>
-                                    setRolesMore({
-                                      itemsCount: 5,
-                                      expanded: false,
-                                    })
-                                  }
-                                >
-                                  Voir moins
-                                </Link>
-                              )}
-
-                              {(group?.roles === null ||
-                                group?.roles?.length === 0) && (
-                                <li className="list-group-item">
-                                  <FontAwesomeIcon icon="exclamation-circle" />{" "}
-                                  Aucun role assigné a ce groupe
-                                </li>
-                              )}
-                            </ul>
+                            <div className="col-sm-12">
+                              <table
+                                id="permissions"
+                                className="table table-bordered table-striped dataTable dtr-inline"
+                                role="grid"
+                                aria-describedby="permissions_info"
+                              >
+                                <thead align="center">
+                                  <tr role="row">
+                                    <th>Role</th>
+                                    <th>Actions</th>
+                                  </tr>
+                                </thead>
+                                <tbody align="center">
+                                  {group?.roles?.map((role, key) => (
+                                    <tr key={key}>
+                                      <th scope="col">{role?.roleName}</th>
+                                      <td>
+                                        <button
+                                          data-toggle="popover"
+                                          title="Role"
+                                          data-placement="left"
+                                          data-trigger="focus"
+                                          data-content={
+                                            role?.description || role?.roleName
+                                          }
+                                          className="btn btn-outline-primary btn-sm"
+                                        >
+                                          <FontAwesomeIcon icon="eye" /> Voir
+                                        </button>
+                                      </td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
                           </td>
                         </tr>
                       </tbody>

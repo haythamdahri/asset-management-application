@@ -54,7 +54,9 @@ export default () => {
     loading: false,
     data: [],
   });
-  var passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{9,}$/;
+  var passwordPattern = new RegExp(
+    "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{9,})"
+  );
   const [file, setFile] = useState(new File([], ""));
   // User Id Extraction from URL
   let { id } = useParams();
@@ -291,6 +293,16 @@ export default () => {
         setError("passwordConfirm", {
           type: "required",
           message: "Les mots de passe ne correspondent pas!",
+        });
+        window.scrollTo(0, 0);
+        return;
+      } else if (
+        data?.password &&
+        (passwordPattern.test(data?.password) === false || data?.password.length < 9)
+      ) {
+        setError("password", {
+          type: "pattern",
+          message: "Mot de passe faible!",
         });
         window.scrollTo(0, 0);
         return;
@@ -532,7 +544,8 @@ export default () => {
                           errors.password ? "is-invalid" : ""
                         }`}
                         ref={register({
-                          pattern: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{9,}$/i,
+                          required: false,
+                          pattern: /^^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{9,})/i,
                           minLength: 9,
                         })}
                         onChange={(e) => {
@@ -552,8 +565,8 @@ export default () => {
                           }
                           // Check pattern
                           if (
-                            passwordPattern.test(value) === false ||
-                            value.length < 9
+                            (passwordPattern.test(value) === false ||
+                            value.length < 9)
                           ) {
                             setError("password", {
                               type: "pattern",

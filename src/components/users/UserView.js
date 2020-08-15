@@ -378,7 +378,7 @@ export default () => {
                                               {role?.roleName}
                                             </th>
                                             <td>
-                                              <button className="btn btn-outline-primary btn-sm">
+                                            <button data-toggle="popover" title="Role" data-trigger="focus" data-placement="left" data-content={role?.description || role?.roleName}  className="btn btn-outline-primary btn-sm">
                                                 <FontAwesomeIcon icon="eye" />{" "}
                                                 Voir
                                               </button>

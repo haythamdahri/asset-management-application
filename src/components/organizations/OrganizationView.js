@@ -21,10 +21,6 @@ export default () => {
     isLoading: true,
     data: [],
   });
-  const [processesMore, setProcessesMore] = useState({
-    expanded: false,
-    itemsCount: 5,
-  });
   let history = useHistory();
   const aborderController = new AbortController();
 

@@ -974,7 +974,7 @@ export default () => {
                         className="col-md-3 font-weight-bold"
                         htmlFor="minCaptchaAttemts"
                       >
-                        Attentatives maximales sans captcha: <b className="text-danger">*</b>{" "}
+                        Tentatives maximales sans captcha: <b className="text-danger">*</b>{" "}
                       </label>
                       <div className="col-md-9">
                         <input
@@ -994,7 +994,7 @@ export default () => {
                         {/** Required name error */}
                         {errors.maxAttemptsWithoutCaptcha && errors.maxAttemptsWithoutCaptcha.type === "required" && (
                           <div className="invalid-feedback">
-                            Champ Attentatives maximale sans captcha est requis
+                            Champ tentatives maximales sans captcha est requis
                           </div>
                         )}
                       </div>
