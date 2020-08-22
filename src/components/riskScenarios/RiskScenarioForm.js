@@ -114,8 +114,8 @@ export default () => {
   const onSubmit = async (data) => {
     setIsSaving(true);
     RiskScenarioService.saveRiskScenario({
-      currentTypology: typologyId,
-      riskScenario: riskScenarioId,
+      currentTypology: typologyId || riskScenarioResponse?.typologyId,
+      riskScenario: riskScenarioId || riskScenarioResponse?.riskScenario?.id,
       ...data,
       description,
     })

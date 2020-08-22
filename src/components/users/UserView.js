@@ -266,11 +266,11 @@ export default () => {
                                       <td>
                                         {user?.groups?.map((group, key) => (
                                           <Link
-                                            to={`/groups/view/${group.id}`}
+                                            to={`/groups/view/${group?.id}`}
                                             key={key}
                                           >
-                                            {group.name}
-                                            {key === user.groups.length - 1
+                                            {group?.name}
+                                            {key === user?.groups?.length - 1
                                               ? ""
                                               : " , "}
                                           </Link>

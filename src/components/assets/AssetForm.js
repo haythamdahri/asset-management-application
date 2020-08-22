@@ -7,6 +7,7 @@ import TypologyService from "../../services/TypologyService";
 import AssetService from "../../services/AssetService";
 import LocationService from "../../services/LocationService";
 import ProcessService from "../../services/ProcessService";
+import SettingService from "../../services/SettingService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import CKEditor from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
@@ -38,7 +39,7 @@ export default () => {
     isLoading: true,
     data: [],
   });
-  const classificationOptions = [1, 2, 3, 4];
+  const [classificationSetting, setClassificationSetting] = useState({});
   const [file, setFile] = useState(new File([], ""));
 
   // Process Id Extraction from URL
@@ -54,6 +55,8 @@ export default () => {
       .then(async (response) => {
         fetchTypologies();
         fetchLocations();
+        // Fetch classification settings
+        fetchClassificationSettings();
         if (response.hasRole) {
           // Get process if id is not new
           if (id !== undefined) {
@@ -81,6 +84,15 @@ export default () => {
         setIsLoading(false);
       });
   }, [reload]);
+
+  const fetchClassificationSettings = async () => {
+    try {
+      const classificationOptions = await SettingService.getClassificationSetting();
+      setClassificationSetting(classificationOptions);
+    } catch (e) {
+      setClassificationSetting(null);
+    }
+  };
 
   const fetchRelatedUsers = async (organizationId) => {
     try {
@@ -119,7 +131,7 @@ export default () => {
       const organizationId = processes?.filter((p) => p?.id === processId)[0]
         ?.organization?.id;
       if (id !== undefined) {
-        console.log("HERE")
+        console.log("HERE");
         if (organizationId !== undefined) {
           fetchRelatedUsers(organizationId);
         }
@@ -170,7 +182,6 @@ export default () => {
   };
 
   const onSubmit = (data) => {
-    console.log(data);
     // Verify if data has file in case of update
     if (
       (data.updateImage !== null &&
@@ -433,66 +444,65 @@ export default () => {
                     </label>
                     <div className="col-md-9">
                       <div className="input-group">
-                      <select
-                        value={
-                          asset.hasOwnProperty("id")
-                            ? asset?.process?.id
-                            : processesData?.data[0]?.id
-                        }
-                        className={`form-control form-control-sm shadow-sm ${
-                          errors.process ? "is-invalid" : ""
-                        }`}
-                        disabled={isSaving || processesData?.isLoading || usersData?.isLoading}
-                        ref={register({
-                          required: true,
-                        })}
-                        onChange={(e) => {
-                          setAsset({
-                            ...asset,
-                            process: {
-                              ...asset?.process,
-                              id: processesData?.data?.filter(
-                                (p) => p?.id === e.target.value
-                              )[0]?.id,
-                            },
-                          });
-                          fetchRelatedUsers(
-                            processesData.data.filter(
-                              (p) => p.id === e.target.value
-                            )[0]?.organization?.id
-                          );
-                        }}
-                        onClick={(e) => {
-                          if (
-                            processesData?.data &&
-                            processesData?.data?.length === 1
-                          ) {
+                        <select
+                          value={
+                            asset?.process?.hasOwnProperty("id")
+                              ? asset?.process?.id
+                              : processesData?.data[0]?.id
+                          }
+                          className={`form-control form-control-sm shadow-sm ${
+                            errors.process ? "is-invalid" : ""
+                          }`}
+                          disabled={
+                            isSaving ||
+                            processesData?.isLoading ||
+                            usersData?.isLoading
+                          }
+                          ref={register({
+                            required: true,
+                          })}
+                          onChange={(e) => {
+                            const newProcess = processesData?.data?.find(
+                              (p) => p?.id === e.target.value
+                            );
+                            // After asset set, users organization of the selected process will be fetched from the server
                             setAsset({
                               ...asset,
-                              process: {
-                                ...asset?.process,
-                                id: processesData?.data?.filter(
-                                  (p) => p?.id === e.target.value
-                                )[0]?.id,
-                              },
+                              process: newProcess,
                             });
-                            fetchRelatedUsers(
-                              processesData.data.filter(
-                                (p) => p.id === e.target.value
-                              )[0]?.organization?.id
-                            );
-                          }
-                        }}
-                        id="process"
-                        name="process"
-                      >
-                        {processesData?.data &&
-                          processesData?.data?.map((p, key) => (
-                            <option key={key} value={p?.id}>
-                              {p?.name}
-                            </option>
-                          ))}
-                      </select>
+                            fetchRelatedUsers(newProcess?.organization?.id);
+                          }}
+                          onClick={(e) => {
+                            if (
+                              processesData?.data &&
+                              processesData?.data?.length === 1
+                            ) {
+                              setAsset({
+                                ...asset,
+                                process: {
+                                  ...asset?.process,
+                                  id: processesData?.data?.filter(
+                                    (p) => p?.id === e.target.value
+                                  )[0]?.id,
+                                },
+                              });
+                              fetchRelatedUsers(
+                                processesData.data.filter(
+                                  (p) => p.id === e.target.value
+                                )[0]?.organization?.id
+                              );
+                            }
+                          }}
+                          id="process"
+                          name="process"
+                        >
+                          {processesData?.data &&
+                            processesData?.data?.map((p, key) => (
+                              <option key={key} value={p?.id}>
+                                {p?.name}
+                              </option>
+                            ))}
+                        </select>
                         {usersData?.isLoading && (
                           <span className="input-group-addon ml-2">
                             <div
@@ -503,13 +513,14 @@ export default () => {
                             </div>
                           </span>
                         )}
-                      {/** Required name error */}
-                      {errors.process && errors.process.type === "required" && (
-                        <div className="invalid-feedback">
-                          Processus est requis
-                        </div>
-                      )}
-                    </div>
+                        {/** Required name error */}
+                        {errors.process &&
+                          errors.process.type === "required" && (
+                            <div className="invalid-feedback">
+                              Processus est requis
+                            </div>
+                          )}
+                      </div>
                     </div>
                   </div>
 
@@ -653,8 +664,16 @@ export default () => {
                     </label>
                     <div className="col-md-9">
                       <select
-                        defaultValue={asset?.classification?.confidentiality}
-                        defaultChecked={asset?.classification?.confidentiality}
+                        value={asset?.classification?.confidentiality}
+                        onChange={(e) => {
+                          setAsset({
+                            ...asset,
+                            classification: {
+                              ...asset?.classification,
+                              confidentiality: e.target.value,
+                            },
+                          });
+                        }}
                         className={`form-control form-control-sm shadow-sm ${
                           errors.confidentiality ? "is-invalid" : ""
                         }`}
@@ -665,17 +684,19 @@ export default () => {
                         id="confidentiality"
                         name="confidentiality"
                       >
-                        {classificationOptions.map((option, key) => (
-                          <option key={key} value={option}>
-                            {option}
-                          </option>
-                        ))}
+                        {classificationSetting?.confidentialities?.map(
+                          (option, key) => (
+                            <option key={key} value={option}>
+                              {option}
+                            </option>
+                          )
+                        )}
                       </select>
                       {/** Required name error */}
                       {errors.confidentiality &&
                         errors.confidentiality.type === "required" && (
                           <div className="invalid-feedback">
-                            La confidentialité de la classification est requise
+                            La confidentialité du processus est requise
                           </div>
                         )}
                     </div>
@@ -691,8 +712,16 @@ export default () => {
                     </label>
                     <div className="col-md-9">
                       <select
-                        defaultValue={asset?.classification?.availability}
-                        defaultChecked={asset?.classification?.availability}
+                        value={asset?.classification?.availability}
+                        onChange={(e) => {
+                          setAsset({
+                            ...asset,
+                            classification: {
+                              ...asset?.classification,
+                              availability: e.target.value,
+                            },
+                          });
+                        }}
                         className={`form-control form-control-sm shadow-sm ${
                           errors.availability ? "is-invalid" : ""
                         }`}
@@ -703,17 +732,19 @@ export default () => {
                         id="availability"
                         name="availability"
                       >
-                        {classificationOptions.map((option, key) => (
-                          <option key={key} value={option}>
-                            {option}
-                          </option>
-                        ))}
+                        {classificationSetting?.availabilities?.map(
+                          (option, key) => (
+                            <option key={key} value={option}>
+                              {option}
+                            </option>
+                          )
+                        )}
                       </select>
                       {/** Required name error */}
                       {errors.availability &&
                         errors.availability.type === "required" && (
                           <div className="invalid-feedback">
-                            La disponibilité de la classification est requise
+                            La disponibilité de l'actif est requise
                           </div>
                         )}
                     </div>
@@ -729,8 +760,16 @@ export default () => {
                     </label>
                     <div className="col-md-9">
                       <select
-                        defaultValue={asset?.classification?.integrity}
-                        defaultChecked={asset?.classification?.integrity}
+                        value={asset?.classification?.integrity}
+                        onChange={(e) => {
+                          setAsset({
+                            ...asset,
+                            classification: {
+                              ...asset?.classification,
+                              integrity: e.target.value,
+                            },
+                          });
+                        }}
                         className={`form-control form-control-sm shadow-sm ${
                           errors.integrity ? "is-invalid" : ""
                         }`}
@@ -741,17 +780,19 @@ export default () => {
                         id="integrity"
                         name="integrity"
                       >
-                        {classificationOptions.map((option, key) => (
-                          <option key={key} value={option}>
-                            {option}
-                          </option>
-                        ))}
+                        {classificationSetting?.integrities?.map(
+                          (option, key) => (
+                            <option key={key} value={option}>
+                              {option}
+                            </option>
+                          )
+                        )}
                       </select>
                       {/** Required name error */}
                       {errors.integrity &&
                         errors.integrity.type === "required" && (
                           <div className="invalid-feedback">
-                            L'intégrité de la classification est requise
+                            L'intégrité de l'actif est requise
                           </div>
                         )}
                     </div>
@@ -767,8 +808,16 @@ export default () => {
                     </label>
                     <div className="col-md-9">
                       <select
-                        defaultValue={asset?.classification?.traceability}
-                        defaultChecked={asset?.classification?.traceability}
+                        value={asset?.classification?.traceability}
+                        onChange={(e) => {
+                          setAsset({
+                            ...asset,
+                            classification: {
+                              ...asset?.classification,
+                              traceability: e.target.value,
+                            },
+                          });
+                        }}
                         className={`form-control form-control-sm shadow-sm ${
                           errors.traceability ? "is-invalid" : ""
                         }`}
@@ -779,17 +828,19 @@ export default () => {
                         id="traceability"
                         name="traceability"
                       >
-                        {classificationOptions.map((option, key) => (
-                          <option key={key} value={option}>
-                            {option}
-                          </option>
-                        ))}
+                        {classificationSetting?.traceabilities?.map(
+                          (option, key) => (
+                            <option key={key} value={option}>
+                              {option}
+                            </option>
+                          )
+                        )}
                       </select>
                       {/** Required name error */}
                       {errors.traceability &&
                         errors.traceability.type === "required" && (
                           <div className="invalid-feedback">
-                            La traçabilité de la classification est requise
+                            La traçabilité de l'actif est requise
                           </div>
                         )}
                     </div>

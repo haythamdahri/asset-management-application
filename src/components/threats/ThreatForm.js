@@ -115,13 +115,12 @@ export default () => {
   const onSubmit = async (data) => {
     setIsSaving(true);
     ThreatService.saveThreat({
-      currentTypology: typologyId,
-      threat: threatId,
+      currentTypology: typologyId || threatResponse?.typologyId,
+      threat: threatId || threatResponse?.threat?.id,
       ...data,
       description,
     })
       .then((threat) => {
-          console.log(threat);
         setThreatResponse(threat);
         setIsSaving(false);
         Swal.fire(

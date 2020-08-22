@@ -87,9 +87,9 @@ export default ({ user, setUser }) => {
           <b className="ml-5">Groupes</b>
           <span className="float-right mr-5">
             {user?.groups?.map((group, key) => (
-              <Link key={key} to={`/groups/view/${group.id}`}>
-                {group.name}
-                {key === user.groups.length - 1 ? "" : " , "}
+              <Link key={key} to={`/groups/view/${group?.id}`}>
+                {group?.name}
+                {key === user?.groups?.length - 1 ? "" : " , "}
               </Link>
             ))}
           </span>

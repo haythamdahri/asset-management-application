@@ -133,6 +133,10 @@ export default () => {
     try {
       const assets = await AssetService.getAssets();
       setAssets(assets);
+      // Fetch first asset typology
+      if( assetId === undefined ) {
+        fetchTypologyAssets(assets[0]?.id);
+      }
     } catch (e) {
       setAssets([]);
     }
@@ -279,8 +283,7 @@ export default () => {
                       </label>
                       <div className="col-md-9">
                         <select
-                          defaultValue={riskAnalysisResponse?.assetId || ""}
-                          defaultChecked={riskAnalysisResponse?.assetId || ""}
+                          value={riskAnalysisResponse?.assetId}
                           className={`form-control form-control-sm shadow-sm ${
                             errors.process ? "is-invalid" : ""
                           }`}
@@ -289,6 +292,7 @@ export default () => {
                             required: true,
                           })}
                           onChange={(e) => {
+                            setRiskAnalysisResponse({...riskAnalysisResponse, assetId: e?.target?.value, asset: e?.target?.value, })
                             fetchTypologyAssets(e.target.value);
                           }}
                           id="asset"

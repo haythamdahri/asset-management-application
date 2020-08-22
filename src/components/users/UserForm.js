@@ -1305,10 +1305,10 @@ export default () => {
                           style={{ height: "100px" }}
                           multiple
                           defaultValue={user?.groups?.map(
-                            (group, key) => group.id
+                            (group, key) => group?.id
                           )}
                           defaultChecked={user?.groups?.map(
-                            (group, key) => group.id
+                            (group, key) => group?.id
                           )}
                           onClick={(event) => {
                             if (
