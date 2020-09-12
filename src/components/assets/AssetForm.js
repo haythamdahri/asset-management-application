@@ -450,7 +450,7 @@ export default () => {
                               ? asset?.process?.id
                               : processesData?.data[0]?.id
                           }
-                          className={`form-control form-control-sm shadow-sm ${
+                          className={`select2 form-control form-control-sm shadow-sm ${
                             errors.process ? "is-invalid" : ""
                           }`}
                           disabled={

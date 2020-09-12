@@ -590,7 +590,7 @@ export default () => {
                     </div>
                   )}
                   <div className="inner">
-                    <h3>{groupsData.counter}</h3>
+                    <h3>{locationsData.counter}</h3>
                     <p>Localisations</p>
                   </div>
                   <div className="icon">

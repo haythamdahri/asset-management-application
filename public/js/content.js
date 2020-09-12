@@ -15,4 +15,10 @@ $(function () {
 
   // Enable Popover
   $('[data-toggle="popover"]').popover();
+
+
+  // Enable Select2
+  $(document).ready(function () {
+    $('.select2').select2();
+  });
 });

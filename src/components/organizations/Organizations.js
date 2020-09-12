@@ -142,7 +142,7 @@ export default () => {
           <div className="container-fluid">
             <div className="row mb-2">
               <div className="col-sm-6">
-                <h1>Users</h1>
+                <h1>Organizations</h1>
               </div>
               <div className="col-sm-6">
                 <ol className="breadcrumb float-sm-right">

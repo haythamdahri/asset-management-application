@@ -45,6 +45,9 @@
   <link rel="stylesheet" href="%PUBLIC_URL%/plugins/daterangepicker/daterangepicker.css">
   <!-- summernote -->
   <link rel="stylesheet" href="%PUBLIC_URL%/plugins/summernote/summernote-bs4.css">
+  <!-- Select2 -->
+  <link rel="stylesheet" href="%PUBLIC_URL%/plugins/select2/css/select2.min.css">
+  <link rel="stylesheet" href="%PUBLIC_URL%/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
   <title>Asset Management</title>
@@ -98,10 +101,19 @@
   <script src="%PUBLIC_URL%/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
   <!-- Summernote -->
   <script src="%PUBLIC_URL%/plugins/summernote/summernote-bs4.min.js"></script>
+  <!-- Select2 -->
+  <script src="%PUBLIC_URL%/plugins/select2/js/select2.full.min.js"></script>
   <!-- overlayScrollbars -->
   <script src="%PUBLIC_URL%/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
   <!-- AdminLTE App -->
   <script src="%PUBLIC_URL%/dist/js/adminlte.js"></script>
+
+  <script>
+    $(document).ready(function() {
+      //Initialize Select2 Elements
+      $('.select2').select2();
+    });
+  </script>
 
   <style>
     .content-wrapper {

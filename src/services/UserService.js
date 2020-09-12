@@ -107,7 +107,7 @@ class UserService {
 
   saveUser(formData) {
     return axios
-      .put(`${API_URL}/`, formData, { headers: authHeader() })
+      .post(`${API_URL}/`, formData, { headers: authHeader() })
       .then((response) => {
         return response.data;
       })
